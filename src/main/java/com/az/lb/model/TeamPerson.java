@@ -5,9 +5,13 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.UUID;
 
-@Entity(name = "Team")
-@Table(name = "team")
-public class Team {
+
+/**
+ * Just hint for UI
+ * */
+@Entity(name = "TeamPerson")
+@Table(name = "teamperson")
+public class TeamPerson {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -18,11 +22,11 @@ public class Team {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Person person;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Org org;
-
+    private Team team;
 
     public UUID getId() {
         return id;
@@ -32,19 +36,19 @@ public class Team {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
-    public Org getOrg() {
-        return org;
+    public Team getTeam() {
+        return team;
     }
 
-    public void setOrg(Org org) {
-        this.org = org;
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }

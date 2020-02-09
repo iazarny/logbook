@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.az.lb.views.team.TeamView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -32,12 +33,13 @@ public class MainView extends AppLayout {
 
     public MainView() {
         menu = createMenuTabs();
-        addToNavbar(menu);
+        addToDrawer(menu);
+        //addToNavbar(menu);
     }
 
     private static Tabs createMenuTabs() {
         final Tabs tabs = new Tabs();
-        tabs.setOrientation(Tabs.Orientation.HORIZONTAL);
+        tabs.setOrientation(Tabs.Orientation.VERTICAL);
         tabs.add(getAvailableTabs());
         return tabs;
     }
@@ -46,6 +48,7 @@ public class MainView extends AppLayout {
         final List<Tab> tabs = new ArrayList<>();
         tabs.add(createTab("Dashboard", DashboardView.class));
         tabs.add(createTab("Master Detail", MasterDetailView.class));
+        tabs.add(createTab("Team", TeamView.class));
         return tabs.toArray(new Tab[tabs.size()]);
     }
 
