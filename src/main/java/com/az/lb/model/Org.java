@@ -27,9 +27,10 @@ public class Org {
     @OneToMany(
             mappedBy = "org",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
-    private List<Team> comments = new ArrayList<>();
+    private List<Team> teams = new ArrayList<>();
 
     public UUID getId() {
         return id;
@@ -47,13 +48,6 @@ public class Org {
         this.name = name;
     }
 
-    public List<Team> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Team> comments) {
-        this.comments = comments;
-    }
 
 
 }

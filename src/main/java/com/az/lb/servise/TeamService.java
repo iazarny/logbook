@@ -27,7 +27,7 @@ public class TeamService {
     }
 
     @Transactional
-    public Team createNewTeam(String orgId, String teamName) {
+    public Team createNewTeam(final String orgId, final String teamName) {
         Team rez = null;
         Optional<Org> org = orgRepository.findById(UUID.fromString(orgId));
         if (org.isPresent()) {
@@ -39,6 +39,7 @@ public class TeamService {
         }
         return rez;
     }
+
 
 
 }

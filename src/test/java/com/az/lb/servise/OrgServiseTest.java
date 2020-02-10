@@ -40,5 +40,11 @@ public class OrgServiseTest {
         );
 
         assertEquals("Jungle", org.getName());
+
+        Optional<Org> created = orgRepository.findByName("Jungle");
+        assertTrue(created.isPresent());
+        Org o2 = orgRepository.findAll().get(0);
+        assertNotNull(o2);
+
     }
 }
