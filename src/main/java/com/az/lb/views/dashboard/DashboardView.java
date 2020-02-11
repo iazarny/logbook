@@ -6,6 +6,8 @@ import com.az.lb.servise.TeamService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.az.lb.backend.BackendService;
@@ -25,7 +27,7 @@ import com.az.lb.MainView;
 @RouteAlias(value = "", layout = MainView.class)
 @PageTitle("Dashboard")
 @CssImport("styles/views/dashboard/dashboard-view.css")
-public class DashboardView extends Div implements AfterNavigationObserver {
+public class DashboardView extends VerticalLayout implements AfterNavigationObserver {
 
     @Autowired
     private TeamService service;
@@ -40,21 +42,24 @@ public class DashboardView extends Div implements AfterNavigationObserver {
         setId("dashboard-view");
         grid = new Grid<>();
         grid.setId("list");
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER,
-                GridVariant.LUMO_NO_ROW_BORDERS);
+        //grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.setHeightFull();
-        grid.addColumn(new ComponentRenderer<>(employee -> {
-            H3 h3 = new H3(
-                    employee.getName() + ", " + employee.getName());
-            Anchor anchor = new Anchor("mailto:" + employee.getName(),
-                    employee.getName());
-            anchor.getElement().getThemeList().add("font-size-xs");
-            Div div = new Div(h3, anchor);
-            div.addClassName("employee-column");
-            return div;
-        }));
+        grid.addColumn(new ComponentRenderer<>(team -> {
+            Button deleteBtn = new Button("Delete"); // for team without any activities or assigned teams
+            Button editBtn = new Button("Edit");
+            Button teamBtn = new Button("Members");
+            Button activityBtn = new Button("Activity");
+            VerticalLayout vl = new VerticalLayout(
+                    new H2(team.getName()),
+                    new Label("Todo some info")
+            );
+            HorizontalLayout hl = new HorizontalLayout(
+                    vl,
+                    deleteBtn, editBtn, teamBtn, activityBtn
+            );
 
-        //add(new Label("asdfasdf"), grid);
+            return hl;
+        }));
         final Button addBtn = new Button("Add");
         final Dialog dialog = createNewTeamDialog();
         addBtn.addClickListener(event -> {
@@ -79,9 +84,10 @@ public class DashboardView extends Div implements AfterNavigationObserver {
     private Dialog createNewTeamDialog() {
         final Dialog dialog = new Dialog(new Label("Please provide new team name " + userContext.getOrg().getName()));
         final Input input = new Input();
-        dialog.add(new Div(),
+        dialog.add(new Div(),new Div(),
                 input,
-                new Div());
+                new Div(), new Div()
+        );
         dialog.setCloseOnEsc(true);
         dialog.setCloseOnOutsideClick(true);
 
@@ -92,6 +98,7 @@ public class DashboardView extends Div implements AfterNavigationObserver {
 
             dialog.close();
             grid.getDataProvider().refreshAll();
+            input.setValue("");
         });
         NativeButton cancelButton = new NativeButton("Cancel", event -> {
             dialog.close();
