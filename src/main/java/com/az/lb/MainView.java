@@ -9,6 +9,8 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabVariant;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -34,7 +36,7 @@ public class MainView extends AppLayout {
     public MainView() {
         menu = createMenuTabs();
         addToDrawer(menu);
-        //addToNavbar(menu);
+        addToNavbar(new Label("Log book"));
     }
 
     private static Tabs createMenuTabs() {

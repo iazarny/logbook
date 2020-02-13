@@ -23,6 +23,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 
 import com.az.lb.MainView;
+
+import java.util.UUID;
+
 @Route(value = "Dashboard", layout = MainView.class)
 @RouteAlias(value = "", layout = MainView.class)
 @PageTitle("Dashboard")
@@ -31,6 +34,7 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
 
     @Autowired
     private TeamService service;
+
     private final Grid<Team> grid;
 
     @Autowired
@@ -42,16 +46,17 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
         setId("dashboard-view");
         grid = new Grid<>();
         grid.setId("list");
-        //grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_COMPACT, GridVariant.MATERIAL_COLUMN_DIVIDERS);
         grid.setHeightFull();
         grid.addColumn(new ComponentRenderer<>(team -> {
-            Button deleteBtn = new Button("Delete"); // for team without any activities or assigned teams
+            Button deleteBtn = new Button("Del"); // for team without any activities or assigned teams
+            deleteBtn.addClickListener( e -> { removeTeam(team.getId()); } );
             Button editBtn = new Button("Edit");
             Button teamBtn = new Button("Members");
             Button activityBtn = new Button("Activity");
             VerticalLayout vl = new VerticalLayout(
-                    new H2(team.getName()),
-                    new Label("Todo some info")
+                    new H3(team.getName())/*,
+                    new Label("Todo some info")*/
             );
             HorizontalLayout hl = new HorizontalLayout(
                     vl,
@@ -61,16 +66,32 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
             return hl;
         }));
         final Button addBtn = new Button("Add");
-        final Dialog dialog = createNewTeamDialog();
+        final TeamEditDialog newTeamDialog =  new TeamEditDialog("Add new team");
         addBtn.addClickListener(event -> {
-            dialog.open();
-            //input.getElement().callJsFunction("focus");
+            newTeamDialog.open();
+            newTeamDialog.input.setValue("");
+            newTeamDialog.input.getElement().callJsFunction("focus");
+            newTeamDialog.confirmButton.addClickListener(
+                    e -> {
+                        Team team = service.createNewTeam(
+                                userContext.getOrg().getId().toString(),
+                                newTeamDialog.input.getValue());
+                        grid.getDataProvider().refreshAll();
+                        newTeamDialog.close();
+                    }
+            );
         });
 
-        add(dialog);
-        add(addBtn, grid);
+        add(newTeamDialog);
+        HorizontalLayout hl = new HorizontalLayout(addBtn);
+        hl.setAlignItems(Alignment.END);
+        add(hl, grid);
+
     }
 
+    private void removeTeam(UUID id) {
+        System.out.println(">>>>>>>>>>>>>>>>>> id " + id);
+    }
 
 
     @Override
@@ -78,33 +99,9 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
         // Lazy init of the grid items, happens only when we are sure the view will be
         // shown to the user
         grid.setItems(service.findAll());
+        grid.getDataProvider().refreshAll();
     }
 
 
-    private Dialog createNewTeamDialog() {
-        final Dialog dialog = new Dialog(new Label("Please provide new team name " + userContext.getOrg().getName()));
-        final Input input = new Input();
-        dialog.add(new Div(),new Div(),
-                input,
-                new Div(), new Div()
-        );
-        dialog.setCloseOnEsc(true);
-        dialog.setCloseOnOutsideClick(true);
 
-        NativeButton confirmButton = new NativeButton("New", event -> {
-            Team team = service.createNewTeam(
-                    userContext.getOrg().getId().toString(),
-                    input.getValue());
-
-            dialog.close();
-            grid.getDataProvider().refreshAll();
-            input.setValue("");
-        });
-        NativeButton cancelButton = new NativeButton("Cancel", event -> {
-            dialog.close();
-        });
-        dialog.add(confirmButton, cancelButton);
-
-        return dialog;
-    }
 }
