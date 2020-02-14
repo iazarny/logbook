@@ -40,6 +40,18 @@ public class TeamService {
         return rez;
     }
 
+    @Transactional
+    public void deleteTeam(UUID id) {
+        teamRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Team update(Team team) {
+        return teamRepository.save(team);
+    }
 
 
+    public Optional<Team> findById(UUID id) {
+        return teamRepository.findById(id);
+    }
 }

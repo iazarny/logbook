@@ -3,15 +3,15 @@ package com.az.lb.views.dashboard;
 import com.az.lb.UserContext;
 import com.az.lb.model.Team;
 import com.az.lb.servise.TeamService;
+import com.az.lb.views.ConfirmDialog;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.function.ValueProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.az.lb.backend.BackendService;
-import com.az.lb.backend.Employee;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -24,8 +24,6 @@ import com.vaadin.flow.router.RouteAlias;
 
 import com.az.lb.MainView;
 
-import java.util.UUID;
-
 @Route(value = "Dashboard", layout = MainView.class)
 @RouteAlias(value = "", layout = MainView.class)
 @PageTitle("Dashboard")
@@ -36,6 +34,8 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
     private TeamService service;
 
     private final Grid<Team> grid;
+    private final ConfirmDialog confirmDialog;
+    private final TeamEditDialog teamDialog;
 
     @Autowired
     private UserContext userContext;
@@ -44,53 +44,94 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
 
         this.userContext = userContext;
         setId("dashboard-view");
-        grid = new Grid<>();
+        grid = new Grid<Team>();
         grid.setId("list");
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_COMPACT, GridVariant.MATERIAL_COLUMN_DIVIDERS);
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_COMPACT,
+                GridVariant.MATERIAL_COLUMN_DIVIDERS);
         grid.setHeightFull();
+        grid.addColumn((ValueProvider<Team, String>) team -> team.getName()).setHeader("Name").setSortable(true);
+
         grid.addColumn(new ComponentRenderer<>(team -> {
-            Button deleteBtn = new Button("Del"); // for team without any activities or assigned teams
-            deleteBtn.addClickListener( e -> { removeTeam(team.getId()); } );
-            Button editBtn = new Button("Edit");
+            Button deleteBtn = new Button("Del", e -> {  removeTeam(team);   });
+
+            Button editBtn = new Button("Edit", e -> { editTeam(team); });
             Button teamBtn = new Button("Members");
             Button activityBtn = new Button("Activity");
-            VerticalLayout vl = new VerticalLayout(
-                    new H3(team.getName())/*,
-                    new Label("Todo some info")*/
-            );
-            HorizontalLayout hl = new HorizontalLayout(
-                    vl,
+
+            return new HorizontalLayout(
                     deleteBtn, editBtn, teamBtn, activityBtn
             );
-
-            return hl;
         }));
-        final Button addBtn = new Button("Add");
-        final TeamEditDialog newTeamDialog =  new TeamEditDialog("Add new team");
-        addBtn.addClickListener(event -> {
-            newTeamDialog.open();
-            newTeamDialog.input.setValue("");
-            newTeamDialog.input.getElement().callJsFunction("focus");
-            newTeamDialog.confirmButton.addClickListener(
-                    e -> {
-                        Team team = service.createNewTeam(
-                                userContext.getOrg().getId().toString(),
-                                newTeamDialog.input.getValue());
-                        grid.getDataProvider().refreshAll();
-                        newTeamDialog.close();
-                    }
-            );
-        });
 
-        add(newTeamDialog);
+
+        final Button addBtn = new Button("Add");
+        teamDialog = new TeamEditDialog("Add new team");
+        add(teamDialog);
+        addBtn.addClickListener(event -> { newTeam(); });
+
+        confirmDialog = new ConfirmDialog("Please confirm", "");
+        add(confirmDialog);
+
         HorizontalLayout hl = new HorizontalLayout(addBtn);
-        hl.setAlignItems(Alignment.END);
-        add(hl, grid);
+        hl.setAlignItems(Alignment.CENTER);
+
+        add(
+                new H2("Teams"),
+                hl,
+                grid
+        );
 
     }
 
-    private void removeTeam(UUID id) {
-        System.out.println(">>>>>>>>>>>>>>>>>> id " + id);
+    private void newTeam() {
+        teamDialog
+                .message("New team")
+                .onCancel(e -> {grid.getDataProvider().refreshAll();})
+                .onConfirm(e -> {
+                    Team team = service.createNewTeam(
+                            userContext.getOrg().getId().toString(),
+                            teamDialog.input.getValue());
+                    grid.setItems(service.findAll());
+                    grid.getDataProvider().refreshAll();
+                    teamDialog.close();
+                })
+                .open(); //teamDialog.input.getElement().callJsFunction("focus");
+    }
+
+
+    private void editTeam(Team team) {
+
+        teamDialog
+                .message("Edit " + team.getName())
+                .teamName(team.getName())
+                .onCancel(e -> {
+                    grid.getDataProvider().refreshAll();
+                    teamDialog.close();
+                })
+                .onConfirm( e-> {
+                    team.setName(teamDialog.input.getValue());
+                    service.update(team);
+                    grid.getDataProvider().refreshAll();
+                    teamDialog.close();
+                })
+                .open();
+
+    }
+
+    private void removeTeam(Team team) {
+        confirmDialog
+                .message("Do you want to delete the team " + team.getName() + " ?")
+                .onCancel(e -> {
+                    grid.getDataProvider().refreshAll();
+                    confirmDialog.close();
+                })
+                .onConfirm(e -> {
+                    service.deleteTeam(team.getId());
+                    ((ListDataProvider) grid.getDataProvider()).getItems().remove(team);
+                    grid.getDataProvider().refreshAll();
+                    confirmDialog.close();
+                })
+                .open();
     }
 
 
@@ -98,10 +139,10 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
     public void afterNavigation(AfterNavigationEvent event) {
         // Lazy init of the grid items, happens only when we are sure the view will be
         // shown to the user
+        userContext.getOrg();
         grid.setItems(service.findAll());
         grid.getDataProvider().refreshAll();
     }
-
 
 
 }

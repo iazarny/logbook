@@ -1,9 +1,11 @@
 package com.az.lb.views.masterdetail;
 
+import com.az.lb.model.Person;
+import com.az.lb.servise.PersonService;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.az.lb.backend.BackendService;
-import com.az.lb.backend.Employee;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -27,12 +29,12 @@ import com.az.lb.MainView;
 @Route(value = "Master-Detail", layout = MainView.class)
 @PageTitle("Master Detail")
 @CssImport("styles/views/masterdetail/master-detail-view.css")
-public class MasterDetailView extends Div implements AfterNavigationObserver {
+public class MasterDetailView extends VerticalLayout implements AfterNavigationObserver {
 
     @Autowired
-    private BackendService service;
+    private PersonService service;
 
-    private Grid<Employee> employees;
+    private Grid<Person> employees;
 
     private TextField firstname = new TextField();
     private TextField lastname = new TextField();
@@ -42,7 +44,7 @@ public class MasterDetailView extends Div implements AfterNavigationObserver {
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
 
-    private Binder<Employee> binder;
+    private Binder<Person> binder;
 
     public MasterDetailView() {
         setId("master-detail-view");
@@ -50,15 +52,15 @@ public class MasterDetailView extends Div implements AfterNavigationObserver {
         employees = new Grid<>();
         employees.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         employees.setHeightFull();
-        employees.addColumn(Employee::getFirstname).setHeader("First name");
-        employees.addColumn(Employee::getLastname).setHeader("Last name");
-        employees.addColumn(Employee::getEmail).setHeader("Email");
+        employees.addColumn(Person::getFirstName).setHeader("First name");
+        employees.addColumn(Person::getLastName).setHeader("Last name");
+        employees.addColumn(Person::getEmail).setHeader("Email");
 
         //when a row is selected or deselected, populate form
         employees.asSingleSelect().addValueChangeListener(event -> populateForm(event.getValue()));
 
         // Configure Form
-        binder = new Binder<>(Employee.class);
+        binder = new Binder<>(Person.class);
 
         // Bind fields. This where you'd define e.g. validation rules
         binder.bindInstanceFields(this);
@@ -78,7 +80,10 @@ public class MasterDetailView extends Div implements AfterNavigationObserver {
         createGridLayout(splitLayout);
         createEditorLayout(splitLayout);
 
-        add(splitLayout);
+        add(
+                new H2("Organization members"),
+                splitLayout
+        );
     }
 
     private void createEditorLayout(SplitLayout splitLayout) {
@@ -88,7 +93,6 @@ public class MasterDetailView extends Div implements AfterNavigationObserver {
         addFormItem(editorDiv, formLayout, firstname, "First name");
         addFormItem(editorDiv, formLayout, lastname, "Last name");
         addFormItem(editorDiv, formLayout, email, "Email");
-        addFormItem(editorDiv, formLayout, password, "Password");
         createButtonLayout(editorDiv);
         splitLayout.addToSecondary(editorDiv);
     }
@@ -124,10 +128,10 @@ public class MasterDetailView extends Div implements AfterNavigationObserver {
 
         // Lazy init of the grid items, happens only when we are sure the view will be
         // shown to the user
-        employees.setItems(service.getEmployees());
+        employees.setItems(service.findAll()); // todo by org
     }
 
-    private void populateForm(Employee value) {
+    private void populateForm(Person value) {
         // Value can be null as well, that clears the form
         binder.readBean(value);
 
