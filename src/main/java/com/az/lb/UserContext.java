@@ -19,7 +19,7 @@ public class UserContext {
     @Autowired
     private OrgRepository orgRepository;
 
-    public Org getOrg() {
+    public synchronized Org getOrg() {
         if (org == null) {
             System.out.println(">>>>>>>>>>>>>>>> resolving org" );
             org = orgRepository.findAll().get(0);

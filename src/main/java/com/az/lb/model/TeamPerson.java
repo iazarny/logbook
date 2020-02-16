@@ -28,6 +28,14 @@ public class TeamPerson {
     @ManyToOne(fetch = FetchType.LAZY)
     private Team team;
 
+    public TeamPerson(Person person, Team team) {
+        this.person = person;
+        this.team = team;
+    }
+
+    public TeamPerson() {
+    }
+
     public UUID getId() {
         return id;
     }
