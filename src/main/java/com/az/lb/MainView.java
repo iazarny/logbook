@@ -1,18 +1,13 @@
 package com.az.lb;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import com.az.lb.views.team.TeamView;
+import com.az.lb.views.dashboard.DashboardView;
+import com.az.lb.views.masterdetail.MasterDetailView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
-import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.applayout.AppLayout;
-import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.TabVariant;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouterLink;
@@ -20,15 +15,16 @@ import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
-import com.az.lb.views.dashboard.DashboardView;
-import com.az.lb.views.masterdetail.MasterDetailView;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The main view is a top-level placeholder for other views.
  */
 @JsModule("./styles/shared-styles.js")
 @PWA(name = "Log Book", shortName = "Log Book")
-@Theme(value = Lumo.class, variant = Lumo.DARK)
+@Theme(value = Lumo.class, variant = Lumo.LIGHT)
 public class MainView extends AppLayout {
 
     private final Tabs menu;
@@ -37,6 +33,10 @@ public class MainView extends AppLayout {
         menu = createMenuTabs();
         addToDrawer(menu);
         addToNavbar(new Label("Log book"));
+        /*private static Tab createTab(String title,
+            Class<? extends Component> viewClass) {
+        return createTab(populateLink(new RouterLink(null, viewClass), title));
+    }*/
     }
 
     private static Tabs createMenuTabs() {
@@ -50,7 +50,7 @@ public class MainView extends AppLayout {
         final List<Tab> tabs = new ArrayList<>();
         tabs.add(createTab("Dashboard", DashboardView.class));
         tabs.add(createTab("Master Detail", MasterDetailView.class));
-        tabs.add(createTab("Team", TeamView.class));
+        //tabs.add(createTab("Team", AssignedPersons.class));
         return tabs.toArray(new Tab[tabs.size()]);
     }
 
@@ -61,7 +61,7 @@ public class MainView extends AppLayout {
 
     private static Tab createTab(Component content) {
         final Tab tab = new Tab();
-        tab.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
+        //tab.addThemeVariants(TabVarian);
         tab.add(content);
         return tab;
     }

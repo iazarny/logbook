@@ -8,11 +8,8 @@ import com.az.lb.servise.PersonService;
 import com.az.lb.servise.TeamService;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
 
 @Component
 @VaadinSessionScope

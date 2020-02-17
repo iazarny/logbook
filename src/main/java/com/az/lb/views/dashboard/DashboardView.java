@@ -55,7 +55,7 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
             Button deleteBtn = new Button("Del", e -> {  removeTeam(team);   });
 
             Button editBtn = new Button("Edit", e -> { editTeam(team); });
-            Button teamBtn = new Button("Members");
+            Button teamBtn = new Button("Members", e-> { edirMembers(team); });
             Button activityBtn = new Button("Activity");
 
             return new HorizontalLayout(
@@ -81,6 +81,12 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
                 grid
         );
 
+    }
+
+    private void edirMembers(Team team) {
+        getUI().ifPresent(ui -> {
+            ui.getPage().setLocation("/Team?tid=" + team.getId());
+        });
     }
 
     private void newTeam() {

@@ -27,9 +27,9 @@ public class TeamService {
     }
 
     @Transactional
-    public Team createNewTeam(final String orgId, final String teamName) {
+    public Team createNewTeam(UUID orgId, String teamName) {
         Team rez = null;
-        Optional<Org> org = orgRepository.findById(UUID.fromString(orgId));
+        Optional<Org> org = orgRepository.findById(orgId);
         if (org.isPresent()) {
             Team team = new Team();
             team.setOrg(org.get());
@@ -38,6 +38,12 @@ public class TeamService {
 
         }
         return rez;
+
+    }
+
+    @Transactional
+    public Team createNewTeam(String orgId, String teamName) {
+        return createNewTeam(UUID.fromString(orgId), teamName);
     }
 
     @Transactional
