@@ -3,20 +3,20 @@ package com.az.lb.views.team;
 
 import com.az.lb.MainView;
 import com.az.lb.UserContext;
-import com.az.lb.model.Team;
-import com.az.lb.model.TeamPerson;
 import com.az.lb.servise.TeamPersonService;
 import com.az.lb.servise.TeamService;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "Team", layout = MainView.class)
@@ -34,7 +34,6 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
 
     @Autowired
     private UserContext userContext;
-
 
 
     public AssignedPersons(@Autowired UserContext userContext) {
@@ -89,16 +88,32 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
             input.getElement().callJsFunction("focus");
         });*/
 
-        Label label = new Label("Teams");
+        //Label label = new Label();
 
         HorizontalLayout hl = new HorizontalLayout();
-        hl.add(label);
+       // hl.add(label);
+        ComboBox cmb = new ComboBox<>("Teams");
+        cmb.setItems("Option one", "Option two");
+        hl.add(cmb);
+
+        HorizontalLayout hlMain = new HorizontalLayout();
+        ListBox availableMembers = new ListBox<>();
+        availableMembers.setItems("ae", "sdgsfg", "sdfgsdfgsfdgdsfg", "sfrum67j");
+        hlMain.add(availableMembers);
+        hlMain.add(new VerticalLayout(
+                new Button(">>"),
+                new Button(">"),
+                new Button("<"),
+                new Button("<<")
+        ));
+        hlMain.add(new ListBox<>());
 
 
         add(
                 new H2("Team members"),
-                hl
-        );
+                hl,
+                hlMain
+                );
     }
 
     @Override
