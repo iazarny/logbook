@@ -26,6 +26,10 @@ public class TeamService {
         return teamRepository.findAll();
     }
 
+    public List<Team> findTeams(Org org) {
+        return teamRepository.findAllByOrg(org);
+    }
+
     @Transactional
     public Team createNewTeam(UUID orgId, String teamName) {
         Team rez = null;

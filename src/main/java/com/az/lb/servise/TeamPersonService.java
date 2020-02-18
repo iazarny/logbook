@@ -31,6 +31,12 @@ public class TeamPersonService {
         return teamPersonRepository.findAllByPersonAndTeam(person, team);
     }
 
+
+    public List<TeamPerson> findAllByTeamId(Team team) {
+
+        return teamPersonRepository.findAllByTeam(team);
+    }
+
     @Transactional
     public List<TeamPerson> unassignPerson(UUID teamPersonId) {
         TeamPerson tp = teamPersonRepository.findById(teamPersonId).get();
