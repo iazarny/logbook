@@ -14,15 +14,17 @@ import java.util.UUID;
 public interface PersonRepository extends JpaRepository<Person, UUID> {
 
     Optional<Person> findByEmail(String email);
-
+/*
     @Query(value = "select p from Person p, TeamPerson t " +
-            "where p.id = t.person.id and t.team.id =:teamId")
-    List<Person> findAllInTeam(@Param("team") UUID teamId);
+            "where  p.id = t.person.id and t.team.id =:teamId")*/
+@Query(value = "select t.person from  TeamPerson t " +
+        "where  t.team.id =:teamId")
+    List<Person> findAllInTeam(@Param("teamId") UUID teamId);
 
     @Query(value = "select p from Person p, TeamPerson t " +
             "where p.org.id =:orgId" +
             " and p.id <> t.person.id and t.team.id =:teamId")
-    List<Person> findAllOutOfTeam(@Param("team") UUID teamId,
+    List<Person> findAllOutOfTeam(@Param("teamId") UUID teamId,
                                   @Param("orgId") UUID orgId);
 
 }
