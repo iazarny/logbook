@@ -133,8 +133,8 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
         teamCmb.setItems(service.findTeams(org));
 
         if (Strings.isNotEmpty(tidValue)) {
-            //availableMembers.setItems(
-             //       personService.findAllOutOfTeam(UUID.fromString(tidValue), org.getId()));
+            availableMembers.setItems(
+                    personService.findAllOutOfTeam(UUID.fromString(tidValue), org.getId()));
             assignedMembers.setItems(
                     personService.findAllInTeam(UUID.fromString(tidValue)) );
         }
