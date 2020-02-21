@@ -17,6 +17,8 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.*;
 import org.apache.logging.log4j.util.Strings;
@@ -99,11 +101,23 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
             if (valSelected) {
                 repopulateMembers(
                         userContext.getOrg(),
-                        e.getValue().getId().toString()
+                        e.getValue().getId()
                 );
 
             }
         });
+
+        availableMembers.addValueChangeListener(
+                e -> {
+                    System.out.println(">>>>>>>>>>>>>>>>> " + e);
+                }
+        );
+
+        assignedMembers.addValueChangeListener(
+                e -> {
+                    System.out.println(">>>>>>>>>>>>>>>>> " + e);
+                }
+        );
 
 
         add(
@@ -125,19 +139,29 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
 
         final String tidValue = parametersMap.getOrDefault(TID, Collections.singletonList("")).get(0);
 
-        repopulateMembers(org, tidValue);
+        if (Strings.isNotEmpty(tidValue)) {
+
+            final UUID selectedTeamId = UUID.fromString(tidValue);
+
+            final List<Team> teams = service.findTeams(org);
+
+            final Team team = teams.stream().filter(t -> selectedTeamId.equals(t.getId())).findFirst().get();
+
+            teamCmb.setItems(teams);
+
+            teamCmb.setValue(team);
+
+        }
 
     }
 
-    private void repopulateMembers(Org org, String tidValue) {
-        teamCmb.setItems(service.findTeams(org));
+    private void repopulateMembers(Org org, UUID selectedTeamId) {
 
-        if (Strings.isNotEmpty(tidValue)) {
-            availableMembers.setItems(
-                    personService.findAllOutOfTeam(UUID.fromString(tidValue), org.getId()));
-            assignedMembers.setItems(
-                    personService.findAllInTeam(UUID.fromString(tidValue)) );
-        }
+        availableMembers.setItems(
+                personService.findAllOutOfTeam(selectedTeamId, org.getId()));
+        assignedMembers.setItems(
+                personService.findAllInTeam(selectedTeamId) );
+
     }
 
     @Override

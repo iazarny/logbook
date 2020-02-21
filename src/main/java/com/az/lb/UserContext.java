@@ -10,6 +10,8 @@ import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 
 @Component
 @VaadinSessionScope
@@ -31,6 +33,10 @@ public class UserContext {
 
     public synchronized Org getOrg() {
         if (org == null) {
+            Optional<Org> defaultOrg = orgRepository.findByName("Default");
+            if (defaultOrg.isPresent()) {
+                return defaultOrg.get();
+            }
             Org no = new Org();
             no.setName("Default");
             orgRepository.save(no);
@@ -40,6 +46,10 @@ public class UserContext {
             service.createNewTeam(
                     org.getId().toString(),
                     "Simple test value");
+
+            service.createNewTeam(
+                    org.getId().toString(),
+                    "One more team");
 
             Person person = new Person();
             person.setEmail("Ivan.Puzan@org.net");
@@ -52,6 +62,13 @@ public class UserContext {
             person.setEmail("Jopa.Lubich@org.net");
             person.setFirstName("Jopa");
             person.setLastName("Lubich");
+            person.setOrg(org);
+            personRepository.save(person);
+
+            person = new Person();
+            person.setEmail("Dua.Lipa@org.net");
+            person.setFirstName("Dua");
+            person.setLastName("Lipa");
             person.setOrg(org);
             personRepository.save(person);
         }
