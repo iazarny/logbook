@@ -1,7 +1,7 @@
 package com.az.lb;
 
-import com.az.lb.views.dashboard.DashboardView;
-import com.az.lb.views.masterdetail.MasterDetailView;
+import com.az.lb.views.dashboard.TeamView;
+import com.az.lb.views.masterdetail.PersonView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -48,9 +48,8 @@ public class MainView extends AppLayout {
 
     private static Tab[] getAvailableTabs() {
         final List<Tab> tabs = new ArrayList<>();
-        tabs.add(createTab("Dashboard", DashboardView.class));
-        tabs.add(createTab("Master Detail", MasterDetailView.class));
-        //tabs.add(createTab("Team", AssignedPersons.class));
+        tabs.add(createTab("Dashboard", TeamView.class));
+        tabs.add(createTab("Master Detail", PersonView.class));
         return tabs.toArray(new Tab[tabs.size()]);
     }
 

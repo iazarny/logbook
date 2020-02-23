@@ -24,11 +24,13 @@ import com.vaadin.flow.router.RouteAlias;
 
 import com.az.lb.MainView;
 
+import java.time.LocalDate;
+
 @Route(value = "Dashboard", layout = MainView.class)
 @RouteAlias(value = "", layout = MainView.class)
 @PageTitle("Dashboard")
 @CssImport("styles/views/dashboard/dashboard-view.css")
-public class DashboardView extends VerticalLayout implements AfterNavigationObserver {
+public class TeamView extends VerticalLayout implements AfterNavigationObserver {
 
     @Autowired
     private TeamService service;
@@ -36,11 +38,12 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
     private final Grid<Team> grid;
     private final ConfirmDialog confirmDialog;
     private final TeamEditDialog teamDialog;
+    private final ActivityDateDialog activityDate;
 
     @Autowired
     private UserContext userContext;
 
-    public DashboardView(@Autowired UserContext userContext) {
+    public TeamView(@Autowired UserContext userContext) {
 
         this.userContext = userContext;
         setId("dashboard-view");
@@ -55,8 +58,8 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
             Button deleteBtn = new Button("Del", e -> {  removeTeam(team);   });
 
             Button editBtn = new Button("Edit", e -> { editTeam(team); });
-            Button teamBtn = new Button("Members", e-> { edirMembers(team); });
-            Button activityBtn = new Button("Activity");
+            Button teamBtn = new Button("Members", e-> { editMembers(team); });
+            Button activityBtn = new Button("Activity", e-> { newActivity(team); });
 
             return new HorizontalLayout(
                     deleteBtn, editBtn, teamBtn, activityBtn
@@ -68,6 +71,9 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
         teamDialog = new TeamEditDialog("Add new team");
         add(teamDialog);
         addBtn.addClickListener(event -> { newTeam(); });
+
+        activityDate = new ActivityDateDialog("Activity date");
+        add(activityDate);
 
         confirmDialog = new ConfirmDialog("Please confirm", "");
         add(confirmDialog);
@@ -83,11 +89,30 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
 
     }
 
-    private void edirMembers(Team team) {
+    private void editMembers(Team team) {
         getUI().ifPresent(ui -> {
             ui.getPage().setLocation("/Team?tid=" + team.getId());
         });
     }
+
+    private void newActivity(Team team) {
+        activityDate
+                .message("Activity date")
+                .onCancel(e -> {activityDate.close();})
+                .onConfirm(e -> {
+
+                    activityDate.close();
+
+                    getUI().ifPresent(ui -> {
+                       ui.getPage().setLocation("/Activity?tid=" + team.getId() + "&date=" + LocalDate.now().toString());
+                    });
+
+
+                })
+                .open();
+
+    }
+
 
     private void newTeam() {
         teamDialog

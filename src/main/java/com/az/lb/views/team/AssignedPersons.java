@@ -29,6 +29,7 @@ import java.util.UUID;
 //@RouteAlias(value = "", layout = MainView.class)
 @PageTitle("Team")
 //@CssImport("styles/views/dashboard/dashboard-view.css")
+//https://github.com/vaadin/flow/issues/3628
 public class AssignedPersons extends VerticalLayout implements AfterNavigationObserver, HasUrlParameter<String> {
 
 

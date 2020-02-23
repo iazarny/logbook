@@ -29,7 +29,7 @@ import com.az.lb.MainView;
 @Route(value = "Master-Detail", layout = MainView.class)
 @PageTitle("Master Detail")
 @CssImport("styles/views/masterdetail/master-detail-view.css")
-public class MasterDetailView extends VerticalLayout implements AfterNavigationObserver {
+public class PersonView extends VerticalLayout implements AfterNavigationObserver {
 
     @Autowired
     private PersonService service;
@@ -44,9 +44,11 @@ public class MasterDetailView extends VerticalLayout implements AfterNavigationO
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
 
+    private PersonEditDialog personEditDialog;
+
     private Binder<Person> binder;
 
-    public MasterDetailView() {
+    public PersonView() {
         setId("master-detail-view");
         // Configure Grid
         employees = new Grid<>();
@@ -80,10 +82,47 @@ public class MasterDetailView extends VerticalLayout implements AfterNavigationO
         createGridLayout(splitLayout);
         createEditorLayout(splitLayout);
 
+        final Button addBtn = new Button("Add");
+        personEditDialog = new PersonEditDialog("New person");
+
+        addBtn.addClickListener(event -> {
+            newPerson();
+        });
+
+        add(personEditDialog);
         add(
+                addBtn,
                 new H2("Organization members"),
                 splitLayout
         );
+    }
+/* private void newTeam() {
+        teamDialog
+                .message("New team")
+                .onCancel(e -> {teamDialog.close();})
+                .onConfirm(e -> {
+                    Team team = service.createNewTeam(
+                            userContext.getOrg().getId().toString(),
+                            teamDialog.input.getValue());
+                    grid.setItems(service.findAll());
+                    grid.getDataProvider().refreshAll();
+                    teamDialog.close();
+                })
+                .open(); //teamDialog.input.getElement().callJsFunction("focus");
+    }*/
+    private void newPerson() {
+        personEditDialog
+                .message("New person")
+                .email("")
+                .firstName("")
+                .lastName("")
+                .manager(false)
+                .onCancel(e -> personEditDialog.close())
+                .onConfirm( e-> {
+                    System.out.println(e); //todo
+                })
+                .open();
+
     }
 
     private void createEditorLayout(SplitLayout splitLayout) {
