@@ -58,7 +58,8 @@ class TeamPersonServiceTest {
         assertEquals(1, assigned.size());
 
         assigned = teamPersonService.unassignPerson(
-                teamPersonService.findByPersonTeam(person, team).get(0).getId()
+                person.getId(),
+                team.getId()
         );
 
         assertEquals(0, assigned.size());

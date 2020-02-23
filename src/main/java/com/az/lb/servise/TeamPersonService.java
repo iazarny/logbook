@@ -38,11 +38,11 @@ public class TeamPersonService {
     }
 
     @Transactional
-    public List<TeamPerson> unassignPerson(UUID teamPersonId) {
-        TeamPerson tp = teamPersonRepository.findById(teamPersonId).get();
-        UUID tid = tp.getTeam().getId();
-        teamPersonRepository.deleteById(teamPersonId);
-        return teamPersonRepository.findAllByTeamId(tid);
+    public List<TeamPerson> unassignPerson(UUID personId, UUID teamId) {
+        teamPersonRepository. findOneByPersonIdAndTeamId(personId, teamId).ifPresent(
+                teamPerson -> teamPersonRepository.deleteById(teamPerson.getId())
+        );
+        return teamPersonRepository.findAllByTeamId(teamId);
     }
 
     @Transactional

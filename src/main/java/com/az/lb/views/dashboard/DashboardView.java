@@ -92,7 +92,7 @@ public class DashboardView extends VerticalLayout implements AfterNavigationObse
     private void newTeam() {
         teamDialog
                 .message("New team")
-                .onCancel(e -> {grid.getDataProvider().refreshAll();})
+                .onCancel(e -> {teamDialog.close();})
                 .onConfirm(e -> {
                     Team team = service.createNewTeam(
                             userContext.getOrg().getId().toString(),

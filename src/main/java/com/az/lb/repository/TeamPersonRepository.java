@@ -18,6 +18,7 @@ public interface TeamPersonRepository extends JpaRepository<TeamPerson, UUID> {
     List<TeamPerson> findAllByTeamId(UUID teamId);
     List<TeamPerson> findAllByTeam(Team team);
     List<TeamPerson> findAllByPersonAndTeam(Person person, Team team);
+    Optional<TeamPerson> findOneByPersonIdAndTeamId(UUID personId, UUID teamId);
 
 
 }

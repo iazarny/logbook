@@ -4,22 +4,18 @@ package com.az.lb.views.team;
 import com.az.lb.MainView;
 import com.az.lb.UserContext;
 import com.az.lb.model.Org;
+import com.az.lb.model.Person;
 import com.az.lb.model.Team;
 import com.az.lb.servise.PersonService;
 import com.az.lb.servise.TeamPersonService;
 import com.az.lb.servise.TeamService;
-import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.Query;
-import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.*;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,15 +47,18 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
     @Autowired
     private UserContext userContext;
 
+    private List<Person> availableMembers;
+    private List<Person> assignedMembers;
+
     private H2 header;
 
     private ComboBox<Team> teamCmb;
-    private ListBox assignedMembers;
-    private ListBox availableMembers;
-    private Button addAll;
-    private Button addOne;
-    private Button removeOne;
-    private Button removeAll;
+    private ListBox<Person> assignedMembersLb;
+    private ListBox<Person> availableMembersLb;
+    private Button addAllBtn;
+    private Button addOneBtn;
+    private Button removeOneBtn;
+    private Button removeAllBtn;
 
     private HorizontalLayout mainHl;
 
@@ -70,35 +69,33 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
 
         setId("team-view");
 
-        addAll = new Button(">>");
-        addOne = new Button(">");
-        removeOne = new Button("<");
-        removeAll = new Button("<<");
+        addAllBtn = new Button(">>");
+        addOneBtn = new Button(">");
+        removeOneBtn = new Button("<");
+        removeAllBtn = new Button("<<");
 
 
         HorizontalLayout hlMain = new HorizontalLayout();
 
-        availableMembers = new ListBox<>();
+        availableMembersLb = new ListBox<>();
+        availableMembersLb.setRenderer(new TextRenderer<>(p -> p.getFirstName() + " " + p.getLastName() ));
 
-        hlMain.add(availableMembers);
+        hlMain.add(availableMembersLb);
+
         hlMain.add(new VerticalLayout(
-                addAll, addOne, removeOne, removeAll
+                addAllBtn, addOneBtn, removeOneBtn, removeAllBtn
         ));
-        assignedMembers = new ListBox<>();
-        hlMain.add(assignedMembers);
+
+        assignedMembersLb = new ListBox<>();
+        assignedMembersLb.setRenderer(new TextRenderer<>(p -> p.getFirstName() + " " + p.getLastName() ));
+        hlMain.add(assignedMembersLb);
 
         teamCmb = new ComboBox<>("Teams");
         teamCmb.setAllowCustomValue(false);
         teamCmb.setItemLabelGenerator(Team::getName);
         teamCmb.addValueChangeListener(e -> {
-            final boolean valSelected = e.getValue() != null;
-            availableMembers.setEnabled(valSelected);
-            assignedMembers.setEnabled(valSelected);
-            addAll.setEnabled(valSelected);
-            addOne.setEnabled(valSelected);
-            removeOne.setEnabled(valSelected);
-            removeAll.setEnabled(valSelected);
-            if (valSelected) {
+
+            if (e.getValue() != null) {
                 repopulateMembers(
                         userContext.getOrg(),
                         e.getValue().getId()
@@ -107,17 +104,38 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
             }
         });
 
-        availableMembers.addValueChangeListener(
+        availableMembersLb.addValueChangeListener(
                 e -> {
-                    System.out.println(">>>>>>>>>>>>>>>>> " + e);
+                    changeControlsVisibility();
                 }
         );
 
-        assignedMembers.addValueChangeListener(
+        assignedMembersLb.addValueChangeListener(
                 e -> {
-                    System.out.println(">>>>>>>>>>>>>>>>> " + e);
+                    changeControlsVisibility();
                 }
         );
+
+        addAllBtn.addClickListener( e-> {
+            assignAllPersons();
+
+        });
+
+        addOneBtn.addClickListener( e-> {
+            assignOnePerson();
+
+        });
+
+        removeOneBtn.addClickListener( e-> {
+
+            removeOnePerson();
+
+        });
+
+        removeAllBtn.addClickListener( e-> {
+            removeAllPersons();
+
+        });
 
 
         add(
@@ -125,6 +143,8 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
                 teamCmb,
                 hlMain
         );
+
+
 
     }
 
@@ -145,23 +165,72 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
 
             final List<Team> teams = service.findTeams(org);
 
-            final Team team = teams.stream().filter(t -> selectedTeamId.equals(t.getId())).findFirst().get();
+            teams.stream().filter(t -> selectedTeamId.equals(t.getId())).findFirst().ifPresent(
 
-            teamCmb.setItems(teams);
+                    team -> {
 
-            teamCmb.setValue(team);
+                        teamCmb.setItems(teams);
+
+                        teamCmb.setValue(team);
+
+                    }
+
+            );
+
 
         }
+
+        changeControlsVisibility();
 
     }
 
     private void repopulateMembers(Org org, UUID selectedTeamId) {
 
-        availableMembers.setItems(
-                personService.findAllOutOfTeam(selectedTeamId, org.getId()));
-        assignedMembers.setItems(
-                personService.findAllInTeam(selectedTeamId) );
+        availableMembers =  personService.findAllOutOfTeam(selectedTeamId, org.getId());
+        assignedMembers =  personService.findAllInTeam(selectedTeamId);
 
+        availableMembersLb.setItems(availableMembers);
+        assignedMembersLb.setItems(assignedMembers );
+
+        changeControlsVisibility();
+
+    }
+
+    private void assignAllPersons() {
+        availableMembers.forEach(
+                p -> { teamPersonService.assignPerson(p.getId(), teamCmb.getValue().getId());  }
+        );
+        repopulateMembers(userContext.getOrg(),  teamCmb.getValue().getId());
+    }
+
+    private void assignOnePerson() {
+        teamPersonService.assignPerson(availableMembersLb.getValue().getId(), teamCmb.getValue().getId());
+        repopulateMembers(userContext.getOrg(),  teamCmb.getValue().getId());
+    }
+
+    private void removeOnePerson() {
+        teamPersonService.unassignPerson(assignedMembersLb.getValue().getId(), teamCmb.getValue().getId());
+        repopulateMembers(userContext.getOrg(),  teamCmb.getValue().getId());
+    }
+
+    private void removeAllPersons() {
+        assignedMembers.forEach(
+                p -> {teamPersonService.unassignPerson(p.getId(), teamCmb.getValue().getId()); }
+        );
+        repopulateMembers(userContext.getOrg(),  teamCmb.getValue().getId());
+    }
+
+
+    private void changeControlsVisibility() {
+        final boolean teamSelected = teamCmb.getValue() != null;
+
+        availableMembersLb.setEnabled(teamSelected);
+        assignedMembersLb.setEnabled(teamSelected);
+
+        addAllBtn.setEnabled(teamSelected && !availableMembers.isEmpty());
+        addOneBtn.setEnabled(teamSelected && availableMembersLb.getValue() != null);
+        removeOneBtn.setEnabled(teamSelected && assignedMembersLb.getValue() != null);
+        removeAllBtn.setEnabled(teamSelected && !assignedMembers.isEmpty());
     }
 
     @Override
