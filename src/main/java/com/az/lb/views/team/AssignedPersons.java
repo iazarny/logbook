@@ -25,15 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Route(value = "Team", layout = MainView.class)
+@Route(value = "AssignedPersons", layout = MainView.class)
 //@RouteAlias(value = "", layout = MainView.class)
-@PageTitle("Team")
+@PageTitle("AssignedPersons")
 //@CssImport("styles/views/dashboard/dashboard-view.css")
-//https://github.com/vaadin/flow/issues/3628
-public class AssignedPersons extends VerticalLayout implements AfterNavigationObserver, HasUrlParameter<String> {
-
-
-    private final String TID = "tid";
+public class AssignedPersons extends VerticalLayout implements AfterNavigationObserver/*, HasUrlParameter<String>*/{
 
     @Autowired
     private TeamPersonService teamPersonService;
@@ -154,32 +150,21 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
 
         final Org org = userContext.getOrg();
 
-        final QueryParameters queryParameters = event.getLocation().getQueryParameters();
+        final UUID selectedTeamId = userContext.getSelectedTeam().getId();
 
-        final Map<String, List<String>> parametersMap = queryParameters.getParameters();
+        final List<Team> teams = service.findTeams(org);
 
-        final String tidValue = parametersMap.getOrDefault(TID, Collections.singletonList("")).get(0);
+        teams.stream().filter(t -> selectedTeamId.equals(t.getId())).findFirst().ifPresent(
 
-        if (Strings.isNotEmpty(tidValue)) {
+                team -> {
 
-            final UUID selectedTeamId = UUID.fromString(tidValue);
+                    teamCmb.setItems(teams);
 
-            final List<Team> teams = service.findTeams(org);
+                    teamCmb.setValue(team);
 
-            teams.stream().filter(t -> selectedTeamId.equals(t.getId())).findFirst().ifPresent(
+                }
 
-                    team -> {
-
-                        teamCmb.setItems(teams);
-
-                        teamCmb.setValue(team);
-
-                    }
-
-            );
-
-
-        }
+        );
 
         changeControlsVisibility();
 
@@ -233,13 +218,6 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
         removeOneBtn.setEnabled(teamSelected && assignedMembersLb.getValue() != null);
         removeAllBtn.setEnabled(teamSelected && !assignedMembers.isEmpty());
     }
-
-    @Override
-    public void setParameter(BeforeEvent event,
-                             @OptionalParameter String parameter) {
-
-    }
-
 
 
 }

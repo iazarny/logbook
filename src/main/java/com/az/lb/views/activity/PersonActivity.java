@@ -11,16 +11,16 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "Activity", layout = MainView.class)
-//@RouteAlias(value = "", layout = MainView.class)
-@PageTitle("Activity")
+@Route(value = "PersonActivity", layout = MainView.class)
+//@RouteAlias(value = "PersonActivity", layout = MainView.class)
+@PageTitle("PersonActivity")
 //@CssImport("styles/views/dashboard/dashboard-view.css")
-public class ActivityView extends VerticalLayout implements AfterNavigationObserver, HasUrlParameter<String> {
+public class PersonActivity extends VerticalLayout /*implements AfterNavigationObserver, HasUrlParameter<String>*/ {
 
     private UserContext userContext;
 
 
-    @Override
+    /*@Override
     public void setParameter(BeforeEvent event, String parameter) {
 
     }
@@ -28,16 +28,16 @@ public class ActivityView extends VerticalLayout implements AfterNavigationObser
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
 
-    }
+    }*/
 
-    public ActivityView(@Autowired UserContext userContext) {
+    public PersonActivity(@Autowired UserContext userContext) {
 
         this.userContext = userContext;
 
         setId("activity-view");
 
 
-        add(new Label("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed " +
+        add(new Label(userContext + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed " +
                 "do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mauris pharetra et ultrices neque " +
                 "ornare aenean euismod. Purus in mollis nunc sed id. Vitae elementum curabitur vitae nunc sed. Morbi non arcu risus" +
                 " quis varius quam quisque id. Blandit libero volutpat sed cras ornare. Nec feugiat in fermentum posuere urna nec. Elementum" +

@@ -48,6 +48,11 @@ public class Org {
         this.name = name;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "Org{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

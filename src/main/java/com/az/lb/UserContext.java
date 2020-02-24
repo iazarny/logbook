@@ -2,6 +2,7 @@ package com.az.lb;
 
 import com.az.lb.model.Org;
 import com.az.lb.model.Person;
+import com.az.lb.model.Team;
 import com.az.lb.repository.OrgRepository;
 import com.az.lb.repository.PersonRepository;
 import com.az.lb.servise.PersonService;
@@ -10,6 +11,7 @@ import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -30,6 +32,12 @@ public class UserContext {
 
     @Autowired
     private PersonRepository personRepository;
+
+    private Team selectedTeam;
+
+    private LocalDate selectedDate;
+
+
 
     public synchronized Org getOrg() {
         if (org == null) {
@@ -73,5 +81,30 @@ public class UserContext {
             personRepository.save(person);
         }
         return org;
+    }
+
+    public Team getSelectedTeam() {
+        return selectedTeam;
+    }
+
+    public void setSelectedTeam(Team selectedTeam) {
+        this.selectedTeam = selectedTeam;
+    }
+
+    public LocalDate getSelectedDate() {
+        return selectedDate;
+    }
+
+    public void setSelectedDate(LocalDate selectedDate) {
+        this.selectedDate = selectedDate;
+    }
+
+    @Override
+    public String toString() {
+        return "UserContext{" +
+                "org=" + org +
+                ", selectedTeam=" + selectedTeam +
+                ", selectedDate=" + selectedDate +
+                '}';
     }
 }

@@ -38,7 +38,7 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
     private final Grid<Team> grid;
     private final ConfirmDialog confirmDialog;
     private final TeamEditDialog teamDialog;
-    private final ActivityDateDialog activityDate;
+    private final ActivityDateDialog activityDateDialog;
 
     @Autowired
     private UserContext userContext;
@@ -72,8 +72,8 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
         add(teamDialog);
         addBtn.addClickListener(event -> { newTeam(); });
 
-        activityDate = new ActivityDateDialog("Activity date");
-        add(activityDate);
+        activityDateDialog = new ActivityDateDialog("Activity date");
+        add(activityDateDialog);
 
         confirmDialog = new ConfirmDialog("Please confirm", "");
         add(confirmDialog);
@@ -91,23 +91,23 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
 
     private void editMembers(Team team) {
         getUI().ifPresent(ui -> {
-            ui.getPage().setLocation("/Team?tid=" + team.getId());
+            userContext.setSelectedTeam(team);
+            ui.getPage().setLocation("/AssignedPersons");
         });
     }
 
     private void newActivity(Team team) {
-        activityDate
+        activityDateDialog
                 .message("Activity date")
-                .onCancel(e -> {activityDate.close();})
+                .onCancel(e -> {
+                    activityDateDialog.close();})
                 .onConfirm(e -> {
-
-                    activityDate.close();
-
+                    activityDateDialog.close();
                     getUI().ifPresent(ui -> {
-                       ui.getPage().setLocation("/Activity?tid=" + team.getId() + "&date=" + LocalDate.now().toString());
+                        userContext.setSelectedTeam(team);
+                        userContext.setSelectedDate(activityDateDialog.getLocalDate());
+                        ui.getPage().setLocation("/PersonActivity");
                     });
-
-
                 })
                 .open();
 

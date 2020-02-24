@@ -26,7 +26,7 @@ public class ActivityDateDialog extends Dialog {
     private Registration confirmListenerRegistration = null;
 
 
-    public ActivityDateDialog(String title) {
+    public ActivityDateDialog(final String title) {
         super();
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
@@ -75,5 +75,9 @@ public class ActivityDateDialog extends Dialog {
     public ActivityDateDialog date(LocalDate localDate) {
         labelDatePicker.setValue(localDate);
         return this;
+    }
+
+    public LocalDate getLocalDate() {
+        return labelDatePicker.getValue();
     }
 }
