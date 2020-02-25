@@ -27,7 +27,7 @@ public class Person {
     @Column(name= "lastName", length = 128)
     private String lastName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Org org;
 
     private Boolean orgManager;

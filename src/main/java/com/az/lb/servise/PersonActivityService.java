@@ -31,12 +31,14 @@ public class PersonActivityService {
     @Autowired
     private PersonActivityRepository personActivityRepository;
 
+    @Transactional
     public List<PersonActivity> findAllByTeamDate(Team team, LocalDate date) {
 
         final Activity activity = activityService.createActivity(team, date);
         return findAllByActivity(activity);
     }
 
+    @Transactional
     public List<PersonActivity> findAllByActivity(Activity activity) {
         PersonActivity personActivity = new PersonActivity();
         personActivity.setActivity(activity);
