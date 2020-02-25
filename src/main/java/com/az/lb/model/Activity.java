@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity(name = "Activity")
@@ -19,8 +20,8 @@ public class Activity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    private Date prevDate;
-    private Date curDate;
+    @Column(name = "adate", nullable = false)
+    private LocalDate aDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Team team;
@@ -33,20 +34,12 @@ public class Activity {
         this.id = id;
     }
 
-    public Date getPrevDate() {
-        return prevDate;
+    public LocalDate getaDate() {
+        return aDate;
     }
 
-    public void setPrevDate(Date prevDate) {
-        this.prevDate = prevDate;
-    }
-
-    public Date getCurDate() {
-        return curDate;
-    }
-
-    public void setCurDate(Date curDate) {
-        this.curDate = curDate;
+    public void setaDate(LocalDate aDate) {
+        this.aDate = aDate;
     }
 
     public Team getTeam() {

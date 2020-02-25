@@ -72,6 +72,11 @@ public class ActivityDateDialog extends Dialog {
     }
 
 
+    public ActivityDateDialog confirmText(String confirmText) {
+        confirmButton.setText(confirmText);
+        return this;
+    }
+
     public ActivityDateDialog date(LocalDate localDate) {
         labelDatePicker.setValue(localDate);
         return this;

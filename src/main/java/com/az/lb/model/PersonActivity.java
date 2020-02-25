@@ -5,6 +5,8 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.UUID;
 
+@Entity(name = "PersonActivity")
+@Table(name = "personactivity")
 public class PersonActivity {
 
     @Id

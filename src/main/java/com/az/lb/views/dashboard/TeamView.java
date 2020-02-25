@@ -40,7 +40,6 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
     private final TeamEditDialog teamDialog;
     private final ActivityDateDialog activityDateDialog;
 
-    @Autowired
     private UserContext userContext;
 
     public TeamView(@Autowired UserContext userContext) {
@@ -98,7 +97,8 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
 
     private void newActivity(Team team) {
         activityDateDialog
-                .message("Activity date")
+                .message("Select activity date")
+                .confirmText("Go")
                 .onCancel(e -> {
                     activityDateDialog.close();})
                 .onConfirm(e -> {

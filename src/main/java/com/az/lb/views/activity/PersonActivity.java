@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 //@RouteAlias(value = "PersonActivity", layout = MainView.class)
 @PageTitle("PersonActivity")
 //@CssImport("styles/views/dashboard/dashboard-view.css")
-public class PersonActivity extends VerticalLayout /*implements AfterNavigationObserver, HasUrlParameter<String>*/ {
+public class PersonActivity extends VerticalLayout implements AfterNavigationObserver /*, HasUrlParameter<String>*/ {
 
     private UserContext userContext;
 
@@ -37,17 +37,14 @@ public class PersonActivity extends VerticalLayout /*implements AfterNavigationO
         setId("activity-view");
 
 
-        add(new Label(userContext + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed " +
-                "do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mauris pharetra et ultrices neque " +
-                "ornare aenean euismod. Purus in mollis nunc sed id. Vitae elementum curabitur vitae nunc sed. Morbi non arcu risus" +
-                " quis varius quam quisque id. Blandit libero volutpat sed cras ornare. Nec feugiat in fermentum posuere urna nec. Elementum" +
-                " eu facilisis sed odio morbi quis commodo odio aenean. Feugiat in ante metus dictum at tempor. Lectus quam id leo in vitae " +
-                "turpis. Tempor id eu nisl nunc mi ipsum faucibus vitae. Viverra orci sagittis eu volutpat odio facilisis mauris " +
-                "sit. Arcu bibendum at varius vel pharetra vel turpis nunc eget. Vel pretium lectus quam id leo in vitae turpis" +
-                " massa. Libero volutpat sed cras ornare arcu dui vivamus arcu." +
-                " Nibh tellus molestie nunc non blandit massa enim nec. Egestas egestas fringilla phasellus faucibus scelerisque " +
-                "eleifend donec pretium vulputate."));
+        add(new Label(userContext + "Lorem ipsum dolor sit amet, "));
     }
 
 
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+
+        add(new Label(userContext + "<br>afterNavigation " + event));
+
+    }
 }
