@@ -27,7 +27,7 @@ public class ActivityService {
     public Activity createActivity(Team team, LocalDate activityDate) {
         Activity activity = new Activity();
         activity.setTeam(team);
-        activity.setaDate(activityDate);
+        activity.setDt(activityDate);
         Example<Activity> activityExample  = Example.of(activity);
         Optional<Activity> existingActivity = activityRepository.findOne(activityExample);
         if (existingActivity.isPresent()) {

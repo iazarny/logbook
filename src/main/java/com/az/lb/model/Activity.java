@@ -20,8 +20,8 @@ public class Activity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "adate", nullable = false)
-    private LocalDate aDate;
+    @Column(name = "dt", nullable = false)
+    private LocalDate dt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Team team;
@@ -34,12 +34,12 @@ public class Activity {
         this.id = id;
     }
 
-    public LocalDate getaDate() {
-        return aDate;
+    public LocalDate getDt() {
+        return dt;
     }
 
-    public void setaDate(LocalDate aDate) {
-        this.aDate = aDate;
+    public void setDt(LocalDate dt) {
+        this.dt = dt;
     }
 
     public Team getTeam() {

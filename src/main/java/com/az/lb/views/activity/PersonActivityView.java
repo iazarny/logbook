@@ -3,6 +3,7 @@ package com.az.lb.views.activity;
 
 import com.az.lb.MainView;
 import com.az.lb.UserContext;
+import com.az.lb.model.Activity;
 import com.az.lb.model.PersonActivity;
 import com.az.lb.model.Team;
 import com.az.lb.servise.PersonActivityService;
@@ -19,6 +20,8 @@ import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @Route(value = "PersonActivity", layout = MainView.class)
 //@RouteAlias(value = "PersonActivity", layout = MainView.class)
@@ -76,10 +79,12 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
         add(new Label(userContext + "<br>afterNavigation " + event));
 
-        grid.setItems(personActivityService.findAllByTeamDate(
-                userContext.getSelectedTeam(),
-                userContext.getSelectedDate()
-        ));
+        Activity act = personActivityService.createPersonsActivitySheet(userContext.getSelectedTeam(),
+                userContext.getSelectedDate());
+
+        List<PersonActivity>data =  personActivityService.findAllByActivity(act);
+
+        grid.setItems(data);
         grid.getDataProvider().refreshAll();
 
     }

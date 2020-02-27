@@ -47,4 +47,12 @@ public class Team {
     public void setOrg(Org org) {
         this.org = org;
     }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
