@@ -11,6 +11,7 @@ import com.az.lb.servise.TeamService;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
@@ -26,7 +27,7 @@ import java.util.List;
 @Route(value = "PersonActivity", layout = MainView.class)
 //@RouteAlias(value = "PersonActivity", layout = MainView.class)
 @PageTitle("PersonActivity")
-//@CssImport("styles/views/dashboard/dashboard-view.css")
+@CssImport("styles/views/personactivity/person-activity.css")
 public class PersonActivityView extends VerticalLayout implements AfterNavigationObserver /*, HasUrlParameter<String>*/ {
 
     private UserContext userContext;
@@ -56,8 +57,20 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
         grid = new Grid<PersonActivity>();
         grid.setId("person-activity-list");
         grid.setHeightFull();
-        grid.addColumn( pa -> pa.getPerson().getFirstName() )
+        grid.addColumn( pa -> pa.getPerson().getFullName() )
                 .setHeader("Name")
+                .setSortable(true);
+        grid.addColumn( pa -> pa.getPerson().getFirstName() )
+                .setHeader("Detail")
+                .setSortable(true);
+        grid.addColumn( pa -> pa.getNote() )
+                .setHeader("Note")
+                .setSortable(true);
+        grid.addColumn( pa -> pa.getTags() )
+                .setHeader("Tags")
+                .setSortable(true);
+        grid.addColumn( pa -> pa.getPerson().getFirstName() )
+                .setHeader("Actions")
                 .setSortable(true);
 
 
@@ -68,9 +81,12 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
         add(
                 new H2("Activity "),
-                hl,
-                grid
+                hl
         );
+
+        add(grid);
+
+        add(new H2("Blya "));
     }
 
 

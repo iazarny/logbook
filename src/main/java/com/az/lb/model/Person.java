@@ -79,4 +79,9 @@ public class Person {
     public void setOrg(Org org) {
         this.org = org;
     }
+
+    @Transient
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

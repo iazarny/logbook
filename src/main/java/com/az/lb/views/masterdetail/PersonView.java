@@ -52,7 +52,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         setId("master-detail-view");
         // Configure Grid
         employees = new Grid<>();
-        employees.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        //employees.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         employees.setHeightFull();
         employees.addColumn(Person::getFirstName).setHeader("First name");
         employees.addColumn(Person::getLastName).setHeader("Last name");
