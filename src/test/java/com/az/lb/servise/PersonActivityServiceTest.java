@@ -50,12 +50,16 @@ class PersonActivityServiceTest {
             person.setOrg(org);
             Person persistedPerson = personRepository.save(person);
 
-            teamPersonService.assignPerson(
-                    persistedPerson.getId(),
-                    team.getId()
-            );
+            if (i < 5) {
+                teamPersonService.assignPerson(
+                        persistedPerson.getId(),
+                        team.getId()
+                );
 
+
+            }
         }
+
 
         Activity oneMoreActivity = personActivityService.createPersonsActivitySheet(
                 team,
@@ -67,7 +71,11 @@ class PersonActivityServiceTest {
         List<PersonActivity> pa = personActivityService.findAllByTeamDate(team,
                 LocalDate.now());
 
-        assertEquals(10, pa.size());
+        assertEquals(5, pa.size());
+
+
+
+
 
     }
 }

@@ -1,5 +1,6 @@
 package com.az.lb.repository;
 
+import com.az.lb.model.Org;
 import com.az.lb.model.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,5 +24,7 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
             "and p.id not in ( select tp.person.id from TeamPerson tp where tp.team.id = :teamId)" )
     List<Person> findAllOutOfTeam(@Param("teamId") UUID teamId,
                                   @Param("orgId") UUID orgId);
+
+    List<Person> findAllByOrg(Org org);
 
 }

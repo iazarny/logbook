@@ -108,5 +108,19 @@ public class PersonEditDialog extends Dialog {
         return this;
     }
 
+    public String getEmai() {
+        return emailTextField.getValue();
+    }
 
+    public String getFirstName() {
+        return firstNameTextField.getValue();
+    }
+
+    public String getLastName() {
+        return lastNameTextField.getValue();
+    }
+
+    public boolean isManager() {
+        return managerCombobox.getValue();
+    }
 }

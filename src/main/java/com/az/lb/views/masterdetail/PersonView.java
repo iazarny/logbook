@@ -1,5 +1,6 @@
 package com.az.lb.views.masterdetail;
 
+import com.az.lb.UserContext;
 import com.az.lb.model.Person;
 import com.az.lb.servise.PersonService;
 import com.vaadin.flow.component.html.H2;
@@ -31,6 +32,8 @@ import com.az.lb.MainView;
 @CssImport("styles/views/masterdetail/master-detail-view.css")
 public class PersonView extends VerticalLayout implements AfterNavigationObserver {
 
+    private UserContext userContext;
+
     @Autowired
     private PersonService service;
 
@@ -48,7 +51,10 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
 
     private Binder<Person> binder;
 
-    public PersonView() {
+    public PersonView(@Autowired UserContext userContext) {
+
+        this.userContext = userContext;
+
         setId("master-detail-view");
         // Configure Grid
         employees = new Grid<>();
@@ -82,8 +88,11 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         createGridLayout(splitLayout);
         createEditorLayout(splitLayout);
 
-        final Button addBtn = new Button("Add");
         personEditDialog = new PersonEditDialog("New person");
+
+        final Button addBtn = new Button("Add");
+
+
 
         addBtn.addClickListener(event -> {
             newPerson();
@@ -96,34 +105,33 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
                 splitLayout
         );
     }
-/* private void newTeam() {
-        teamDialog
-                .message("New team")
-                .onCancel(e -> {teamDialog.close();})
-                .onConfirm(e -> {
-                    Team team = service.createNewTeam(
-                            userContext.getOrg().getId().toString(),
-                            teamDialog.input.getValue());
-                    grid.setItems(service.findAll());
-                    grid.getDataProvider().refreshAll();
-                    teamDialog.close();
-                })
-                .open(); //teamDialog.input.getElement().callJsFunction("focus");
-    }*/
     private void newPerson() {
         personEditDialog
-                .message("New person")
                 .email("")
                 .firstName("")
                 .lastName("")
                 .manager(false)
-                .onCancel(e -> personEditDialog.close())
-                .onConfirm( e-> {
-                    System.out.println(e); //todo
+                .message("Add new person")
+                .onCancel( cancel -> {
+                    personEditDialog.close();
+                })
+                .onConfirm(confirm -> {
+                    Person person = new Person();
+                    person.setOrgManager(personEditDialog.isManager());
+                    person.setFirstName(personEditDialog.getFirstName());
+                    person.setLastName(personEditDialog.getLastName());
+                    person.setEmail(personEditDialog.getEmai());
+                    person.setOrg(userContext.getOrg());
+                    service.save(person);
+                    employees.setItems(service.findAll(userContext.getOrg()));
+                    personEditDialog.close();
+
                 })
                 .open();
 
     }
+
+
 
     private void createEditorLayout(SplitLayout splitLayout) {
         Div editorDiv = new Div();
@@ -167,7 +175,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
 
         // Lazy init of the grid items, happens only when we are sure the view will be
         // shown to the user
-        employees.setItems(service.findAll()); // todo by org
+        employees.setItems(service.findAll(userContext.getOrg()));
     }
 
     private void populateForm(Person value) {
