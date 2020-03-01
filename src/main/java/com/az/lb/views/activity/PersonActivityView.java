@@ -7,6 +7,7 @@ import com.az.lb.model.Activity;
 import com.az.lb.model.PersonActivity;
 import com.az.lb.model.Team;
 import com.az.lb.servise.PersonActivityService;
+import com.az.lb.servise.PersonService;
 import com.az.lb.servise.TeamService;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -25,6 +26,7 @@ import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
@@ -34,30 +36,34 @@ import java.util.List;
 @CssImport("styles/views/personactivity/person-activity.css")
 public class PersonActivityView extends VerticalLayout implements AfterNavigationObserver /*, HasUrlParameter<String>*/ {
 
+    @Autowired
     private UserContext userContext;
+
+    @Autowired
+    private PersonService personService;
 
     private Grid<PersonActivity> grid;
 
+    private PersonAdtivityDetailDialog personAdtivityDetailDialog;
 
     @Autowired
     private PersonActivityService personActivityService;
 
 
-    /*@Override
-    public void setParameter(BeforeEvent event, String parameter) {
 
-    }
-
-    @Override
-    public void afterNavigation(AfterNavigationEvent event) {
-
-    }*/
-
-    public PersonActivityView(@Autowired UserContext userContext) {
+    public PersonActivityView(@Autowired UserContext userContext,
+                              @Autowired PersonService personService) {
 
         this.userContext = userContext;
+        this.personService = personService;
 
         setId("person-activity-view");
+
+
+
+        personAdtivityDetailDialog = new PersonAdtivityDetailDialog(userContext, personService);
+        add(personAdtivityDetailDialog);
+
         grid = new Grid<PersonActivity>();
         grid.setId("person-activity-list");
         grid.setHeightFull();
@@ -79,19 +85,41 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
         grid.addColumn(new ComponentRenderer<>(pa -> {
             Icon delIcon = new Icon(VaadinIcon.DEL_A);
-            delIcon.addAttachListener(event -> {});
+            delIcon.addClickListener(
+                    e -> {
+                        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>");
 
-            Icon recordIcon = new Icon(VaadinIcon.MICROPHONE);
-            recordIcon.addAttachListener(event -> {});
-
-
-            return new HorizontalLayout(
-                    delIcon, recordIcon
+                    }
             );
+
+
+
+
+            return delIcon;
         }));
 
+        grid.addItemClickListener(
+                ie -> {
 
 
+                   getUI().get().getCurrent().getPage().retrieveExtendedClientDetails(
+                           r -> {
+
+                               personAdtivityDetailDialog.setWidth( ((int)(r.getBodyClientWidth()*0.98)) + "px");
+                               personAdtivityDetailDialog.setHeight( ((int)(r.getBodyClientHeight()*0.98)) + "px");
+                               personAdtivityDetailDialog
+                                       .personActivity(ie.getItem())
+                                       .message("Detail activity")
+                                       .onClose(
+                                               e-> {personAdtivityDetailDialog.close();}
+                                       )
+                                       .open();
+                           }
+                   );
+
+
+                }
+        );
 
         final Button addBtn = new Button("Add");
 
@@ -104,6 +132,8 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
         );
 
         add(grid);
+
+
     }
 
 
@@ -119,6 +149,8 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
         grid.setItems(data);
         grid.getDataProvider().refreshAll();
+
+
 
     }
 }

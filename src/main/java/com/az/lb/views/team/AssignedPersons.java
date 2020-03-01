@@ -26,9 +26,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Route(value = "AssignedPersons", layout = MainView.class)
-//@RouteAlias(value = "", layout = MainView.class)
 @PageTitle("AssignedPersons")
-//@CssImport("styles/views/dashboard/dashboard-view.css")
 public class AssignedPersons extends VerticalLayout implements AfterNavigationObserver/*, HasUrlParameter<String>*/{
 
     @Autowired
