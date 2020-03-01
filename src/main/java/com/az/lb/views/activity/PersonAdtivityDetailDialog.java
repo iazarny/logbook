@@ -13,16 +13,26 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.editor.Editor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.WeakHashMap;
 
 //@CssImport("styles/views/personactivitydetail/person-activity-detail.css")
 public class PersonAdtivityDetailDialog extends Dialog {
@@ -62,19 +72,23 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         grid = new Grid<PersonActivityDetail>();
 
-        grid.addColumn(i -> i.getTask())
+        Grid.Column<PersonActivityDetail> taskColumn = grid.addColumn(i -> i.getTask())
                 .setSortable(true)
                 .setHeader("Task");
 
-        grid.addColumn(i -> i.getName())
+        Grid.Column<PersonActivityDetail> nameColumn = grid.addColumn(i -> i.getName())
                 .setSortable(true)
                 .setHeader("Name");
 
-        grid.addColumn(i -> i.getSpend())
+        Grid.Column<PersonActivityDetail> detailColumn = grid.addColumn(i -> i.getDetail())
+                .setSortable(true)
+                .setHeader("Detail");
+
+        Grid.Column<PersonActivityDetail> spendColumn = grid.addColumn(i -> i.getSpend())
                 .setSortable(true)
                 .setHeader("Spend");
 
-        grid.addColumn(new ComponentRenderer<>(i -> {
+        Grid.Column<PersonActivityDetail> donemColumn = grid.addColumn(new ComponentRenderer<>(i -> {
             return new Checkbox(i.isDone());
         }))
                 .setSortable(true)
@@ -87,6 +101,66 @@ public class PersonAdtivityDetailDialog extends Dialog {
         }));
 
         grid.setWidth("96%");
+
+        Binder<PersonActivityDetail> personActivityDetailBinder = new Binder<>(PersonActivityDetail.class);
+        Editor<PersonActivityDetail> personActivityDetailEditor = grid.getEditor();
+        personActivityDetailEditor.setBinder(personActivityDetailBinder);
+        personActivityDetailEditor.setBuffered(true);
+        Div validationStatus = new Div();
+        validationStatus.setId("validation");
+
+
+
+        TextField spendTextField = new TextField();
+        personActivityDetailBinder.forField(spendTextField)
+                .withValidator(new StringLengthValidator("Spend length must be between 3 and 8.", 3, 8))
+                .withStatusLabel(validationStatus).bind("spend");
+        nameColumn.setEditorComponent(spendTextField);
+
+
+        TextArea detaildTextField = new TextArea();
+        personActivityDetailBinder.forField(detaildTextField)
+                .withValidator(new StringLengthValidator("Detail length must be between 3 and 32768.", 3, 32768))
+                .withStatusLabel(validationStatus).bind("detail");
+        nameColumn.setEditorComponent(detaildTextField);
+
+
+        TextField teskTextField = new TextField();
+        personActivityDetailBinder.forField(teskTextField)
+                .withValidator(new StringLengthValidator("Task name length must be between 3 and 32.", 3, 32))
+                .withStatusLabel(validationStatus).bind("task");
+        taskColumn.setEditorComponent(teskTextField);
+
+        TextField nameTextField = new TextField();
+        personActivityDetailBinder.forField(nameTextField)
+                .withValidator(new StringLengthValidator("Name length must be between 3 and 512.", 3, 512))
+                .withStatusLabel(validationStatus).bind("name");
+        nameColumn.setEditorComponent(nameTextField);
+
+        Collection<Button> editButtons = Collections
+                .newSetFromMap(new WeakHashMap<>());
+        Grid.Column<PersonActivityDetail> editorColumn = grid.addComponentColumn(i -> {
+            Button edit = new Button("Edit");
+            edit.addClassName("edit");
+            edit.addClickListener(e -> {
+                personActivityDetailEditor.editItem(i);
+                nameTextField.focus();
+            });
+            edit.setEnabled(!personActivityDetailEditor.isOpen());
+            editButtons.add(edit);
+            return edit;
+        });
+
+
+
+        personActivityDetailEditor.addSaveListener(
+                event -> Notification.show( " Save - " + event.getItem()  )
+        );
+
+
+
+
+
 
         add(message);
         add(availableMembersCmb);
