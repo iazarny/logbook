@@ -4,6 +4,7 @@ import com.az.lb.UserContext;
 import com.az.lb.model.Person;
 import com.az.lb.model.PersonActivity;
 import com.az.lb.model.PersonActivityDetail;
+import com.az.lb.servise.PersonActivityDetailService;
 import com.az.lb.servise.PersonService;
 import com.az.lb.servise.TeamService;
 import com.vaadin.flow.component.ClickEvent;
@@ -35,10 +36,12 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 //@CssImport("styles/views/personactivitydetail/person-activity-detail.css")
+
 public class PersonAdtivityDetailDialog extends Dialog {
 
     private final UserContext userContext;
     private final PersonService personService;
+    private final PersonActivityDetailService personActivityDetailService;
 
 
     private H2 message;
@@ -53,13 +56,17 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
     private Grid<PersonActivityDetail> grid;
 
-    public PersonAdtivityDetailDialog(UserContext userContext, PersonService personService) {
+    public PersonAdtivityDetailDialog(UserContext userContext,
+                                      PersonService personService,
+                                      PersonActivityDetailService personActivityDetailService ) {
 
         super();
 
         this.personService = personService;
 
         this.userContext = userContext;
+
+        this.personActivityDetailService = personActivityDetailService;
 
         setId("person-activity-detail");
 
@@ -88,8 +95,10 @@ public class PersonAdtivityDetailDialog extends Dialog {
                 .setSortable(true)
                 .setHeader("Spend");
 
-        Grid.Column<PersonActivityDetail> donemColumn = grid.addColumn(new ComponentRenderer<>(i -> {
-            return new Checkbox(i.isDone());
+        Grid.Column<PersonActivityDetail> doneColumn = grid.addColumn(new ComponentRenderer<>(i -> {
+            Checkbox rez = new Checkbox(i.isDone());
+            rez.setEnabled(false);
+            return rez;
         }))
                 .setSortable(true)
                 .setHeader("Done");
@@ -111,19 +120,6 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
 
 
-        TextField spendTextField = new TextField();
-        personActivityDetailBinder.forField(spendTextField)
-                .withValidator(new StringLengthValidator("Spend length must be between 3 and 8.", 3, 8))
-                .withStatusLabel(validationStatus).bind("spend");
-        nameColumn.setEditorComponent(spendTextField);
-
-
-        TextArea detaildTextField = new TextArea();
-        personActivityDetailBinder.forField(detaildTextField)
-                .withValidator(new StringLengthValidator("Detail length must be between 3 and 32768.", 3, 32768))
-                .withStatusLabel(validationStatus).bind("detail");
-        nameColumn.setEditorComponent(detaildTextField);
-
 
         TextField teskTextField = new TextField();
         personActivityDetailBinder.forField(teskTextField)
@@ -137,8 +133,27 @@ public class PersonAdtivityDetailDialog extends Dialog {
                 .withStatusLabel(validationStatus).bind("name");
         nameColumn.setEditorComponent(nameTextField);
 
+
+        TextArea detaildTextField = new TextArea();
+        personActivityDetailBinder.forField(detaildTextField)
+                .withValidator(new StringLengthValidator("Detail length must be between 3 and 32768.", 3, 32768))
+                .withStatusLabel(validationStatus).bind("detail");
+        detailColumn.setEditorComponent(detaildTextField);
+
+        TextField spendTextField = new TextField();
+        personActivityDetailBinder.forField(spendTextField)
+                .withValidator(new StringLengthValidator("Spend length must be between 2 and 8.", 2, 8))
+                .withStatusLabel(validationStatus).bind("spend");
+        spendColumn.setEditorComponent(spendTextField);
+
+        Checkbox doneCheckBox = new Checkbox();
+        personActivityDetailBinder.forField(doneCheckBox)
+                .withStatusLabel(validationStatus).bind("done");
+        doneColumn.setEditorComponent(doneCheckBox);
+
         Collection<Button> editButtons = Collections
                 .newSetFromMap(new WeakHashMap<>());
+
         Grid.Column<PersonActivityDetail> editorColumn = grid.addComponentColumn(i -> {
             Button edit = new Button("Edit");
             edit.addClassName("edit");
@@ -151,15 +166,29 @@ public class PersonAdtivityDetailDialog extends Dialog {
             return edit;
         });
 
+        Button save = new Button("Save", e -> personActivityDetailEditor.save());
+        save.addClassName("save");
+        Button cancel = new Button("Cancel", e -> personActivityDetailEditor.cancel());
+        cancel.addClassName("cancel");
 
+        Div buttons = new Div(save, cancel);
+        editorColumn.setEditorComponent(buttons);
 
         personActivityDetailEditor.addSaveListener(
-                event -> Notification.show( " Save - " + event.getItem()  )
+                event -> {
+                    Notification.show( " Save - " + event.getItem()  );
+                }
         );
 
+        personActivityDetailEditor.addCancelListener(
+                event -> {
+                    Notification.show( " Cancel - " + event.getItem()  );
+                }
+        );
 
+        personActivityDetailBinder.setValidationStatusHandler(
 
-
+        );
 
 
         add(message);
@@ -187,7 +216,23 @@ public class PersonAdtivityDetailDialog extends Dialog {
         this.availableMembers = personService.findAll(userContext.getOrg());
         this.availableMembersCmb.setItems(availableMembers);
         this.availableMembersCmb.setValue(personActivity.getPerson());
+        addTestDetails(personActivity);
         return this;
+
+    }
+
+    public void addTestDetails(final PersonActivity personActivity) {
+
+        PersonActivityDetail detail = new PersonActivityDetail();
+        detail.setActivity(personActivity);
+        detail.setDetail("Detail some lorepm ipsum");
+        detail.setTask("ABC-1234");
+        detail.setName("Add to add some issue and refine");
+        personActivityDetailService.save(detail);
+
+        //grid.setItems(personActivityDetailService.findActivityDetail(personActivity));
+        grid.setItems(Collections.singletonList(detail));
+        grid.getDataProvider().refreshAll();
 
     }
 

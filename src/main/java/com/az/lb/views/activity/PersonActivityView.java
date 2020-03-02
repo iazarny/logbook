@@ -6,6 +6,7 @@ import com.az.lb.UserContext;
 import com.az.lb.model.Activity;
 import com.az.lb.model.PersonActivity;
 import com.az.lb.model.Team;
+import com.az.lb.servise.PersonActivityDetailService;
 import com.az.lb.servise.PersonActivityService;
 import com.az.lb.servise.PersonService;
 import com.az.lb.servise.TeamService;
@@ -42,6 +43,9 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
     @Autowired
     private PersonService personService;
 
+    @Autowired
+    private PersonActivityDetailService personActivityDetailService;
+
     private Grid<PersonActivity> grid;
 
     private PersonAdtivityDetailDialog personAdtivityDetailDialog;
@@ -52,16 +56,21 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
 
     public PersonActivityView(@Autowired UserContext userContext,
-                              @Autowired PersonService personService) {
+                              @Autowired PersonService personService,
+                              @Autowired PersonActivityDetailService personActivityDetailService) {
 
         this.userContext = userContext;
         this.personService = personService;
+        this.personActivityDetailService = personActivityDetailService;
 
         setId("person-activity-view");
 
 
 
-        personAdtivityDetailDialog = new PersonAdtivityDetailDialog(userContext, personService);
+        personAdtivityDetailDialog = new PersonAdtivityDetailDialog(
+                userContext,
+                personService,
+                personActivityDetailService);
         add(personAdtivityDetailDialog);
 
         grid = new Grid<PersonActivity>();
