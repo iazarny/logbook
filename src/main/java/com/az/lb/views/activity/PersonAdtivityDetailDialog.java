@@ -124,7 +124,8 @@ public class PersonAdtivityDetailDialog extends Dialog {
         TextField teskTextField = new TextField();
         personActivityDetailBinder.forField(teskTextField)
                 .withValidator(new StringLengthValidator("Task name length must be between 3 and 32.", 3, 32))
-                .withStatusLabel(validationStatus).bind("task");
+                //.withStatusLabel(validationStatus)
+                .bind("task");
         taskColumn.setEditorComponent(teskTextField);
 
         TextField nameTextField = new TextField();
@@ -186,9 +187,14 @@ public class PersonAdtivityDetailDialog extends Dialog {
                 }
         );
 
-        personActivityDetailBinder.setValidationStatusHandler(
+        //personActivityDetailBinder.setStatusLabel();
+        /*personActivityDetailBinder.setValidationStatusHandler(
 
-        );
+                h -> {
+                    System.out.println(h);
+                }
+
+        );*/
 
 
         add(message);
