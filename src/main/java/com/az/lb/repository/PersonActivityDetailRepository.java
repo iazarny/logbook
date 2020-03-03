@@ -11,6 +11,6 @@ import java.util.UUID;
 @Repository
 public interface PersonActivityDetailRepository extends JpaRepository<PersonActivityDetail, UUID> {
 
-    List<PersonActivityDetail> findAllByActivity(PersonActivity personActivity);
+    List<PersonActivityDetail> findAllByActivityOrderByDoneTask(PersonActivity personActivity);
 
 }

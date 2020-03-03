@@ -5,6 +5,7 @@ import com.az.lb.MainView;
 import com.az.lb.UserContext;
 import com.az.lb.model.Activity;
 import com.az.lb.model.PersonActivity;
+import com.az.lb.model.PersonActivityDetail;
 import com.az.lb.model.Team;
 import com.az.lb.servise.PersonActivityDetailService;
 import com.az.lb.servise.PersonActivityService;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Route(value = "PersonActivity", layout = MainView.class)
 //@RouteAlias(value = "PersonActivity", layout = MainView.class)
@@ -82,7 +84,22 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
 
         grid.addColumn(new ComponentRenderer<>(pa -> {
-            return new Html("<table border='1' width='100%'><tr><td>bla-bla</td><td>bla-bla</td></tr><tr><td>bla-bla</td><td>bla-bla</td></tr></table>");
+            final List<PersonActivityDetail> details = personActivityDetailService.findActivityDetail(pa);
+            final String cellBody;
+            if (details.isEmpty()) {
+                cellBody = "&nbsp;";
+            } else {
+                cellBody = "<table>" + details.stream()
+                        .map( ad -> "<tr>" +
+                                "<td>" + ad.getTask() + "</td>" +
+                                "<td>" + ad.getDetail() + "</td>" +
+                                "<td>" + ad.getSpend() + "</td>" +
+                                "</tr>")
+                        .collect(Collectors.joining())
+                        + "</table>";
+            }
+            return new Html(cellBody);
+
         })).setHeader("Detail");
 
         grid.addColumn(new ComponentRenderer<>(pa -> {
@@ -120,7 +137,10 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                                        .personActivity(ie.getItem())
                                        .message("Detail activity")
                                        .onClose(
-                                               e-> {personAdtivityDetailDialog.close();}
+                                               e-> {
+                                                   personAdtivityDetailDialog.close();
+                                                   grid.getDataProvider().refreshAll();
+                                               }
                                        )
                                        .open();
                            }
