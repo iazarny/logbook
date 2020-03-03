@@ -238,6 +238,11 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         );*/
 
+        addDialogCloseActionListener(closeEvt -> {
+            personActivityDetailEditor.cancel();
+
+        });
+
 
         add(message);
         add(availableMembersCmb);

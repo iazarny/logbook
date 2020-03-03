@@ -8,6 +8,16 @@
     height: 100%;
 }
 
+table.detail-table {
+    border-collapse: collapse;
+    border: 1px  solid gray;
+    font-size: x-small;
+}
+
+tr.detail-table-tr td {
+    border-bottom:1pt solid black;
+}
+
 div.employee-column {
     border-radius: var(--lumo-border-radius);
     box-shadow: var(--lumo-box-shadow-s);

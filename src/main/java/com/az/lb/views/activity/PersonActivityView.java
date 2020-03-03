@@ -27,6 +27,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -87,12 +88,12 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
             final List<PersonActivityDetail> details = personActivityDetailService.findActivityDetail(pa);
             final String cellBody;
             if (details.isEmpty()) {
-                cellBody = "&nbsp;";
+                cellBody = "<div></div>";
             } else {
-                cellBody = "<table>" + details.stream()
-                        .map( ad -> "<tr>" +
+                cellBody = "<table class='detail-table'>" + details.stream()
+                        .map( ad -> "<tr class='detail-table-tr'>" +
                                 "<td>" + ad.getTask() + "</td>" +
-                                "<td>" + ad.getDetail() + "</td>" +
+                                "<td>" + StringUtils.truncate(ad.getDetail(), 20) + "</td>" +
                                 "<td>" + ad.getSpend() + "</td>" +
                                 "</tr>")
                         .collect(Collectors.joining())
