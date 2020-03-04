@@ -16,6 +16,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
@@ -27,10 +28,12 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,7 +93,7 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
             if (details.isEmpty()) {
                 cellBody = "<div></div>";
             } else {
-                cellBody = "<table class='detail-table'>" + details.stream()
+                cellBody = "<table width='100%' class='detail-table'>" + details.stream()
                         .map( ad -> "<tr class='detail-table-tr'>" +
                                 "<td>" + ad.getTask() + "</td>" +
                                 "<td>" + StringUtils.truncate(ad.getDetail(), 20) + "</td>" +
@@ -111,19 +114,21 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
         })).setHeader("Notes / Blockers");
 
         grid.addColumn(new ComponentRenderer<>(pa -> {
-            Icon delIcon = new Icon(VaadinIcon.DEL_A);
+
+            if (StringUtils.isNotBlank(pa.getNote()) || StringUtils.isNotBlank(pa.getTags()) || ArrayUtils.isNotEmpty(pa.getRecord())  ) {
+                return new Html("<div></div>");
+            }
+            Icon delIcon = new Icon(VaadinIcon.MINUS_CIRCLE_O);
             delIcon.addClickListener(
                     e -> {
                         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>");
-
                     }
             );
-
-
-
-
             return delIcon;
-        }));
+        }))
+                .setWidth("32px")
+                .setAutoWidth(true)
+                .setTextAlign(ColumnTextAlign.END);
 
         grid.addItemClickListener(
                 ie -> {
@@ -137,6 +142,7 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                                personAdtivityDetailDialog
                                        .personActivity(ie.getItem())
                                        .message("Detail activity")
+                                       .autoAdd(LocalDate.now().equals(userContext.getSelectedDate()))
                                        .onClose(
                                                e-> {
                                                    personAdtivityDetailDialog.close();

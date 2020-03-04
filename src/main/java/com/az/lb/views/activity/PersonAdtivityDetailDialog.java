@@ -12,6 +12,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
@@ -26,6 +27,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.shared.Registration;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -67,6 +69,9 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         super();
 
+        setCloseOnEsc(true);
+        setCloseOnOutsideClick(true);
+
         this.personService = personService;
 
         this.userContext = userContext;
@@ -86,7 +91,9 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         Grid.Column<PersonActivityDetail> taskColumn = grid.addColumn(i -> i.getTask())
                 .setSortable(true)
-                .setHeader("Task");
+                .setHeader("Task")
+                .setWidth("32pt")
+                .setAutoWidth(true);
 
         Grid.Column<PersonActivityDetail> nameColumn = grid.addColumn(i -> i.getName())
                 .setSortable(true)
@@ -98,7 +105,10 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         Grid.Column<PersonActivityDetail> spendColumn = grid.addColumn(i -> i.getSpend())
                 .setSortable(true)
-                .setHeader("Spend");
+                .setHeader("Spend")
+                .setWidth("32pt")
+                .setAutoWidth(true);
+
 
         Grid.Column<PersonActivityDetail> doneColumn = grid.addColumn(new ComponentRenderer<>(i -> {
             Checkbox rez = new Checkbox(i.isDone());
@@ -108,16 +118,13 @@ public class PersonAdtivityDetailDialog extends Dialog {
                 .setSortable(true)
                 .setHeader("Done");
 
-        grid.addColumn(new ComponentRenderer<>(i -> {
-            return new HorizontalLayout(
-                    new Icon(VaadinIcon.MINUS_CIRCLE),
-                    new Icon(VaadinIcon.DISC),
-                    new Icon(VaadinIcon.PENCIL),
-                    new Icon(VaadinIcon.PLUS_CIRCLE)
+        /*grid.addColumn(new ComponentRenderer<>(i -> {
+            return  new Icon(VaadinIcon.MINUS_CIRCLE_O);
+        }))
+                .setTextAlign(ColumnTextAlign.END)
+                .setWidth("32pt")
+                .setAutoWidth(true);*/
 
-
-            );
-        }));
 
         grid.setWidth("96%");
 
@@ -166,11 +173,23 @@ public class PersonAdtivityDetailDialog extends Dialog {
                 .bind("done");
         doneColumn.setEditorComponent(doneCheckBox);
 
-        Collection<Button> editButtons = Collections
-                .newSetFromMap(new WeakHashMap<>());
+        Collection<Icon> editButtons = Collections.newSetFromMap(new WeakHashMap<>());
 
         Grid.Column<PersonActivityDetail> editorColumn = grid.addComponentColumn(i -> {
-            Button edit = new Button("Edit");
+
+            Icon delIcon = new Icon(VaadinIcon.MINUS_CIRCLE_O);
+            editButtons.add(delIcon);
+
+            Icon editIcon = new Icon(VaadinIcon.PENCIL);
+            editIcon.addClickListener(e -> {
+                personActivityDetailEditor.editItem(i);
+                nameTextField.focus();
+            });
+            editIcon.setVisible(!personActivityDetailEditor.isOpen());
+            editButtons.add(editIcon);
+            return  editIcon;
+
+            /*Button edit = new Button("Edit");
             edit.addClassName("edit");
             edit.addClickListener(e -> {
                 personActivityDetailEditor.editItem(i);
@@ -178,7 +197,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
             });
             edit.setEnabled(!personActivityDetailEditor.isOpen());
             editButtons.add(edit);
-            return edit;
+            return edit;*/
         });
 
         Button save = new Button("Save", e -> {
@@ -199,25 +218,25 @@ public class PersonAdtivityDetailDialog extends Dialog {
         personActivityDetailEditor.addCloseListener(event -> {
             if (saveNewRecord) {
                 System.out.println("$$$$$$$$$$$ addCloseListener " + event);
-
-                personActivityDetailService.save(event.getItem());
-                Notification.show( " Save - " + event.getItem().getTask()  );
-
-                if (autoAddAllowed) {
-                    addNewItemToFill();
-
+                final PersonActivityDetail pad = event.getItem();
+                if (StringUtils.isNotBlank(pad.getTask())) {
+                    personActivityDetailService.save(pad);
+                    Notification.show( " Save - " + event.getItem().getTask()  );
+                    if (autoAddAllowed) {
+                        addNewItemToFill();
+                    }
                 }
             }
-
-
         });
 
+/*
         personActivityDetailEditor.addSaveListener(
                 event -> {
                     System.out.println("########## addSaveListener " + event);
 
                 }
         );
+*/
 
         personActivityDetailEditor.addCancelListener(
                 event -> {
@@ -239,16 +258,27 @@ public class PersonAdtivityDetailDialog extends Dialog {
         );*/
 
         addDialogCloseActionListener(closeEvt -> {
-            personActivityDetailEditor.cancel();
+            if (personActivityDetailEditor.isOpen()) {
+                personActivityDetailEditor.cancel();
+            }
 
         });
 
+        HorizontalLayout hl = new HorizontalLayout(
+                message,
+                availableMembersCmb,
+                closeButton
+        );
+        hl.setWidthFull();
 
-        add(message);
-        add(availableMembersCmb);
+        add(  hl  );
         add(grid);
-        add(closeButton);
 
+
+    }
+
+    public Editor<PersonActivityDetail> getPersonActivityDetailEditor() {
+        return personActivityDetailEditor;
     }
 
     public PersonAdtivityDetailDialog onClose(ComponentEventListener<ClickEvent<Button>> listener) {
@@ -257,6 +287,12 @@ public class PersonAdtivityDetailDialog extends Dialog {
         }
         closeListenerRegistration = this.closeButton.addClickListener(listener);
         return this;
+    }
+
+    public PersonAdtivityDetailDialog autoAdd(boolean autoAddAllowed) {
+        this.autoAddAllowed = autoAddAllowed;
+        return this;
+
     }
 
     public PersonAdtivityDetailDialog message(String message) {
