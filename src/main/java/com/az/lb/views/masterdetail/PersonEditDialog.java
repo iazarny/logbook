@@ -56,12 +56,18 @@ public class PersonEditDialog extends Dialog {
         hl.setWidthFull();
         hl.expand(cancelButtonWrapper);
 
-        FormLayout nameLayout = new FormLayout();
+        FormLayout nameLayout = new FormLayout(
+                firstNameTextField,
+                lastNameTextField,
+                emailTextField,
+                managerCombobox
 
-        nameLayout.add(firstNameTextField);
-        nameLayout.add(lastNameTextField);
-        nameLayout.add(emailTextField);
-        nameLayout.add(managerCombobox);
+        );
+        nameLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
+                new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
+
+
+
         nameLayout.add(hl);
 
         add(nameLayout);

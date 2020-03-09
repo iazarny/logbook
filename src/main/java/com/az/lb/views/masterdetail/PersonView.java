@@ -4,6 +4,9 @@ import com.az.lb.UserContext;
 import com.az.lb.model.Person;
 import com.az.lb.servise.PersonService;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -89,18 +92,27 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
 
         this.personEditDialog = new PersonEditDialog("New person");
 
+
         final Button addBtn = new Button("Add");
 
+        final FlexLayout caddButtonWrapper = new FlexLayout(addBtn);
+        caddButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
+        HorizontalLayout hl = new HorizontalLayout(
+                new H5("Organization members"),
+                caddButtonWrapper
+        );
+
+        hl.setWidthFull();
+        hl.expand(caddButtonWrapper);
 
         addBtn.addClickListener(event -> {
             newPerson();
         });
 
-        add(personEditDialog);
         add(
-                addBtn,
-                new H2("Organization members"),
+                personEditDialog,
+                hl,
                 splitLayout
         );
     }
