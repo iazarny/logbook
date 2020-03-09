@@ -12,5 +12,7 @@ import java.util.UUID;
 public interface PersonActivityDetailRepository extends JpaRepository<PersonActivityDetail, UUID> {
 
     List<PersonActivityDetail> findAllByActivity(PersonActivity personActivity);
+    //todo not optimal
+    long countAllByActivity(PersonActivity personActivity);
 
 }

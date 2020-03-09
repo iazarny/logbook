@@ -3,11 +3,15 @@ package com.az.lb.views.masterdetail;
 import com.az.lb.model.Person;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
@@ -15,7 +19,7 @@ import com.vaadin.flow.shared.Registration;
 
 public class PersonEditDialog extends Dialog {
 
-    private H2 message;
+    private HtmlContainer message;
     private TextField emailTextField;
     private TextField firstNameTextField;
     private TextField lastNameTextField;
@@ -34,7 +38,7 @@ public class PersonEditDialog extends Dialog {
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
 
-        message = new H2(title);
+        message = new H5(title);
         emailTextField = new TextField("Email");
         firstNameTextField = new TextField("First name");
         lastNameTextField = new TextField("Last name");
@@ -42,10 +46,15 @@ public class PersonEditDialog extends Dialog {
         cancelButton = new Button("Cancel");
         managerCombobox = new Checkbox("Manager");
 
+        final FlexLayout cancelButtonWrapper = new FlexLayout(cancelButton);
+        cancelButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
         HorizontalLayout hl = new HorizontalLayout(
                 confirmButton,
-                cancelButton
+                cancelButtonWrapper
         );
+        hl.setWidthFull();
+        hl.expand(cancelButtonWrapper);
 
         FormLayout nameLayout = new FormLayout();
 

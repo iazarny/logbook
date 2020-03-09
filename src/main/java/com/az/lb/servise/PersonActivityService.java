@@ -73,4 +73,9 @@ public class PersonActivityService {
         return activity;
     }
 
+    @Transactional
+    public void delete(PersonActivity pa) {
+        personActivityRepository.delete(pa);
+    }
+
 }

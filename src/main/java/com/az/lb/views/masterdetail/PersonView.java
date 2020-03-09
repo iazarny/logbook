@@ -13,7 +13,6 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -28,7 +27,7 @@ import com.vaadin.flow.router.Route;
 
 import com.az.lb.MainView;
 @Route(value = "Master-Detail", layout = MainView.class)
-@PageTitle("Master Detail")
+@PageTitle("Persons")
 @CssImport("styles/views/masterdetail/master-detail-view.css")
 public class PersonView extends VerticalLayout implements AfterNavigationObserver {
 
@@ -37,7 +36,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
     @Autowired
     private PersonService service;
 
-    private Grid<Person> employees;
+    private Grid<Person> grid;
 
     private TextField firstname = new TextField();
     private TextField lastname = new TextField();
@@ -57,28 +56,28 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
 
         setId("master-detail-view");
         // Configure Grid
-        employees = new Grid<>();
-        //employees.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-        employees.setHeightFull();
-        employees.addColumn(Person::getFirstName).setHeader("First name");
-        employees.addColumn(Person::getLastName).setHeader("Last name");
-        employees.addColumn(Person::getEmail).setHeader("Email");
+        this.grid = new Grid<>();
+        //grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        this.grid.setHeightFull();
+        this.grid.addColumn(Person::getFirstName).setHeader("First name");
+        this.grid.addColumn(Person::getLastName).setHeader("Last name");
+        this.grid.addColumn(Person::getEmail).setHeader("Email");
 
         //when a row is selected or deselected, populate form
-        employees.asSingleSelect().addValueChangeListener(event -> populateForm(event.getValue()));
+        this.grid.asSingleSelect().addValueChangeListener(event -> populateForm(event.getValue()));
 
         // Configure Form
-        binder = new Binder<>(Person.class);
+        this. binder = new Binder<>(Person.class);
 
         // Bind fields. This where you'd define e.g. validation rules
-        binder.bindInstanceFields(this);
+        this.binder.bindInstanceFields(this);
         // note that password field isn't bound since that property doesn't exist in
         // Employee
 
         // the grid valueChangeEvent will clear the form too
-        cancel.addClickListener(e -> employees.asSingleSelect().clear());
+        this.cancel.addClickListener(e -> grid.asSingleSelect().clear());
 
-        save.addClickListener(e -> {
+        this.save.addClickListener(e -> {
             Notification.show("Not implemented");
         });
 
@@ -88,7 +87,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         createGridLayout(splitLayout);
         createEditorLayout(splitLayout);
 
-        personEditDialog = new PersonEditDialog("New person");
+        this.personEditDialog = new PersonEditDialog("New person");
 
         final Button addBtn = new Button("Add");
 
@@ -123,7 +122,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
                     person.setEmail(personEditDialog.getEmai());
                     person.setOrg(userContext.getOrg());
                     service.save(person);
-                    employees.setItems(service.findAll(userContext.getOrg()));
+                    grid.setItems(service.findAll(userContext.getOrg()));
                     personEditDialog.close();
 
                 })
@@ -160,7 +159,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         wrapper.setId("wrapper");
         wrapper.setWidthFull();
         splitLayout.addToPrimary(wrapper);
-        wrapper.add(employees);
+        wrapper.add(grid);
     }
 
     private void addFormItem(Div wrapper, FormLayout formLayout,
@@ -175,7 +174,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
 
         // Lazy init of the grid items, happens only when we are sure the view will be
         // shown to the user
-        employees.setItems(service.findAll(userContext.getOrg()));
+        grid.setItems(service.findAll(userContext.getOrg()));
     }
 
     private void populateForm(Person value) {

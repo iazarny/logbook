@@ -1,8 +1,10 @@
 package com.az.lb.model;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.UUID;
 
 @Entity(name = "PersonActivity")
@@ -81,4 +83,5 @@ public class PersonActivity {
     public void setPerson(Person person) {
         this.person = person;
     }
+
 }

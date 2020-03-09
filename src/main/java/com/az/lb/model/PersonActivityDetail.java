@@ -21,10 +21,10 @@ public class PersonActivityDetail {
     @ManyToOne(fetch = FetchType.EAGER)
     private PersonActivity activity;
 
-    @Column(name = "task", length = 32)
+    @Column(name = "task", length = 32, nullable = false)
     private String task;
 
-    @Column(name = "name", length = 512, nullable = false)
+    @Column(name = "name", length = 512)
     private String name;
 
     @Column(name = "detail", length = 32768)

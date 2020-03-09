@@ -1,22 +1,24 @@
-package com.az.lb.views.dashboard;
+package com.az.lb.views.activity;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
 
 import java.time.LocalDate;
 
 public class ActivityDateDialog extends Dialog {
 
-    H2 message;
+    HtmlContainer message;
     DatePicker labelDatePicker;
 
     Button confirmButton;
@@ -31,17 +33,22 @@ public class ActivityDateDialog extends Dialog {
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
 
-        message = new H2(title);
+        message = new H5(title);
         labelDatePicker = new DatePicker("Date");
         labelDatePicker.setValue(LocalDate.now());
 
         confirmButton = new Button("New");
         cancelButton = new Button("Cancel");
+
+        final FlexLayout cancelButtonWrapper = new FlexLayout(cancelButton);
+        cancelButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
         HorizontalLayout hl = new HorizontalLayout(
                 confirmButton,
-                cancelButton
+                cancelButtonWrapper
         );
-        hl.setAlignItems(FlexComponent.Alignment.END);
+        hl.setWidthFull();
+        hl.expand(cancelButtonWrapper);
 
         add(new VerticalLayout(
                 message,

@@ -24,4 +24,9 @@ public class PersonActivityDetailService {
     public List<PersonActivityDetail> findActivityDetail(PersonActivity personActivity) {
         return repository.findAllByActivity(personActivity); //OrderByDoneTask
     }
+
+    public long countAllByActivity(PersonActivity personActivity) {
+        return repository.countAllByActivity(personActivity);
+    }
+
 }
