@@ -126,7 +126,7 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                 }
         );
 
-        final HtmlContainer titleH3 = new H5("Activity " + userContext.getSelectedTeam().getName() + " " + userContext.getSelectedDate());
+        final HtmlContainer titleContainer = new H5("Activity " + userContext.getSelectedTeam().getName() + " " + userContext.getSelectedDate());
 
         final Button addBtn = new Button("Add");
 
@@ -134,7 +134,7 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
         cancelButtonWrapper.setJustifyContentMode(JustifyContentMode.END);
 
         final HorizontalLayout topHorizontalLayout = new HorizontalLayout(
-                titleH3,
+                titleContainer,
                 cancelButtonWrapper
         );
         topHorizontalLayout.expand(cancelButtonWrapper);

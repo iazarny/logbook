@@ -19,6 +19,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.material.Material;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -74,19 +76,32 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
 
 
         HorizontalLayout hlMain = new HorizontalLayout();
-        hlMain.setWidthFull();
+
 
         availableMembersLb = new ListBox<>();
         availableMembersLb.setRenderer(new TextRenderer<>(p -> p.getFullName() ));
-
+        availableMembersLb.setMinWidth("200px");
+        availableMembersLb.setMaxWidth("300px");
+        availableMembersLb.setWidth("250px");
         hlMain.add(availableMembersLb);
 
-        hlMain.add(new VerticalLayout(
+        VerticalLayout verticalLayout = new VerticalLayout(
                 addAllBtn, addOneBtn, removeOneBtn, removeAllBtn
-        ));
+        );
+        verticalLayout.setMinWidth("100px");
+        verticalLayout.setMaxWidth("100px");
+        verticalLayout.setWidth("100px");
+
+        hlMain.add(verticalLayout);
 
         assignedMembersLb = new ListBox<>();
         assignedMembersLb.setRenderer(new TextRenderer<>(p -> p.getFullName() ));
+        assignedMembersLb.setMinWidth("200px");
+        assignedMembersLb.setMaxWidth("300px");
+        assignedMembersLb.setWidth("250px");
+        assignedMembersLb.setHeight("500px");
+
+
         hlMain.add(assignedMembersLb);
 
         teamCmb = new ComboBox<>();

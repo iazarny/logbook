@@ -8,6 +8,7 @@ import com.az.lb.servise.PersonActivityDetailService;
 import com.az.lb.servise.PersonService;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -17,9 +18,12 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -43,7 +47,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
     private final PersonActivityDetailService personActivityDetailService;
 
 
-    private H2 message;
+    private HtmlContainer message;
     private ComboBox<Person> availableMembersCmb;
 
     private Button closeButton;
@@ -86,7 +90,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         this.closeButton = new Button("Close");
 
-        this.message = new H2("Detail activity");
+        this.message = new H5("Detail activity");
 
         this.grid = new Grid<>();
         this.grid.setWidth("96%");
@@ -258,12 +262,16 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         });
 
+        final FlexLayout closeButtonWrapper = new FlexLayout(closeButton);
+        closeButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
         HorizontalLayout hl = new HorizontalLayout(
                 message,
                 availableMembersCmb,
-                closeButton
+                closeButtonWrapper
         );
         hl.setWidthFull();
+        hl.expand(closeButtonWrapper);
 
         add(hl);
         add(grid);
