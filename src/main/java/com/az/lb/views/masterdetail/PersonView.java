@@ -3,11 +3,12 @@ package com.az.lb.views.masterdetail;
 import com.az.lb.UserContext;
 import com.az.lb.model.Person;
 import com.az.lb.servise.PersonService;
-import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.binder.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.AbstractField;
@@ -44,6 +45,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
     private TextField firstname = new TextField();
     private TextField lastname = new TextField();
     private TextField email = new TextField();
+    private Checkbox orgManager = new Checkbox();
     private PasswordField password = new PasswordField();
 
     private Button cancel = new Button("Cancel");
@@ -62,15 +64,16 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         this.grid = new Grid<>();
         //grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         this.grid.setHeightFull();
-        this.grid.addColumn(Person::getFirstName).setHeader("First name");
-        this.grid.addColumn(Person::getLastName).setHeader("Last name");
-        this.grid.addColumn(Person::getEmail).setHeader("Email");
+        this.grid.addColumn(Person::getFullName).setHeader("Name").setSortable(true);
+        this.grid.addColumn(Person::getEmail).setHeader("Email").setSortable(true);
+
 
         //when a row is selected or deselected, populate form
-        this.grid.asSingleSelect().addValueChangeListener(event -> populateForm(event.getValue()));
+        this.grid.asSingleSelect().addValueChangeListener(
+                event -> populateForm(event.getValue()));
 
         // Configure Form
-        this. binder = new Binder<>(Person.class);
+        this.binder = new Binder<>(Person.class);
 
         // Bind fields. This where you'd define e.g. validation rules
         this.binder.bindInstanceFields(this);
@@ -81,7 +84,21 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         this.cancel.addClickListener(e -> grid.asSingleSelect().clear());
 
         this.save.addClickListener(e -> {
-            Notification.show("Not implemented");
+
+            this.grid.getSelectedItems().forEach(
+                    p -> {
+                        try {
+                            this.binder.writeBean(p);
+                            this.service.save(p);
+                            this.grid.getDataProvider().refreshItem(p);
+                            Notification.show("Saved " + p.getFullName());
+
+                        } catch (ValidationException ex) {
+                            ex.printStackTrace(); // todo log
+                            Notification.show("Error " + p.getFullName());
+                        }
+                    }
+            );
         });
 
         SplitLayout splitLayout = new SplitLayout();
@@ -102,7 +119,6 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
                 new H5("Organization members"),
                 caddButtonWrapper
         );
-
         hl.setWidthFull();
         hl.expand(caddButtonWrapper);
 
@@ -151,6 +167,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         addFormItem(editorDiv, formLayout, firstname, "First name");
         addFormItem(editorDiv, formLayout, lastname, "Last name");
         addFormItem(editorDiv, formLayout, email, "Email");
+        addFormItem(editorDiv, formLayout, orgManager, "Lead");
         createButtonLayout(editorDiv);
         splitLayout.addToSecondary(editorDiv);
     }
@@ -192,6 +209,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
     private void populateForm(Person value) {
         // Value can be null as well, that clears the form
         binder.readBean(value);
+
 
         // The password field isn't bound through the binder, so handle that
         password.setValue("");

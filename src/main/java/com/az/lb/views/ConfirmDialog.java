@@ -9,6 +9,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -16,8 +17,8 @@ import com.vaadin.flow.shared.Registration;
 
 public class ConfirmDialog extends Dialog {
 
-    public Button confirmButton;
-    public Button cancelButton;
+    private Button confirmButton;
+    private Button cancelButton;
 
     private H2 title;
     private Label message;
@@ -39,10 +40,17 @@ public class ConfirmDialog extends Dialog {
 
         this.cancelButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
+        final FlexLayout cancelButtonWrapper = new FlexLayout(cancelButton);
+        cancelButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+        final FlexLayout confirmButtonWrapper = new FlexLayout(confirmButton);
+        confirmButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
         HorizontalLayout hl = new HorizontalLayout(
-                this.confirmButton,
-                this.cancelButton);
-        hl.setAlignItems(FlexComponent.Alignment.END);
+                confirmButtonWrapper,
+                cancelButtonWrapper);
+        hl.expand(confirmButtonWrapper, cancelButtonWrapper);
+        hl.setWidthFull();
 
         add( new VerticalLayout(
                 this.title,

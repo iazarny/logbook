@@ -5,8 +5,15 @@ import com.az.lb.model.Team;
 import com.az.lb.servise.TeamService;
 import com.az.lb.views.ConfirmDialog;
 import com.az.lb.views.activity.ActivityDateDialog;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -43,44 +50,84 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
 
     public TeamView(@Autowired UserContext userContext) {
 
-        this.userContext = userContext;
         setId("dashboard-view");
-        grid = new Grid<Team>();
-        grid.setId("list");
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_COMPACT,
-                GridVariant.MATERIAL_COLUMN_DIVIDERS);
-        grid.setHeightFull();
-        grid.addColumn((ValueProvider<Team, String>) team -> team.getName()).setHeader("Name").setSortable(true);
 
-        grid.addColumn(new ComponentRenderer<>(team -> {
-            Button deleteBtn = new Button("Del", e -> {  removeTeam(team);   });
+        this.userContext = userContext;
 
-            Button editBtn = new Button("Edit", e -> { editTeam(team); });
-            Button teamBtn = new Button("Members", e-> { editMembers(team); });
-            Button activityBtn = new Button("Activity", e-> { newActivity(team); });
+        this.grid = new Grid<Team>();
+        this.grid.setId("list");
+        //this.grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_COMPACT,
+        //      GridVariant.MATERIAL_COLUMN_DIVIDERS);
+        this.grid.setHeightFull();
+        this.grid.addColumn((ValueProvider<Team, String>) team ->
+                team.getName()).setHeader("Name").setSortable(true);
 
-            return new HorizontalLayout(
-                    deleteBtn, editBtn, teamBtn, activityBtn
-            );
-        }));
 
+
+        this.grid.addComponentColumn(
+                i -> {
+
+                    Icon deleteIcon = new Icon(VaadinIcon.CROSS_CUTLERY);
+                    deleteIcon.addClickListener(
+                            e -> removeTeam(i)
+                    );
+                    final FlexLayout deleteButtonWrapper = new FlexLayout(deleteIcon);
+                    deleteButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+
+                    Icon editIcon = new Icon(VaadinIcon.PENCIL);
+                    editIcon.addClickListener(
+                            e -> editTeam(i)
+                    );
+                    final FlexLayout editButtonWrapper = new FlexLayout(editIcon);
+                    editButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+                    Icon membersIcon = new Icon(VaadinIcon.USERS);
+                    membersIcon.addClickListener(
+                            e -> editMembers(i)
+                    );
+                    final FlexLayout membersButtonWrapper = new FlexLayout(membersIcon);
+                    membersButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+                    HorizontalLayout hl = new HorizontalLayout(
+                            deleteButtonWrapper, editButtonWrapper, membersButtonWrapper);
+
+                    return hl;
+                }
+        ).setAutoWidth(true)
+                .setFlexGrow(0)
+                .setTextAlign(ColumnTextAlign.END);
+
+
+        this.activityDateDialog = new ActivityDateDialog("Activity date");
+
+        this.confirmDialog = new ConfirmDialog("Please confirm", "");
 
         final Button addBtn = new Button("Add");
-        teamDialog = new TeamEditDialog("Add new team");
-        add(teamDialog);
-        addBtn.addClickListener(event -> { newTeam(); });
+        final FlexLayout addButtonWrapper = new FlexLayout(addBtn);
+        addButtonWrapper.setJustifyContentMode(JustifyContentMode.END);
 
-        activityDateDialog = new ActivityDateDialog("Activity date");
-        add(activityDateDialog);
+        addBtn.addClickListener(event -> {
+            newTeam();
+        });
 
-        confirmDialog = new ConfirmDialog("Please confirm", "");
-        add(confirmDialog);
 
-        HorizontalLayout hl = new HorizontalLayout(addBtn);
-        hl.setAlignItems(Alignment.CENTER);
+        final HorizontalLayout hl = new HorizontalLayout(
+                new H5("Teams"),
+                addButtonWrapper
+        );
+        hl.expand(addButtonWrapper);
+        hl.setWidthFull();
+
+        this.teamDialog = new TeamEditDialog("Add new team");
+
+        add(this.activityDateDialog);
+
+        add(this.confirmDialog);
+
+        add(this.teamDialog);
 
         add(
-                new H2("Teams"),
                 hl,
                 grid
         );
@@ -94,33 +141,19 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
         });
     }
 
-    private void newActivity(Team team) {
-        activityDateDialog
-                .message("Select activity date")
-                .confirmText("Go")
-                .onCancel(e -> {
-                    activityDateDialog.close();})
-                .onConfirm(e -> {
-                    activityDateDialog.close();
-                    getUI().ifPresent(ui -> {
-                        userContext.setSelectedTeam(team);
-                        userContext.setSelectedDate(activityDateDialog.getLocalDate());
-                        ui.getPage().setLocation("/PersonActivity");
-                    });
-                })
-                .open();
 
-    }
 
 
     private void newTeam() {
         teamDialog
                 .message("New team")
-                .onCancel(e -> {teamDialog.close();})
+                .onCancel(e -> {
+                    teamDialog.close();
+                })
                 .onConfirm(e -> {
                     Team team = service.createNewTeam(
                             userContext.getOrg().getId().toString(),
-                            teamDialog.input.getValue());
+                            teamDialog.getValue());
                     grid.setItems(service.findAll());
                     grid.getDataProvider().refreshAll();
                     teamDialog.close();
@@ -138,8 +171,8 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
                     grid.getDataProvider().refreshAll();
                     teamDialog.close();
                 })
-                .onConfirm( e-> {
-                    team.setName(teamDialog.input.getValue());
+                .onConfirm(e -> {
+                    team.setName(teamDialog.getValue());
                     service.update(team);
                     grid.getDataProvider().refreshAll();
                     teamDialog.close();

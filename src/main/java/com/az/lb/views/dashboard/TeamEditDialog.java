@@ -1,12 +1,13 @@
 package com.az.lb.views.dashboard;
 
-import com.az.lb.views.ConfirmDialog;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -14,11 +15,11 @@ import com.vaadin.flow.shared.Registration;
 
 public class TeamEditDialog extends Dialog {
 
-    H2 message;
-    TextField input;
+    private HtmlContainer message;
+    private TextField input;
 
-    Button confirmButton;
-    Button cancelButton;
+    private Button confirmButton;
+    private Button cancelButton;
 
     private Registration cancelListenerRegistration = null;
     private Registration confirmListenerRegistration = null;
@@ -29,15 +30,23 @@ public class TeamEditDialog extends Dialog {
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
 
-        message = new H2(title);
+        message = new H5(title);
         input = new TextField();
-        confirmButton = new Button("New");
+        confirmButton = new Button("Ok");
         cancelButton = new Button("Cancel");
+
+        final FlexLayout cancelButtonWrapper = new FlexLayout(cancelButton);
+        cancelButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+        final FlexLayout confirmButtonWrapper = new FlexLayout(confirmButton);
+        confirmButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
         HorizontalLayout hl = new HorizontalLayout(
-                confirmButton,
-                cancelButton
+                confirmButtonWrapper,
+                cancelButtonWrapper
         );
-        hl.setAlignItems(FlexComponent.Alignment.END);
+        hl.expand(confirmButtonWrapper, cancelButtonWrapper);
+        hl.setWidthFull();
 
         add(new VerticalLayout(
                 message,
@@ -71,5 +80,9 @@ public class TeamEditDialog extends Dialog {
     public TeamEditDialog teamName(String name) {
         input.setValue(name);
         return this;
+    }
+
+    public String getValue() {
+        return input.getValue();
     }
 }

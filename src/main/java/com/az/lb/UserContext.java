@@ -78,6 +78,7 @@ public class UserContext {
             person.setFirstName("Dua");
             person.setLastName("Lipa");
             person.setOrg(org);
+            person.setOrgManager(true);
             personRepository.save(person);
         }
         return org;

@@ -42,12 +42,6 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
     @Autowired
     private UserContext userContext;
 
-    @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private PersonActivityDetailService personActivityDetailService;
-
     private final Grid<PersonActivity> grid;
 
     private final PersonAdtivityDetailDialog personAdtivityDetailDialog;
@@ -63,8 +57,6 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                               @Autowired PersonActivityDetailService personActivityDetailService) {
         setId("person-activity-view");
         this.userContext = userContext;
-        this.personService = personService;
-        this.personActivityDetailService = personActivityDetailService;
 
         this.confirmDialog = new ConfirmDialog("Please confirm", "");
 

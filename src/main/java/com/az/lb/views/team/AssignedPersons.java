@@ -9,9 +9,11 @@ import com.az.lb.model.Team;
 import com.az.lb.servise.PersonService;
 import com.az.lb.servise.TeamPersonService;
 import com.az.lb.servise.TeamService;
+import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -35,7 +37,6 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
     @Autowired
     private TeamService service;
 
-
     @Autowired
     private PersonService personService;
 
@@ -45,7 +46,7 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
     private List<Person> availableMembers;
     private List<Person> assignedMembers;
 
-    private H2 header;
+    private HtmlContainer header;
 
     private ComboBox<Team> teamCmb;
     private ListBox<Person> assignedMembersLb;
@@ -60,20 +61,23 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
 
     public AssignedPersons(@Autowired UserContext userContext) {
 
-        this.userContext = userContext;
-
         setId("team-view");
 
-        addAllBtn = new Button(">>");
-        addOneBtn = new Button(">");
-        removeOneBtn = new Button("<");
-        removeAllBtn = new Button("<<");
+        this.userContext = userContext;
+
+
+
+        this.addAllBtn = new Button(">>");
+        this.addOneBtn = new Button(">");
+        this.removeOneBtn = new Button("<");
+        this.removeAllBtn = new Button("<<");
 
 
         HorizontalLayout hlMain = new HorizontalLayout();
+        hlMain.setWidthFull();
 
         availableMembersLb = new ListBox<>();
-        availableMembersLb.setRenderer(new TextRenderer<>(p -> p.getFirstName() + " " + p.getLastName() ));
+        availableMembersLb.setRenderer(new TextRenderer<>(p -> p.getFullName() ));
 
         hlMain.add(availableMembersLb);
 
@@ -82,14 +86,13 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
         ));
 
         assignedMembersLb = new ListBox<>();
-        assignedMembersLb.setRenderer(new TextRenderer<>(p -> p.getFirstName() + " " + p.getLastName() ));
+        assignedMembersLb.setRenderer(new TextRenderer<>(p -> p.getFullName() ));
         hlMain.add(assignedMembersLb);
 
-        teamCmb = new ComboBox<>("Teams");
+        teamCmb = new ComboBox<>();
         teamCmb.setAllowCustomValue(false);
         teamCmb.setItemLabelGenerator(Team::getName);
         teamCmb.addValueChangeListener(e -> {
-
             if (e.getValue() != null) {
                 repopulateMembers(
                         userContext.getOrg(),
@@ -132,10 +135,14 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
 
         });
 
+        header = new H5("Team members");
+        HorizontalLayout htTitle = new HorizontalLayout(
+                header, teamCmb
+        );
+
 
         add(
-                new H2("Team members"),
-                teamCmb,
+                htTitle,
                 hlMain
         );
 
