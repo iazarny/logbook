@@ -100,7 +100,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
         Grid.Column<PersonActivityDetail> taskColumn = grid.addColumn(i -> i.getTask())
                 .setSortable(true)
                 .setHeader("Task")
-                .setWidth("32pt")
+                .setWidth("32px")
                 .setAutoWidth(true);
 
         if (naemColumnEnabled) {
@@ -136,6 +136,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
                 .setSortable(true)
                 .setAutoWidth(true)
                 .setHeader("Done");
+
 
 
 
@@ -181,20 +182,27 @@ public class PersonAdtivityDetailDialog extends Dialog {
         Collection<Icon> editButtons = Collections.newSetFromMap(new WeakHashMap<>());
 
         Grid.Column<PersonActivityDetail> editorColumn = grid.addComponentColumn(i -> {
-            Icon delIcon = new Icon(VaadinIcon.MINUS_CIRCLE_O);
+            final Icon delIcon = new Icon(VaadinIcon.MINUS_CIRCLE_O);
             editButtons.add(delIcon);
-            Icon editIcon = new Icon(VaadinIcon.PENCIL);
+
+
+            final Icon editIcon = new Icon(VaadinIcon.PENCIL);
+            editButtons.add(editIcon);
             editIcon.addClickListener(e -> {
                 personActivityDetailEditor.editItem(i);
                 teskTextField.focus();
             });
             editIcon.setVisible(!personActivityDetailEditor.isOpen());
-            editButtons.add(editIcon);
-            return new HorizontalLayout(delIcon, editIcon);
+
+
+            HorizontalLayout hl = new HorizontalLayout(delIcon, editIcon);
+
+
+            return hl;
 
         })
                 .setAutoWidth(true)
-                .setWidth("64px")
+                .setFlexGrow(0)
                 .setTextAlign(ColumnTextAlign.END);
 
         Icon saveIcon = new Icon(VaadinIcon.CHECK);
@@ -259,7 +267,6 @@ public class PersonAdtivityDetailDialog extends Dialog {
             if (personActivityDetailEditor.isOpen()) {
                 personActivityDetailEditor.cancel();
             }
-
         });
 
         final FlexLayout closeButtonWrapper = new FlexLayout(closeButton);
@@ -270,7 +277,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
                 availableMembersCmb,
                 closeButtonWrapper
         );
-        hl.setWidthFull();
+        hl.setWidth("96%");
         hl.expand(closeButtonWrapper);
 
         add(hl);
