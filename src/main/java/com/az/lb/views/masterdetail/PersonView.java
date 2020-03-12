@@ -30,7 +30,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import com.az.lb.MainView;
-@Route(value = "Master-Detail", layout = MainView.class)
+@Route(value = "Persons", layout = MainView.class)
 @PageTitle("Persons")
 @CssImport("styles/views/masterdetail/master-detail-view.css")
 public class PersonView extends VerticalLayout implements AfterNavigationObserver {
@@ -64,8 +64,16 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         this.grid = new Grid<>();
         //grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         this.grid.setHeightFull();
-        this.grid.addColumn(Person::getFullName).setHeader("Name").setSortable(true);
-        this.grid.addColumn(Person::getEmail).setHeader("Email").setSortable(true);
+        this.grid.addColumn(Person::getFullName)
+                .setHeader("Name")
+                .setWidth("20%")
+                .setSortable(true)
+                .setResizable(true);
+        this.grid.addColumn(Person::getEmail)
+                .setHeader("Email")
+                .setWidth("80%")
+                .setSortable(true)
+                .setResizable(true);
 
 
         //when a row is selected or deselected, populate form
