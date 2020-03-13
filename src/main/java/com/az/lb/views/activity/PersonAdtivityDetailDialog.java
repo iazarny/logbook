@@ -42,6 +42,13 @@ import java.util.WeakHashMap;
 
 public class PersonAdtivityDetailDialog extends Dialog {
 
+    private final static String SIZE_TASK = "60px";
+    private final static String SIZE_NAME = "120px";
+    private final static String SIZE_DESCR = "240px";
+    private final static String SIZE_SPEND = "60px";
+    private final static String SIZE_DONE = "30px";
+    private final static String SIZE_ACT = "72px";
+
     private final UserContext userContext;
     private final PersonService personService;
     private final PersonActivityDetailService personActivityDetailService;
@@ -98,34 +105,37 @@ public class PersonAdtivityDetailDialog extends Dialog {
         this.personActivityDetailEditor = grid.getEditor();
 
         Grid.Column<PersonActivityDetail> taskColumn = grid.addColumn(i -> i.getTask())
+                .setResizable(true)
                 .setSortable(true)
                 .setHeader("Task")
-                .setWidth("32px")
+                .setWidth(SIZE_TASK)
                 .setAutoWidth(true);
 
         if (naemColumnEnabled) {
             Grid.Column<PersonActivityDetail> nameColumn = grid.addColumn(i -> i.getName())
+                    .setResizable(true)
                     .setSortable(true)
-                    .setHeader("Name");
+                    .setHeader("Name")
+                    .setWidth(SIZE_NAME);
 
             TextField nameTextField = new TextField();
             personActivityDetailBinder.forField(nameTextField)
                     .bind("name");
             nameColumn.setEditorComponent(nameTextField);
-
         }
 
 
-
         Grid.Column<PersonActivityDetail> detailColumn = grid.addColumn(i -> i.getDetail())
+                .setResizable(true)
                 .setSortable(true)
-                .setHeader("Detail");
+                .setHeader("Detail")
+                .setWidth(SIZE_DESCR);
 
         Grid.Column<PersonActivityDetail> spendColumn = grid.addColumn(i -> i.getSpend())
+                .setResizable(true)
                 .setSortable(true)
                 .setHeader("Spend")
-                .setWidth("32pt")
-                .setAutoWidth(true);
+                .setWidth(SIZE_SPEND);
 
 
         Grid.Column<PersonActivityDetail> doneColumn = grid.addColumn(new ComponentRenderer<>(i -> {
@@ -133,14 +143,11 @@ public class PersonAdtivityDetailDialog extends Dialog {
             rez.setEnabled(false);
             return rez;
         }))
+                .setResizable(true)
                 .setSortable(true)
                 .setAutoWidth(true)
+                .setWidth(SIZE_DONE)
                 .setHeader("Done");
-
-
-
-
-
 
 
         personActivityDetailEditor.setBinder(personActivityDetailBinder);
@@ -150,6 +157,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
 
         this.teskTextField = new TextField();
+        this.teskTextField.setWidth(SIZE_TASK);
         personActivityDetailBinder.forField(teskTextField)
                 .withValidator(new StringLengthValidator("Task name length must be between 3 and 32.", 3, 32))
                 //.withStatusLabel(validationStatus)
@@ -160,6 +168,8 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
 
         TextArea detaildTextField = new TextArea();
+        detaildTextField.setWidth(SIZE_DESCR);
+        detaildTextField.setHeight("120pt");
         personActivityDetailBinder.forField(detaildTextField)
                 .withValidator(new StringLengthValidator("Detail length must be between 3 and 32768.", 3, 32768))
                 //.withStatusLabel(validationStatus)
@@ -167,6 +177,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
         detailColumn.setEditorComponent(detaildTextField);
 
         TextField spendTextField = new TextField();
+        spendTextField.setWidth(SIZE_SPEND);
         personActivityDetailBinder.forField(spendTextField)
                 //.withValidator(new StringLengthValidator("Spend length must be between 2 and 8.", 2, 8))
                 //.withStatusLabel(validationStatus)

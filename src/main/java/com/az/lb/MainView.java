@@ -3,6 +3,9 @@ package com.az.lb;
 import com.az.lb.views.activity.TeamActivityView;
 import com.az.lb.views.dashboard.TeamView;
 import com.az.lb.views.masterdetail.PersonView;
+import com.az.lb.views.org.OrganizationSettingView;
+import com.az.lb.views.report.ReportDailyView;
+import com.az.lb.views.report.ReportTaskView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.accordion.Accordion;
@@ -44,8 +47,8 @@ public class MainView extends AppLayout {
         this.accordion.add(
                 "Reports",
                 new VerticalLayout(
-                        new RouterLink("Daily", TeamView.class),
-                        new RouterLink("Task", TeamView.class)
+                        new RouterLink("Daily", ReportDailyView.class),
+                        new RouterLink("Task", ReportTaskView.class)
                 )
         );
         this.accordion.add(
@@ -53,7 +56,7 @@ public class MainView extends AppLayout {
                 new VerticalLayout(
                         new RouterLink("Persons", PersonView.class),
                         new RouterLink("Teams ", TeamView.class),
-                        new RouterLink("Organization", TeamView.class)
+                        new RouterLink("Organization", OrganizationSettingView.class)
                         )
         );
         addToDrawer(this.accordion );
