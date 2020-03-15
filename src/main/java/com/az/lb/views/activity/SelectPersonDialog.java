@@ -1,27 +1,27 @@
 package com.az.lb.views.activity;
 
-import com.az.lb.model.PersonActivity;
+import com.az.lb.model.Person;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
 
-public class PersonActivityNoteDialog extends Dialog {
+import java.time.LocalDate;
+import java.util.List;
 
-
+public class SelectPersonDialog extends Dialog {
 
     HtmlContainer message;
-    TextArea notes;
-    TextField tags;
+    ComboBox<Person> personsToAdd;
 
     Button confirmButton;
     Button cancelButton;
@@ -29,18 +29,14 @@ public class PersonActivityNoteDialog extends Dialog {
     private Registration cancelListenerRegistration = null;
     private Registration confirmListenerRegistration = null;
 
-    public PersonActivityNoteDialog() {
+
+    public SelectPersonDialog() {
         super();
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
 
-        message = new H5("Notes");
-        notes = new TextArea("Notes");
-        notes.setHeight("300px");
-        notes.setWidth("400px");
+        message = new H5();
 
-        tags= new TextField("Targs");
-        tags.setWidth("400px");
 
         confirmButton = new Button("New");
         cancelButton = new Button("Cancel");
@@ -55,21 +51,27 @@ public class PersonActivityNoteDialog extends Dialog {
         hl.setWidthFull();
         hl.expand(cancelButtonWrapper);
 
+        personsToAdd = new ComboBox("Persons");
+        personsToAdd.setItemLabelGenerator(Person::getFullName);
+        personsToAdd.addValueChangeListener(
+                e -> {
+                    confirmButton.setEnabled(true);
+                }
+        );
+
         add(new VerticalLayout(
                 message,
-                notes,
-                tags,
+                personsToAdd,
                 hl
         ));
     }
 
-
-    public PersonActivityNoteDialog message(String message) {
+    public SelectPersonDialog message(String message) {
         this.message.setText(message);
         return this;
     }
 
-    public PersonActivityNoteDialog onCancel(ComponentEventListener<ClickEvent<Button>> listener) {
+    public SelectPersonDialog onCancel(ComponentEventListener<ClickEvent<Button>> listener) {
         if (cancelListenerRegistration != null) {
             cancelListenerRegistration.remove();
         }
@@ -77,7 +79,7 @@ public class PersonActivityNoteDialog extends Dialog {
         return this;
     }
 
-    public PersonActivityNoteDialog onConfirm(ComponentEventListener<ClickEvent<Button>> listener) {
+    public SelectPersonDialog onConfirm(ComponentEventListener<ClickEvent<Button>> listener) {
         if (confirmListenerRegistration != null) {
             confirmListenerRegistration.remove();
         }
@@ -86,26 +88,23 @@ public class PersonActivityNoteDialog extends Dialog {
     }
 
 
-    public PersonActivityNoteDialog confirmText(String confirmText) {
+    public SelectPersonDialog confirmText(String confirmText) {
         confirmButton.setText(confirmText);
         return this;
     }
 
-    public PersonActivityNoteDialog notes(String value) {
-        this.notes.setValue(value);
+    public SelectPersonDialog persons(List<Person> persons) {
+        personsToAdd.setItems(persons);
         return this;
     }
 
-    public PersonActivityNoteDialog tags(String value) {
-        this.tags.setValue(value);
-        return this;
+    public Person getPerson() {
+        return personsToAdd.getValue();
     }
 
-    public String getNotes() {
-        return notes.getValue();
-    }
-
-    public String getTags() {
-        return tags.getValue();
+    @Override
+    public void open() {
+        confirmButton.setEnabled(false);
+        super.open();
     }
 }

@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 
 @Route(value = "TeamActivity", layout = MainView.class)
-@RouteAlias(value = "TeamActivity", layout = MainView.class)
+@RouteAlias(value = "", layout = MainView.class)
 @PageTitle("Team's activity")
 @CssImport("styles/views/dashboard/dashboard-view.css")
 public class TeamActivityView extends VerticalLayout implements AfterNavigationObserver {

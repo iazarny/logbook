@@ -3,7 +3,6 @@ package com.az.lb.model;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.UUID;
 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,6 +35,14 @@ public class ActivityService {
             return existingActivity.get();
         }
         return activityRepository.save(activity);
+    }
+
+    @Transactional
+    public List<Activity> findAll(LocalDate localDate) {
+        Activity activity = new Activity();
+        activity.setDt(localDate);
+        Example<Activity> activityExample  = Example.of(activity);
+        return activityRepository.findAll();
     }
 
 }

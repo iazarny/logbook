@@ -33,7 +33,7 @@ import com.vaadin.flow.router.RouteAlias;
 import com.az.lb.MainView;
 
 @Route(value = "Dashboard", layout = MainView.class)
-@RouteAlias(value = "", layout = MainView.class)
+@RouteAlias(value = "Dashboard", layout = MainView.class)
 @PageTitle("Dashboard")
 @CssImport("styles/views/dashboard/dashboard-view.css")
 public class TeamView extends VerticalLayout implements AfterNavigationObserver {

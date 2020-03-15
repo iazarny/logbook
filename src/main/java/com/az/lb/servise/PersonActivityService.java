@@ -5,6 +5,7 @@ import com.az.lb.repository.ActivityRepository;
 import com.az.lb.repository.PersonActivityRepository;
 import com.az.lb.repository.PersonRepository;
 import com.az.lb.repository.TeamPersonRepository;
+import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -78,4 +79,13 @@ public class PersonActivityService {
         personActivityRepository.delete(pa);
     }
 
+    @Transactional
+    public PersonActivity save(PersonActivity pa) {
+        return personActivityRepository.save(pa);
+    }
+
+    @Transactional
+    public List<PersonActivity> findAll() {
+        return  personActivityRepository.findAll();
+    }
 }

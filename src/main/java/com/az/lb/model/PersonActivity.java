@@ -84,4 +84,14 @@ public class PersonActivity {
         this.person = person;
     }
 
+    @Override
+    public String toString() {
+        return "PersonActivity{" +
+                "id=" + id +
+                ", note='" + note + '\'' +
+                ", tags='" + tags + '\'' +
+                ", activity=" + activity +
+                ", person=" + person +
+                '}';
+    }
 }

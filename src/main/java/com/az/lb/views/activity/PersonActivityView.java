@@ -10,12 +10,14 @@ import com.az.lb.servise.PersonActivityDetailService;
 import com.az.lb.servise.PersonActivityService;
 import com.az.lb.servise.PersonService;
 import com.az.lb.views.ConfirmDialog;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -43,10 +45,15 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
     private UserContext userContext;
 
     private final Grid<PersonActivity> grid;
+    private List<PersonActivity> data;
+    private Activity act;
 
     private final PersonAdtivityDetailDialog personAdtivityDetailDialog;
+    private final PersonActivityNoteDialog personActivityNoteDialog;
+    private final SelectPersonDialog selectPersonDialog;
 
     private final ConfirmDialog confirmDialog;
+
 
     @Autowired
     private PersonActivityService personActivityService;
@@ -66,26 +73,38 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                 personService,
                 personActivityDetailService);
 
+        this.personActivityNoteDialog = new PersonActivityNoteDialog();
+
+        this.selectPersonDialog = new SelectPersonDialog();
+
 
         this.grid = new Grid<PersonActivity>();
         this.grid.setId("person-activity-list");
         this.grid.setHeightFull();
-        this.grid.addColumn(pa -> pa.getPerson().getFullName())
+
+        Grid.Column<PersonActivity> nameColumn = this.grid.addColumn(pa -> pa.getPerson().getFullName())
                 .setHeader("Name")
+                .setResizable(true)
+                .setWidth("20%")
                 .setSortable(true);
-        this.grid.addColumn(new ComponentRenderer<>(pa -> {
+
+        Grid.Column<PersonActivity> detailColumn = this.grid.addColumn(new ComponentRenderer<>(pa -> {
             return new Html(
                     createDetailActivity(personActivityDetailService, pa)
             );
         }))
+                .setResizable(true)
+                .setWidth("40%")
                 .setHeader("Detail");
 
-        this.grid.addColumn(new ComponentRenderer<>(pa -> {
+        Grid.Column<PersonActivity> notesColumn = this.grid.addColumn(new ComponentRenderer<>(pa -> {
             return new VerticalLayout(
                     new Label(pa.getNote()),
                     new Label(pa.getTags())
             );
         }))
+                .setResizable(true)
+                .setWidth("30%")
                 .setHeader("Notes / Blockers");
 
         this.grid.addColumn(new ComponentRenderer<>(pa -> {
@@ -108,27 +127,84 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                 ie -> {
                     getUI().get().getCurrent().getPage().retrieveExtendedClientDetails(
                             r -> {
-                                personAdtivityDetailDialog.setWidth(((int) (r.getBodyClientWidth() * 0.98)) + "px");
-                                personAdtivityDetailDialog.setHeight(((int) (r.getBodyClientHeight() * 0.98)) + "px");
-                                personAdtivityDetailDialog
-                                        .personActivity(ie.getItem())
-                                        .message("Detail activity")
-                                        .autoAdd(LocalDate.now().equals(userContext.getSelectedDate()))
-                                        .onClose(
-                                                e -> {
-                                                    personAdtivityDetailDialog.close();
-                                                    grid.getDataProvider().refreshAll();
-                                                }
-                                        )
-                                        .open();
+                                if (nameColumn == ie.getColumn() || detailColumn == ie.getColumn()) {
+                                    personAdtivityDetailDialog.setWidth(((int) (r.getBodyClientWidth() * 0.98)) + "px");
+                                    personAdtivityDetailDialog.setHeight(((int) (r.getBodyClientHeight() * 0.98)) + "px");
+                                    personAdtivityDetailDialog
+                                            .personActivity(ie.getItem())
+                                            .message("Detail activity")
+                                            .autoAdd(LocalDate.now().equals(userContext.getSelectedDate()))
+                                            .onClose(
+                                                    e -> {
+                                                        personAdtivityDetailDialog.close();
+                                                        grid.getDataProvider().refreshAll();
+                                                    }
+                                            )
+                                            .open();
+
+                                } else if (notesColumn == ie.getColumn()) {
+
+                                    personActivityNoteDialog
+                                            .notes(StringUtils.stripToEmpty(ie.getItem().getNote()))
+                                            .tags(StringUtils.stripToEmpty(ie.getItem().getTags()))
+                                            .message("Notes / blockers")
+                                            .onCancel(
+                                                    e -> {
+                                                        personActivityNoteDialog.close();
+                                                        grid.getDataProvider().refreshAll();
+                                                    }
+                                            )
+                                            .onConfirm(
+                                                    e -> {
+                                                        ie.getItem().setNote(personActivityNoteDialog.getNotes());
+                                                        ie.getItem().setTags(personActivityNoteDialog.getTags());
+                                                        personActivityService.save(ie.getItem());
+                                                        personActivityNoteDialog.close();
+                                                        grid.getDataProvider().refreshAll();
+                                                    }
+                                            )
+                                            .open();
+
+                                }
                             }
                     );
                 }
         );
 
+
         final HtmlContainer titleContainer = new H5("Activity " + userContext.getSelectedTeam().getName() + " " + userContext.getSelectedDate());
 
         final Button addBtn = new Button("Add");
+        addBtn.addClickListener(
+                e -> {
+                    selectPersonDialog
+                            .message("Select person to add")
+                            .confirmText("Add")
+                            .persons(personService.findAllWithoutActivity(userContext.getOrg(), act))
+                            .onCancel(
+                                    ce -> {
+                                        selectPersonDialog.close();
+                                    }
+                            )
+                            .onConfirm(
+                                    ce -> {
+                                        PersonActivity pa = new PersonActivity();
+                                        pa.setPerson(selectPersonDialog.getPerson());
+                                        pa.setActivity(act);
+                                        personActivityService.save(pa);
+                                        data.add(pa);
+
+                                        //!!!grid.setItems(personActivityService.findAllByActivity(act));
+                                        grid.getDataProvider().refreshAll();
+
+                                        grid.getDataProvider().refreshAll();
+                                        selectPersonDialog.close();
+                                    }
+                            )
+                            .open();
+
+                }
+        );
 
         final FlexLayout cancelButtonWrapper = new FlexLayout(addBtn);
         cancelButtonWrapper.setJustifyContentMode(JustifyContentMode.END);
@@ -159,9 +235,9 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
         } else {
             cellBody = "<table width='100%' class='detail-table'>" + details.stream()
                     .map(ad -> "<tr class='detail-table-tr'>" +
-                            "<td>" + ad.getTask() + "</td>" +
-                            "<td>" + StringUtils.truncate(ad.getDetail(), 20) + "</td>" +
-                            "<td>" + ad.getSpend() + "</td>" +
+                            "<td width='10%' >" + ad.getTask() + "</td>" +
+                            "<td width='180%' >" + StringUtils.truncate(ad.getDetail(), 80) + "</td>" +
+                            "<td width='10%' >" + ad.getSpend() + "</td>" +
                             "</tr>")
                     .collect(Collectors.joining())
                     + "</table>";
@@ -172,9 +248,9 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        Activity act = personActivityService.createPersonsActivitySheet(userContext.getSelectedTeam(),
+        act = personActivityService.createPersonsActivitySheet(userContext.getSelectedTeam(),
                 userContext.getSelectedDate());
-        List<PersonActivity> data = personActivityService.findAllByActivity(act);
+        data = personActivityService.findAllByActivity(act);
         grid.setItems(data);
         grid.getDataProvider().refreshAll();
     }

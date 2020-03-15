@@ -1,5 +1,6 @@
 package com.az.lb.repository;
 
+import com.az.lb.model.Activity;
 import com.az.lb.model.Org;
 import com.az.lb.model.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,5 +27,9 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
                                   @Param("orgId") UUID orgId);
 
     List<Person> findAllByOrg(Org org);
+
+    @Query("select p from Person p where p.org = :org " +
+            "and p.id not in ( select pa.person.id from PersonActivity pa where pa.activity = :act)" )
+    List<Person> findAllWithoutActivity(Org org, Activity act);
 
 }

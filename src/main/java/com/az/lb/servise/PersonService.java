@@ -1,5 +1,6 @@
 package com.az.lb.servise;
 
+import com.az.lb.model.Activity;
 import com.az.lb.model.Org;
 import com.az.lb.model.Person;
 import com.az.lb.model.Team;
@@ -32,6 +33,10 @@ public class PersonService {
 
     public List<Person> findAllOutOfTeam(UUID teamId, UUID orgId) {
         return repository.findAllOutOfTeam(teamId, orgId);
+    }
+
+    public List<Person> findAllWithoutActivity(Org org, Activity act) {
+        return repository.findAllWithoutActivity(org, act);
     }
 
     @Transactional
