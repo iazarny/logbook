@@ -18,6 +18,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -55,7 +56,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
 
     private HtmlContainer message;
-    private ComboBox<Person> availableMembersCmb;
+    private HtmlContainer personName;
 
     private Button closeButton;
 
@@ -92,8 +93,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         setId("person-activity-detail");
 
-        availableMembersCmb = new ComboBox<Person>();
-        availableMembersCmb.setItemLabelGenerator(Person::getFullName);
+        personName = new H4();
 
         this.closeButton = new Button("Close");
 
@@ -159,7 +159,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
         this.teskTextField = new TextField();
         this.teskTextField.setWidth(SIZE_TASK);
         personActivityDetailBinder.forField(teskTextField)
-                .withValidator(new StringLengthValidator("Task name length must be between 3 and 32.", 3, 32))
+                .withValidator(new StringLengthValidator("Task name length must be \nbetween 3 and 32.", 3, 32))
                 //.withStatusLabel(validationStatus)
                 .bind("task");
         taskColumn.setEditorComponent(teskTextField);
@@ -285,7 +285,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         HorizontalLayout hl = new HorizontalLayout(
                 message,
-                availableMembersCmb,
+                personName,
                 closeButtonWrapper
         );
         hl.setWidth("96%");
@@ -321,15 +321,9 @@ public class PersonAdtivityDetailDialog extends Dialog {
     }
 
     public PersonAdtivityDetailDialog personActivity(final PersonActivity personActivity) {
-        final List<Person> availableMembers = personService.findAll(userContext.getOrg());
         this.personActivity = personActivity;
-        this.availableMembersCmb.setItems(availableMembers);
-        this.availableMembersCmb.setValue(personActivity.getPerson());
-
-
+        this.personName.setText(personActivity.getPerson().getFullName());
         addNewItemToFill();
-
-
         return this;
     }
 
