@@ -5,6 +5,7 @@ import com.az.lb.repository.ActivityRepository;
 import com.az.lb.repository.PersonActivityRepository;
 import com.az.lb.repository.PersonRepository;
 import com.az.lb.repository.TeamPersonRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -87,5 +88,16 @@ public class PersonActivityService {
     @Transactional
     public List<PersonActivity> findAll() {
         return  personActivityRepository.findAll();
+    }
+
+    public String getDetailsAsHtmlTable(final List<PersonActivityDetail> details) {
+        return "<table width='100%' class='detail-table'>" + details.stream()
+                .map(ad -> "<tr class='detail-table-tr'>" +
+                        "<td width='10%' valign='top' >" + ad.getTask() + "</td>" +
+                        "<td width='180%' >" + StringUtils.truncate(ad.getDetail(), 80) + "</td>" + //todo several lines, br up to param
+                        "<td width='10%' valign='top' >" + ad.getSpend() + "</td>" +
+                        "</tr>")
+                .collect(Collectors.joining())
+                + "</table>";
     }
 }

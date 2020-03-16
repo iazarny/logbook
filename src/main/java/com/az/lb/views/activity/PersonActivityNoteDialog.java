@@ -39,7 +39,7 @@ public class PersonActivityNoteDialog extends Dialog {
         notes.setHeight("300px");
         notes.setWidth("400px");
 
-        tags= new TextField("Targs");
+        tags= new TextField("Tags");
         tags.setWidth("400px");
 
         confirmButton = new Button("New");

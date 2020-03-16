@@ -233,14 +233,7 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
         if (details.isEmpty()) {
             cellBody = "<div></div>";
         } else {
-            cellBody = "<table width='100%' class='detail-table'>" + details.stream()
-                    .map(ad -> "<tr class='detail-table-tr'>" +
-                            "<td width='10%' >" + ad.getTask() + "</td>" +
-                            "<td width='180%' >" + StringUtils.truncate(ad.getDetail(), 80) + "</td>" +
-                            "<td width='10%' >" + ad.getSpend() + "</td>" +
-                            "</tr>")
-                    .collect(Collectors.joining())
-                    + "</table>";
+            cellBody = personActivityService.getDetailsAsHtmlTable(details);
         }
         return cellBody;
     }

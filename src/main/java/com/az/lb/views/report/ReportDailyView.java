@@ -80,19 +80,17 @@ public class ReportDailyView extends VerticalLayout implements AfterNavigationOb
                     teamService.findTeams(userContext.getOrg())
                             .forEach(
                                     t -> {
-                                        str += "<h4>" +t.getName() + " " + labelDatePicker.getValue() + "</h4>";
+                                        str += "<h4>" +t.getName() + " " + labelDatePicker.getValue() + "</h4><hr/>";
 
                                         List<PersonActivity> pal = personActivityService.findAllByTeamDate(t, labelDatePicker.getValue());
 
+
                                         pal.forEach(
                                                 pa -> {
-                                                    str += " " + pa.getPerson().getFullName() + "<br>";
+                                                    str += " " + pa.getPerson().getFullName();
 
-                                                    List<PersonActivityDetail> padl = personActivityDetailService.findActivityDetail(pa);
-                                                    padl.forEach(
-                                                            pad -> {
-                                                                str += pad.getTask() + " " + pad.getDetail();
-                                                            }
+                                                    str += personActivityService.getDetailsAsHtmlTable(
+                                                            personActivityDetailService.findActivityDetail(pa)
                                                     );
                                                 }
                                         );

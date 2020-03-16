@@ -1,6 +1,7 @@
 package com.az.lb.views.activity;
 
 import com.az.lb.UserContext;
+import com.az.lb.misc.DurationValidator;
 import com.az.lb.model.Person;
 import com.az.lb.model.PersonActivity;
 import com.az.lb.model.PersonActivityDetail;
@@ -179,7 +180,9 @@ public class PersonAdtivityDetailDialog extends Dialog {
         TextField spendTextField = new TextField();
         spendTextField.setWidth(SIZE_SPEND);
         personActivityDetailBinder.forField(spendTextField)
-                //.withValidator(new StringLengthValidator("Spend length must be between 2 and 8.", 2, 8))
+                .withValidator(
+                        new DurationValidator("String must comply \"[d m h s]\" format. But was {0}")
+                )
                 //.withStatusLabel(validationStatus)
                 .bind("spend");
         spendColumn.setEditorComponent(spendTextField);
