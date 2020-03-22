@@ -1,12 +1,9 @@
 package com.az.lb;
 
-import com.az.lb.model.Org;
-import com.az.lb.model.Person;
-import com.az.lb.model.Team;
+import com.az.lb.model.*;
 import com.az.lb.repository.OrgRepository;
 import com.az.lb.repository.PersonRepository;
-import com.az.lb.servise.PersonService;
-import com.az.lb.servise.TeamService;
+import com.az.lb.servise.*;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,6 +30,18 @@ public class UserContext {
     @Autowired
     private PersonRepository personRepository;
 
+    @Autowired
+    private PersonActivityService personActivityService;
+
+    @Autowired
+    private PersonActivityDetailService personActivityDetailService;
+
+    @Autowired
+    private ActivityService activityService;
+
+    @Autowired
+    private TeamPersonService teamPersonService;
+
     private Team selectedTeam;
 
     private LocalDate selectedDate;
@@ -51,7 +60,7 @@ public class UserContext {
             org = orgRepository.findAll().get(0);
             System.out.println(">>>>>>>>>>>>>>>>" + org.getId());
 
-            service.createNewTeam(
+            Team team = service.createNewTeam(
                     org.getId().toString(),
                     "Simple test value");
 
@@ -60,29 +69,61 @@ public class UserContext {
                     "One more team");
 
             Person person = new Person();
-            person.setEmail("Ivan.Puzan@org.net");
-            person.setFirstName("Ivan");
-            person.setLastName("Puzan");
+            person.setEmail("john.dou@org.net");
+            person.setFirstName("John");
+            person.setLastName("Dou");
             person.setOrg(org);
             personRepository.save(person);
+            teamPersonService.assignPerson(person.getId(), team.getId());
 
             person = new Person();
-            person.setEmail("Jopa.Lubich@org.net");
-            person.setFirstName("Jopa");
-            person.setLastName("Lubich");
+            person.setEmail("michael.drunk@org.net");
+            person.setFirstName("Michael");
+            person.setLastName("Drunk");
             person.setOrg(org);
             personRepository.save(person);
+            teamPersonService.assignPerson(person.getId(), team.getId());
 
             person = new Person();
-            person.setEmail("Dua.Lipa@org.net");
-            person.setFirstName("Dua");
-            person.setLastName("Lipa");
+            person.setEmail("scott.scanotti@org.net");
+            person.setFirstName("Scott");
+            person.setLastName("Scanotti");
             person.setOrg(org);
             person.setOrgManager(true);
             personRepository.save(person);
+            teamPersonService.assignPerson(person.getId(), team.getId());
+
+            Activity activity = personActivityService.createPersonsActivitySheet(team, LocalDate.now());
+
+
+            personActivityService.findAllByActivity(activity).stream()
+                    .forEach(
+
+                            personActivity -> {
+                                int j = (int) (Math.random() * 20);
+                                for (int i = 0; i < j; i++) {
+                                    PersonActivityDetail pad = new PersonActivityDetail();
+                                    pad.setActivity(personActivity);
+                                    pad.setTask("ASD-" + task); task ++;
+                                    pad.setDetail("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." + i);
+                                    pad.setSpend("1d18h33m2s");
+                                    pad.setDone( Math.random() > 0.5);
+                                    personActivityDetailService.save(pad);
+                                }
+
+                            }
+
+                    );
+
+
+
+
+
         }
         return org;
     }
+
+    int task = (int) (Math.random() * 1000);
 
     public Team getSelectedTeam() {
         return selectedTeam;

@@ -26,8 +26,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.router.*;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,6 +40,7 @@ import java.util.stream.Collectors;
 @Route(value = "PersonActivity", layout = MainView.class)
 @RouteAlias(value = "PersonActivity", layout = MainView.class)
 @PageTitle("PersonActivity")
+//@CssImport(value = "styles/views/personactivity/person-activity.css", themeFor = "vaadin-grid")
 @CssImport("styles/views/personactivity/person-activity.css")
 public class PersonActivityView extends VerticalLayout implements AfterNavigationObserver /*, HasUrlParameter<String>*/ {
 
@@ -82,11 +85,30 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
         this.grid.setId("person-activity-list");
         this.grid.setHeightFull();
 
-        Grid.Column<PersonActivity> nameColumn = this.grid.addColumn(pa -> pa.getPerson().getFullName())
+        /*Grid.Column<PersonActivity> nameColumn = this.grid.addColumn(pa -> pa.getPerson().getFullName())
                 .setHeader("Name")
                 .setResizable(true)
                 .setWidth("20%")
+                .setSortable(true);*/
+
+        Html test = new Html("<table border=1><tr><td class='paname'>Hi </td><td><br><br>dddddddddddddddddddd<br><br><br></td></tr></table>");
+        add(test);
+
+        Grid.Column<PersonActivity> nameColumn = this.grid.addColumn(pa -> pa.getPerson().getFullName())
+                .setHeader("Name")
+                .setResizable(true)
+                .setWidth("19%")
                 .setSortable(true);
+        nameColumn.setClassNameGenerator( pa -> "paname");
+        nameColumn.getElement().getStyle().set("verticalAlign", "top");
+        nameColumn.getElement().getStyle().set("vertical-align", "top");
+        nameColumn.getElement().getStyle().set("display", "inline");
+        nameColumn.getElement().getStyle().set("height", "100px");
+
+
+
+
+
 
         Grid.Column<PersonActivity> detailColumn = this.grid.addColumn(new ComponentRenderer<>(pa -> {
             return new Html(
@@ -96,16 +118,37 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                 .setResizable(true)
                 .setWidth("40%")
                 .setHeader("Detail");
+        //
 
-        Grid.Column<PersonActivity> notesColumn = this.grid.addColumn(new ComponentRenderer<>(pa -> {
-            return new VerticalLayout(
-                    new Label(pa.getNote()),
-                    new Label(pa.getTags())
-            );
-        }))
+        /*Grid.Column<PersonActivity> detailColumn = this.grid.addColumn(
+
+                TemplateRenderer.<PersonActivity>of("<div style='text-align:left; white-space:normal; vertical-align: top'>[[item.note]]</div>")
+                        .withProperty("note", vp -> {
+                            return createDetailActivity(personActivityDetailService, vp);
+                        })
+
+        )
+                .setResizable(true)
+                .setWidth("40%")
+                .setHeader("Detail")
+                .setFlexGrow(1);*/
+
+
+        Grid.Column<PersonActivity> notesColumn = this.grid.addColumn(
+
+                TemplateRenderer.<PersonActivity>of("<div style='text-align:left; white-space:normal; vertical-align: top'>[[item.note]]</div>")
+                        .withProperty("note", vp -> {
+                            boolean needHr = StringUtils.isNotBlank(vp.getNote()) && StringUtils.isNotBlank(vp.getTags());
+                            return ObjectUtils.defaultIfNull(vp.getNote(),"") +
+                                    (needHr ? "\n" : "") +
+                                    ObjectUtils.defaultIfNull(vp.getTags(),"");
+                        })
+
+        )
                 .setResizable(true)
                 .setWidth("30%")
-                .setHeader("Notes / Blockers");
+                .setHeader("Notes / Blockers")
+                .setFlexGrow(1);
 
         this.grid.addColumn(new ComponentRenderer<>(pa -> {
             if (StringUtils.isBlank(pa.getNote())
@@ -227,13 +270,14 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
     }
 
-    private String createDetailActivity(@Autowired PersonActivityDetailService personActivityDetailService, PersonActivity pa) {
+    private String createDetailActivity(PersonActivityDetailService personActivityDetailService,
+                                        PersonActivity pa) {
         final List<PersonActivityDetail> details = personActivityDetailService.findActivityDetail(pa);
         final String cellBody;
         if (details.isEmpty()) {
             cellBody = "<div></div>";
         } else {
-            cellBody = personActivityService.getDetailsAsHtmlTable(details);
+            cellBody = personActivityService.getDetailsAsHtmlTable(details, pa.getNote(), pa.getTags(), false);
         }
         return cellBody;
     }

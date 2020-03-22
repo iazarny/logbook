@@ -29,4 +29,8 @@ public class PersonActivityDetailService {
         return repository.countAllByActivity(personActivity);
     }
 
+    @Transactional
+    public void delete(PersonActivityDetail personActivityDetail) {
+        repository.delete(personActivityDetail);
+    }
 }

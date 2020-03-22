@@ -90,7 +90,8 @@ public class ReportDailyView extends VerticalLayout implements AfterNavigationOb
                                                     str += " " + pa.getPerson().getFullName();
 
                                                     str += personActivityService.getDetailsAsHtmlTable(
-                                                            personActivityDetailService.findActivityDetail(pa)
+                                                            personActivityDetailService.findActivityDetail(pa),
+                                                            pa.getNote(), pa.getTags(), true
                                                     );
                                                 }
                                         );

@@ -18,8 +18,15 @@ table.detail-table {
 td.paname {
     color: red;
     vertical-align: top;
-    display: inline;
+    display: block;
+    border: 0;
 }
+
+/*.paname {
+    color: cyan;
+    vertical-align: top;
+    display: inline;
+}*/
 
 paname {
     color: green;
@@ -33,13 +40,9 @@ paname {
     display: inline;
 }
 
-.paname {
-    color: cyan;
-    vertical-align: top;
-    display: inline;
-}
 
-.v-grid-cell.paname {
+
+.v-grid-cell.rightalignpaname {
     color: cyan;
     vertical-align: top;
     display: inline;

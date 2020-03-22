@@ -31,10 +31,18 @@ public class DurationValidator extends AbstractValidator<String> {
                 Duration.parse(toValidate);
                 return ValidationResult.ok();
             } catch (DateTimeParseException e) {
-                return ValidationResult.error(e.getMessage() + ' ' + value);
+                return ValidationResult.error(" Not comply \"[d m h s]\" format. \n Example 1d27h. But was " + value);
             }
         }
         return ValidationResult.ok();
+    }
+
+    public Duration getDuration(String value) {
+        try {
+            return Duration.parse(normalizeDurationString(value));
+        } catch (DateTimeParseException  | NullPointerException e) {
+            return Duration.ZERO;
+        }
     }
 
     String normalizeDurationString(String value) {

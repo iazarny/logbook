@@ -7,6 +7,7 @@ import com.az.lb.model.PersonActivity;
 import com.az.lb.model.PersonActivityDetail;
 import com.az.lb.servise.PersonActivityDetailService;
 import com.az.lb.servise.PersonService;
+import com.az.lb.views.ConfirmDialog;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HtmlContainer;
@@ -30,6 +31,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.shared.Registration;
@@ -56,21 +58,19 @@ public class PersonAdtivityDetailDialog extends Dialog {
     private final PersonActivityDetailService personActivityDetailService;
 
 
-    private HtmlContainer message;
-    private HtmlContainer personName;
+    private final ConfirmDialog confirmDialog;
 
-    private Button closeButton;
-
+    private final HtmlContainer message;
+    private final HtmlContainer personName;
+    private final Button closeButton;
     private Registration closeListenerRegistration = null;
-
-    private PersonActivity personActivity;
-
-    private List<PersonActivityDetail> persistedDetails;
     private final Grid<PersonActivityDetail> grid;
     private final TextField teskTextField;
-
     private final Binder<PersonActivityDetail> personActivityDetailBinder;
     private final Editor<PersonActivityDetail> personActivityDetailEditor;
+
+    private  PersonActivity personActivity;
+    private  List<PersonActivityDetail> persistedDetails;
 
     private boolean autoAddAllowed = true;
     private boolean saveNewRecord = false;
@@ -94,7 +94,9 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         setId("person-activity-detail");
 
-        personName = new H4();
+        this.confirmDialog = new ConfirmDialog("Please confirm", "");
+
+        this.personName = new H5();
 
         this.closeButton = new Button("Close");
 
@@ -181,7 +183,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
         spendTextField.setWidth(SIZE_SPEND);
         personActivityDetailBinder.forField(spendTextField)
                 .withValidator(
-                        new DurationValidator("String must comply \"[d m h s]\" format. But was {0}")
+                        new DurationValidator("")
                 )
                 //.withStatusLabel(validationStatus)
                 .bind("spend");
@@ -197,6 +199,25 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         Grid.Column<PersonActivityDetail> editorColumn = grid.addComponentColumn(i -> {
             final Icon delIcon = new Icon(VaadinIcon.MINUS_CIRCLE_O);
+            delIcon.addClickListener( e-> {
+
+                confirmDialog
+                        .message("Do you want to remove task " + i.getTask() + " ?")
+                        .onCancel(ce -> {
+                            grid.getDataProvider().refreshAll();
+                            confirmDialog.close();
+                        })
+                        .onConfirm(ce -> {
+                            personActivityDetailService.delete(i);
+                            persistedDetails = personActivityDetailService.findActivityDetail(this.personActivity);
+                            grid.setItems(this.persistedDetails);
+                            grid.getDataProvider().refreshAll();
+                            confirmDialog.close();
+                        })
+                        .open();
+
+                    }
+            );
             editButtons.add(delIcon);
 
 
