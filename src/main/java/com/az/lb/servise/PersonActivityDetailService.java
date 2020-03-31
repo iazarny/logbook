@@ -25,6 +25,7 @@ public class PersonActivityDetailService {
         return repository.findAllByActivity(personActivity); //OrderByDoneTask
     }
 
+    // TODO is present slave records . Wil be faster
     public long countAllByActivity(PersonActivity personActivity) {
         return repository.countAllByActivity(personActivity);
     }

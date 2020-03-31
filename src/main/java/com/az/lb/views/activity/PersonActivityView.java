@@ -21,6 +21,8 @@ import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -40,7 +42,6 @@ import java.util.stream.Collectors;
 @Route(value = "PersonActivity", layout = MainView.class)
 @RouteAlias(value = "PersonActivity", layout = MainView.class)
 @PageTitle("PersonActivity")
-//@CssImport(value = "styles/views/personactivity/person-activity.css", themeFor = "vaadin-grid")
 @CssImport("styles/views/personactivity/person-activity.css")
 public class PersonActivityView extends VerticalLayout implements AfterNavigationObserver /*, HasUrlParameter<String>*/ {
 
@@ -84,30 +85,19 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
         this.grid = new Grid<PersonActivity>();
         this.grid.setId("person-activity-list");
         this.grid.setHeightFull();
+        this.grid.setClassName("smallgrid");
 
-        /*Grid.Column<PersonActivity> nameColumn = this.grid.addColumn(pa -> pa.getPerson().getFullName())
-                .setHeader("Name")
-                .setResizable(true)
-                .setWidth("20%")
-                .setSortable(true);*/
 
-        Html test = new Html("<table border=1><tr><td class='paname'>Hi </td><td><br><br>dddddddddddddddddddd<br><br><br></td></tr></table>");
+        /*Html test = new Html("<table border=1><tr><td class='topp'>Hi </td>" +
+                "<td><br><br>dddddddddddddddddddd<br><br><br></td></tr></table>");
         add(test);
-
+*/
         Grid.Column<PersonActivity> nameColumn = this.grid.addColumn(pa -> pa.getPerson().getFullName())
                 .setHeader("Name")
                 .setResizable(true)
-                .setWidth("19%")
+                .setWidth("15%")
                 .setSortable(true);
-        nameColumn.setClassNameGenerator( pa -> "paname");
-        nameColumn.getElement().getStyle().set("verticalAlign", "top");
-        nameColumn.getElement().getStyle().set("vertical-align", "top");
-        nameColumn.getElement().getStyle().set("display", "inline");
-        nameColumn.getElement().getStyle().set("height", "100px");
-
-
-
-
+        nameColumn.setId("vvvbbb");
 
 
         Grid.Column<PersonActivity> detailColumn = this.grid.addColumn(new ComponentRenderer<>(pa -> {
@@ -116,27 +106,12 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
             );
         }))
                 .setResizable(true)
-                .setWidth("40%")
-                .setHeader("Detail");
-        //
-
-        /*Grid.Column<PersonActivity> detailColumn = this.grid.addColumn(
-
-                TemplateRenderer.<PersonActivity>of("<div style='text-align:left; white-space:normal; vertical-align: top'>[[item.note]]</div>")
-                        .withProperty("note", vp -> {
-                            return createDetailActivity(personActivityDetailService, vp);
-                        })
-
-        )
-                .setResizable(true)
-                .setWidth("40%")
+                .setWidth("55%")
                 .setHeader("Detail")
-                .setFlexGrow(1);*/
-
+                .setFlexGrow(1);
 
         Grid.Column<PersonActivity> notesColumn = this.grid.addColumn(
-
-                TemplateRenderer.<PersonActivity>of("<div style='text-align:left; white-space:normal; vertical-align: top'>[[item.note]]</div>")
+                TemplateRenderer.<PersonActivity>of("<div style='align-self:baseline; white-space:normal;'>[[item.note]]</div>")
                         .withProperty("note", vp -> {
                             boolean needHr = StringUtils.isNotBlank(vp.getNote()) && StringUtils.isNotBlank(vp.getTags());
                             return ObjectUtils.defaultIfNull(vp.getNote(),"") +
@@ -146,24 +121,59 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
         )
                 .setResizable(true)
-                .setWidth("30%")
+                .setWidth("20%")
                 .setHeader("Notes / Blockers")
                 .setFlexGrow(1);
 
+
+
         this.grid.addColumn(new ComponentRenderer<>(pa -> {
+
+            Icon playIcon = new Icon(VaadinIcon.PLAY);
+            Icon delIcon = new Icon(VaadinIcon.MINUS_CIRCLE_O);
+            Icon recordIcon = new Icon(VaadinIcon.RECORDS);
+            recordIcon.addClickListener(
+                    e -> {
+
+                        Notification notification = new RecordPersonSpeachNotification(pa);
+
+                        notification.open();
+                    }
+            );
+
             if (StringUtils.isBlank(pa.getNote())
                     && StringUtils.isBlank(pa.getTags())
                     && ArrayUtils.isEmpty(pa.getRecord())
                     && personActivityDetailService.countAllByActivity(pa) == 0
             ) {
-                Icon delIcon = new Icon(VaadinIcon.MINUS_CIRCLE_O);
                 delIcon.addClickListener(e -> removeActivity(pa));
-                return delIcon;
 
+            } else {
+                delIcon.setColor("grey");
             }
-            return new Html("<div></div>");
+
+            if (ArrayUtils.isEmpty(pa.getRecord())) {
+                playIcon.setColor("grey");
+            } else {
+                playIcon.addClickListener(
+                        e -> {}
+                );
+            }
+
+
+            final FlexLayout recordButtonWrapper = new FlexLayout(recordIcon);
+            recordButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+            final FlexLayout playButtonWrapper = new FlexLayout(playIcon);
+            playButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+            final FlexLayout delButtonWrapper = new FlexLayout(delIcon);
+            delButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+            return new HorizontalLayout(
+                    delButtonWrapper, playButtonWrapper, recordButtonWrapper );
+
         }))
                 .setAutoWidth(true)
+                .setWidth("10%")
                 .setTextAlign(ColumnTextAlign.END);
 
         this.grid.addItemClickListener(
@@ -277,7 +287,8 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
         if (details.isEmpty()) {
             cellBody = "<div></div>";
         } else {
-            cellBody = personActivityService.getDetailsAsHtmlTable(details, pa.getNote(), pa.getTags(), false);
+            cellBody = personActivityService.getDetailsAsHtmlTable(details, pa.getNote(),
+                    pa.getTags(), false);
         }
         return cellBody;
     }

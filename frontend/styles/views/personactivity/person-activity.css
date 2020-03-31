@@ -10,45 +10,41 @@
 
 table.detail-table {
 
-    border: 1px  solid gray;
+    border: 0.1px  solid #aaaaaa;
     font-size: x-small;
-    width: auto;
+
 }
 
-td.paname {
-    color: red;
+tr.task-rt {
     vertical-align: top;
     display: inline;
 }
 
-paname {
-    color: green;
+tr.task-done {
+    background-color: #eeffee;
     vertical-align: top;
-    display: inline;
+    white-space: normal;
 }
 
-#paname {
-    color: blue;
+tr.task-not-done {
+    background-color: #eeeeff;
     vertical-align: top;
-    display: inline;
+    white-space: normal;
 }
 
-.paname {
-    color: cyan;
+td.task-total {
+    font-weight: bold;
     vertical-align: top;
-    display: inline;
 }
 
-.v-grid-cell.paname {
-    color: cyan;
+td.task-total-value {
+    font-weight: bold;
     vertical-align: top;
-    display: inline;
+    text-align: end;
+    background-color: #eeeeee;
+    vert-align: top;
 }
 
-
-/*tr.detail-table-tr td {
-    border-bottom:1pt solid black;
-}*/
 
 div.employee-column {
     border-radius: var(--lumo-border-radius);
@@ -60,16 +56,6 @@ div.employee-column>h3 {
     margin: 0;
 }
 
-
-#person-activity-list {
-    height: 100%;
-}
-
-.employee-column {
-    border-radius: var(--lumo-border-radius);
-    box-shadow: var(--lumo-box-shadow-s);
-    padding: var(--lumo-space-s);
-}
 
 #order {
     margin: 0

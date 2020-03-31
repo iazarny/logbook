@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,8 +91,12 @@ public class PersonActivityService {
         return personActivityRepository.findAll();
     }
 
-    public String getDetailsAsHtmlTable(final List<PersonActivityDetail> details,
+    public String getDetailsAsHtmlTable(final List<PersonActivityDetail> detailsRaw,
                                         final String notes, final String tags, final boolean useNotesTags) {
+
+        Duration totalTeamSpend = Duration.ZERO;
+        final List<PersonActivityDetail> details  = new ArrayList<>(detailsRaw);
+        details.sort((o1, o2) -> Boolean.compare(o1.isDone(), o2.isDone()));
 
         DurationValidator durationValidator = new DurationValidator("");
 
@@ -106,43 +107,59 @@ public class PersonActivityService {
         } else {
             Duration totalSpend = Duration.ZERO;
             for (int i = 0; i < details.size(); i++) {
-
                 PersonActivityDetail ad = details.get(i);
-
                 totalSpend = totalSpend.plus(durationValidator.getDuration(ad.getSpend()));
-
+                totalTeamSpend = totalTeamSpend.plus(durationValidator.getDuration(ad.getSpend()));
+                String doneClass = ad.isDone() ? "task-tr task-done" : "task-tr task-not-done";
                 rez += String.format(
-                        "<tr class='detail-table-tr'>" +
-                                "<td  valign='top' >%s</td>" +
-                                "<td  valign='top' >%s</td>" + //todo several lines, br up to param
-                                "<td  valign='top' aligin=right>%s</td>" +
+                        "<tr class='%s'>" +
+                                "<td>%s</td>" +
+                                "<td>%s</td>" +
+                                "<td  style='text-align: end;'>%s</td>" +
                                 "%s" +
                                 "</tr>",
+                        doneClass,
                         ad.getTask(),
                         ad.getDetail(),
                         ad.getSpend(),
                         i == 0 ? getNotesAndTags(details, notes, tags, useNotesTags) : ""
-
                 );
-
             }
 
             rez += String.format(
-                    "<tr class='detail-table-tr'>" +
-                            "<td width='95%%' valign='top' colspan=2>%s</td>" +
-                            "<td width='5%%' valign='top' aligin=right>%s</td>" +
+                    "<tr class='task-tr'>" +
+                            "<td width='95%%' valign='top' colspan=2 class='task-total'>%s</td>" +
+                            "<td width='5%%'  class='task-total-value'>%s</td>" +
                             "</tr>",
                     "Total",
-                    totalSpend.toString()
-
+                    humanizeTotal(totalSpend.toString())
             );
 
         }
 
+        /*rez += String.format(
+                "<tr class='task-tr'>" +
+                        "<td width='95%%' valign='top' colspan=2 class='task-total'>%s</td>" +
+                        "<td width='5%%'  class='task-total-value'>%s</td>" +
+                        "</tr>",
+                "Team Total",
+                humanizeTotal(totalTeamSpend.toString())
+        );*/
+
         rez += "</table>";
-
-
         return rez;
+    }
+
+    private String humanizeTotal (String total) {
+        return total.replace("P", "")
+                .replace("T", "")
+                .replace("D", "d ")
+                .replace("H", "h ")
+                .replace("M", "m ")
+                .replace("S", "s ")
+                .replace("  ", " ")
+                .replace("  ", " ")
+                ;
     }
 
     public String getNotesAndTags(final List<PersonActivityDetail> details,
