@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.sql.Blob;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -26,9 +27,12 @@ public class PersonActivity {
     @Column(name = "tags", length = 256)
     private String tags;
 
+    @Column(name = "recordct", length = 256)
+    private String contentType;
+
     @Lob
     @Column(name = "record", columnDefinition="BLOB")
-    private byte[] record;
+    private Blob record;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Activity activity;
@@ -60,11 +64,11 @@ public class PersonActivity {
         this.tags = tags;
     }
 
-    public byte[] getRecord() {
+    public Blob getRecord() {
         return record;
     }
 
-    public void setRecord(byte[] record) {
+    public void setRecord(Blob record) {
         this.record = record;
     }
 
@@ -82,6 +86,14 @@ public class PersonActivity {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     @Override

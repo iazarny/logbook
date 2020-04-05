@@ -8,12 +8,18 @@ import com.az.lb.repository.PersonRepository;
 import com.az.lb.repository.TeamPersonRepository;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.LobHelper;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transactional;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
@@ -89,6 +95,23 @@ public class PersonActivityService {
     @Transactional
     public List<PersonActivity> findAll() {
         return personActivityRepository.findAll();
+    }
+
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+
+    @Transactional
+    public void addAudio(String id, String contentType, Long size, InputStream is) {
+        UUID pid = UUID.fromString(id);
+        PersonActivity pa = personActivityRepository.getOne(pid);
+        if (pa != null) {
+            SessionFactory sf = entityManagerFactory.unwrap(SessionFactory.class);
+            Session ses = sf.openSession();
+            LobHelper lb = ses.getLobHelper();
+            pa.setContentType(contentType);
+            pa.setRecord(lb.createBlob(is, size));
+            personActivityRepository.save(pa);
+        }
     }
 
     public String getDetailsAsHtmlTable(final List<PersonActivityDetail> detailsRaw,

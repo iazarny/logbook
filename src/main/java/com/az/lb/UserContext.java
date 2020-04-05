@@ -58,7 +58,6 @@ public class UserContext {
             no.setName("Default");
             orgRepository.save(no);
             org = orgRepository.findAll().get(0);
-            System.out.println(">>>>>>>>>>>>>>>>" + org.getId());
 
             Team team = service.createNewTeam(
                     org.getId().toString(),

@@ -143,7 +143,8 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
             if (StringUtils.isBlank(pa.getNote())
                     && StringUtils.isBlank(pa.getTags())
-                    && ArrayUtils.isEmpty(pa.getRecord())
+                    //&& ArrayUtils.isEmpty(pa.getRecord())
+                    //&& pa.getRecord().length() == 0
                     && personActivityDetailService.countAllByActivity(pa) == 0
             ) {
                 delIcon.addClickListener(e -> removeActivity(pa));
@@ -152,13 +153,14 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                 delIcon.setColor("grey");
             }
 
-            if (ArrayUtils.isEmpty(pa.getRecord())) {
+            playIcon.setColor("cyan");
+           /* if (ArrayUtils.isEmpty(pa.getRecord())) {
                 playIcon.setColor("grey");
             } else {
                 playIcon.addClickListener(
                         e -> {}
                 );
-            }
+            }*/
 
 
             final FlexLayout recordButtonWrapper = new FlexLayout(recordIcon);

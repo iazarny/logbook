@@ -20,9 +20,12 @@ public class RecordPersonSpeachNotification extends Notification {
 
         this.personActivity = personActivity;
 
-        //UI.getCurrent().getPage().addJavaScript("recorder.js");
+        UI.getCurrent().getPage().addJavaScript("js/WebAudioRecorder.min.js");
+        UI.getCurrent().getPage().addJavaScript("js/app.js");
+/*
         UI.getCurrent().getPage().addJavaScript("js/recorder.js");
         UI.getCurrent().getPage().addJavaScript("js/record-person-speach-notification.js");
+*/
 
         Button stopRecordingBtn = new Button("Stop recording");
 
