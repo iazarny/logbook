@@ -8,6 +8,7 @@ import com.az.lb.repository.PersonRepository;
 import com.az.lb.repository.TeamPersonRepository;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.LobHelper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transactional;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
@@ -38,6 +41,9 @@ public class PersonActivityService {
 
     @Autowired
     private PersonActivityRepository personActivityRepository;
+
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     @Transactional
     public List<PersonActivity> findAllByTeamDate(Team team, LocalDate date) {
@@ -97,8 +103,17 @@ public class PersonActivityService {
         return personActivityRepository.findAll();
     }
 
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
+    public Pair<InputStream, String> getAudio(String id) throws Exception {
+        UUID pid = UUID.fromString(id);
+        PersonActivity pa = personActivityRepository.getOne(pid);
+        if (pa != null) {
+            return Pair.of(
+                    pa.getRecord().getBinaryStream(),
+                    pa.getContentType()
+            );
+        }
+        return null;
+    }
 
     @Transactional
     public void addAudio(String id, String contentType, Long size, InputStream is) {

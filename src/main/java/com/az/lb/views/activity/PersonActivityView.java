@@ -114,9 +114,9 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                 TemplateRenderer.<PersonActivity>of("<div style='align-self:baseline; white-space:normal;'>[[item.note]]</div>")
                         .withProperty("note", vp -> {
                             boolean needHr = StringUtils.isNotBlank(vp.getNote()) && StringUtils.isNotBlank(vp.getTags());
-                            return ObjectUtils.defaultIfNull(vp.getNote(),"") +
+                            return ObjectUtils.defaultIfNull(vp.getNote(), "") +
                                     (needHr ? "\n" : "") +
-                                    ObjectUtils.defaultIfNull(vp.getTags(),"");
+                                    ObjectUtils.defaultIfNull(vp.getTags(), "");
                         })
 
         )
@@ -124,7 +124,6 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                 .setWidth("20%")
                 .setHeader("Notes / Blockers")
                 .setFlexGrow(1);
-
 
 
         this.grid.addColumn(new ComponentRenderer<>(pa -> {
@@ -135,7 +134,13 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
             recordIcon.addClickListener(
                     e -> {
 
-                        Notification notification = new RecordPersonSpeachNotification(pa);
+                        Notification notification = new RecordPersonSpeachNotification(pa, id -> {
+                            playIcon.setColor("green");
+                            playIcon.addClickListener(
+                                    plc -> {
+                                    }
+                            );
+                        });
 
                         notification.open();
                     }
@@ -144,7 +149,7 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
             if (StringUtils.isBlank(pa.getNote())
                     && StringUtils.isBlank(pa.getTags())
                     //&& ArrayUtils.isEmpty(pa.getRecord())
-                    //&& pa.getRecord().length() == 0
+                    && pa.isRecordEmpty()
                     && personActivityDetailService.countAllByActivity(pa) == 0
             ) {
                 delIcon.addClickListener(e -> removeActivity(pa));
@@ -153,14 +158,16 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                 delIcon.setColor("grey");
             }
 
-            playIcon.setColor("cyan");
-           /* if (ArrayUtils.isEmpty(pa.getRecord())) {
+
+            if (pa.isRecordEmpty()) {
                 playIcon.setColor("grey");
             } else {
+                playIcon.setColor("cyan");
                 playIcon.addClickListener(
-                        e -> {}
+                        pcl -> {
+                        }
                 );
-            }*/
+            }
 
 
             final FlexLayout recordButtonWrapper = new FlexLayout(recordIcon);
@@ -171,7 +178,7 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
             delButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
             return new HorizontalLayout(
-                    delButtonWrapper, playButtonWrapper, recordButtonWrapper );
+                    delButtonWrapper, playButtonWrapper, recordButtonWrapper);
 
         }))
                 .setAutoWidth(true)

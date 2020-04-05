@@ -9,23 +9,23 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.page.Page;
 
+import java.util.function.Consumer;
+
 public class RecordPersonSpeachNotification extends Notification {
 
     private final PersonActivity personActivity;
+    private final Consumer<String> onClose;
 
 
-    public RecordPersonSpeachNotification(final PersonActivity personActivity) {
+    public RecordPersonSpeachNotification(final PersonActivity personActivity, final Consumer<String> onClose) {
 
         super();
 
         this.personActivity = personActivity;
+        this.onClose = onClose;
 
         UI.getCurrent().getPage().addJavaScript("js/WebAudioRecorder.min.js");
         UI.getCurrent().getPage().addJavaScript("js/app.js");
-/*
-        UI.getCurrent().getPage().addJavaScript("js/recorder.js");
-        UI.getCurrent().getPage().addJavaScript("js/record-person-speach-notification.js");
-*/
 
         Button stopRecordingBtn = new Button("Stop recording");
 
@@ -44,9 +44,6 @@ public class RecordPersonSpeachNotification extends Notification {
 
         page.executeJs("startRecording()");
 
-
-
-
     }
 
     private void stopRecording() {
@@ -55,8 +52,9 @@ public class RecordPersonSpeachNotification extends Notification {
 
         page.executeJs("stopRecording($0)", personActivity.getId().toString());
 
-
         this.close();
-        //todo save
+
+        onClose.accept(personActivity.getId().toString());
+
     }
 }

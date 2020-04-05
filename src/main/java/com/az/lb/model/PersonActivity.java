@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -105,5 +106,14 @@ public class PersonActivity {
                 ", activity=" + activity +
                 ", person=" + person +
                 '}';
+    }
+
+    public boolean isRecordEmpty() {
+        try {
+            return getRecord() == null || getRecord().length() == 0;
+        } catch (SQLException e) {
+            e.printStackTrace(); // to do log
+            return true;
+        }
     }
 }

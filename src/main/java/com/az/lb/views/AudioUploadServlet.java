@@ -1,7 +1,6 @@
 package com.az.lb.views;
 
 import com.az.lb.servise.PersonActivityService;
-import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinServletConfiguration;
 import com.vaadin.flow.spring.SpringServlet;
 import org.springframework.context.ApplicationContext;
@@ -9,16 +8,13 @@ import org.springframework.context.ApplicationContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 
 @MultipartConfig
 @WebServlet(urlPatterns = "/upload/audio", name = "uploadaudio", asyncSupported = true)
@@ -39,6 +35,7 @@ public class AudioUploadServlet extends SpringServlet {
         if ("POST".equalsIgnoreCase(request.getMethod())) {
             try {
                 Collection<Part> parts = request.getParts();
+                System.out.println(">>>>>>>>>>>>>>> pid " + request.getParameterValues("pid")[0]);
 
                 Part audio = getPart(parts, "audio_data").get();
                 PersonActivityService pas = context.getBean(PersonActivityService.class);
@@ -61,7 +58,7 @@ public class AudioUploadServlet extends SpringServlet {
             response.setStatus(405);
             response.setContentType("text/html");
             PrintWriter pwriter = response.getWriter();
-            pwriter.println("405 Method " + request.getMethod() + " Not Allowed");
+            pwriter.println("405 Method " + request.getMethod() + " not allowed");
             pwriter.close();
         }
 
