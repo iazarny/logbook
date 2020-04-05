@@ -165,6 +165,9 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                 playIcon.setColor("cyan");
                 playIcon.addClickListener(
                         pcl -> {
+
+                            Notification playNotification = new RecordPersonPlayNotification(pa);
+                            playNotification.open();
                         }
                 );
             }
