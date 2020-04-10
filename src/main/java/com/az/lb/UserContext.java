@@ -54,75 +54,92 @@ public class UserContext {
             if (defaultOrg.isPresent()) {
                 return defaultOrg.get();
             }
-            Org no = new Org();
-            no.setName("Default");
-            orgRepository.save(no);
-            org = orgRepository.findAll().get(0);
-
-            Team team = service.createNewTeam(
-                    org.getId().toString(),
-                    "Simple test value");
-
-            service.createNewTeam(
-                    org.getId().toString(),
-                    "One more team");
-
-            Person person = new Person();
-            person.setEmail("john.dou@org.net");
-            person.setFirstName("John");
-            person.setLastName("Dou");
-            person.setOrg(org);
-            personRepository.save(person);
-            teamPersonService.assignPerson(person.getId(), team.getId());
-
-            person = new Person();
-            person.setEmail("michael.drunk@org.net");
-            person.setFirstName("Michael");
-            person.setLastName("Drunk");
-            person.setOrg(org);
-            personRepository.save(person);
-            teamPersonService.assignPerson(person.getId(), team.getId());
-
-            person = new Person();
-            person.setEmail("scott.scanotti@org.net");
-            person.setFirstName("Scott");
-            person.setLastName("Scanotti");
-            person.setOrg(org);
-            person.setOrgManager(true);
-            personRepository.save(person);
-            teamPersonService.assignPerson(person.getId(), team.getId());
-
-            Activity activity = personActivityService.createPersonsActivitySheet(team, LocalDate.now());
-
-
-            personActivityService.findAllByActivity(activity).stream()
-                    .forEach(
-
-                            personActivity -> {
-                                int j = (int) (Math.random() * 20);
-                                for (int i = 0; i < j; i++) {
-                                    PersonActivityDetail pad = new PersonActivityDetail();
-                                    pad.setActivity(personActivity);
-                                    pad.setTask("ASD-" + task); task ++;
-                                    pad.setDetail("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." + i);
-                                    pad.setSpend("1d18h33m2s");
-                                    pad.setDone( Math.random() > 0.5);
-                                    personActivityDetailService.save(pad);
-                                }
-
-                            }
-
-                    );
-
-
-
+            createTestData();
 
 
         }
         return org;
     }
 
-    int task = (int) (Math.random() * 1000);
+    void createTestData() {
+        Org no = new Org();
+        no.setName("Default");
+        orgRepository.save(no);
+        org = orgRepository.findAll().get(0);
+
+        Team team = service.createNewTeam(
+                org.getId().toString(),
+                "Simple test value");
+
+        service.createNewTeam(
+                org.getId().toString(),
+                "One more team");
+
+        Person person = new Person();
+        person.setEmail("john.dou@org.net");
+        person.setFirstName("John");
+        person.setLastName("Dou");
+        person.setOrg(org);
+        personRepository.save(person);
+        teamPersonService.assignPerson(person.getId(), team.getId());
+
+        person = new Person();
+        person.setEmail("michael.drunk@org.net");
+        person.setFirstName("Michael");
+        person.setLastName("Drunk");
+        person.setOrg(org);
+        personRepository.save(person);
+        teamPersonService.assignPerson(person.getId(), team.getId());
+
+        person = new Person();
+        person.setEmail("scott.scanotti@org.net");
+        person.setFirstName("Scott");
+        person.setLastName("Scanotti");
+        person.setOrg(org);
+        person.setOrgManager(true);
+        personRepository.save(person);
+        teamPersonService.assignPerson(person.getId(), team.getId());
+
+
+
+        person = new Person("j.pink@org.net", "Joane", "Pink", org);
+        personRepository.save(person);
+
+        person = new Person("v.cepesh@org.net","Vlad","Cepech",org);
+        personRepository.save(person);
+
+        person = new Person("p.dolgih@org.net","Piotr","Dolgih",org);
+        personRepository.save(person);
+
+        person = new Person("s.macdac@org.net","Scroogde","Macdac",org);
+        personRepository.save(person);
+
+
+        Activity activity = personActivityService.createPersonsActivitySheet(team, LocalDate.now());
+
+
+        personActivityService.findAllByActivity(activity).stream()
+                .forEach(
+
+                        personActivity -> {
+                            int j = (int) (Math.random() * 12);
+                            for (int i = 0; i < j; i++) {
+                                PersonActivityDetail pad = new PersonActivityDetail();
+                                pad.setActivity(personActivity);
+                                pad.setTask("ASD-" + task); task ++;
+                                pad.setDetail("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." + i);
+                                pad.setSpend("7h33m2s");
+                                pad.setDone( Math.random() > 0.5);
+                                personActivityDetailService.save(pad);
+                            }
+                            task = task - (int) (Math.random() * 6);
+
+                        }
+
+                );
+    }
+
+    int task = (int) (Math.random() * 10000);
 
     public Team getSelectedTeam() {
         return selectedTeam;

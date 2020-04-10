@@ -9,7 +9,10 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
@@ -49,6 +52,7 @@ public class TeamActivityView extends VerticalLayout implements AfterNavigationO
         this.grid.addColumn(new ComponentRenderer<>(team -> {
             return new Button(
                     "Date",
+                    new Icon(VaadinIcon.CALENDAR),
                     e-> { newActivity(team); }
                     );
         }))
@@ -69,7 +73,7 @@ public class TeamActivityView extends VerticalLayout implements AfterNavigationO
 
         add(
                 this.activityDateDialog,
-                new H5("Team's activity"),
+                new H4("Team's activity"),
                 this.grid
         );
 

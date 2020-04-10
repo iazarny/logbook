@@ -8,6 +8,28 @@
     height: 100%;
 }
 
+tr.task-rt {
+    vertical-align: top;
+    display: inline;
+}
+
+tr.task-done {
+    background-color: #eeffee;
+    vertical-align: top;
+    white-space: normal;
+}
+
+tr.task-not-done {
+    background-color: #eeeeff;
+    vertical-align: top;
+    white-space: normal;
+}
+
+td.task-total {
+    font-weight: bold;
+    vertical-align: top;
+}
+
 div.employee-column {
     border-radius: var(--lumo-border-radius);
     box-shadow: var(--lumo-box-shadow-s);

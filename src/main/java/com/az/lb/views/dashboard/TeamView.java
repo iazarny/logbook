@@ -1,40 +1,29 @@
 package com.az.lb.views.dashboard;
 
+import com.az.lb.MainView;
 import com.az.lb.UserContext;
 import com.az.lb.model.Team;
 import com.az.lb.servise.TeamService;
 import com.az.lb.views.ConfirmDialog;
-import com.az.lb.views.activity.ActivityDateDialog;
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.function.ValueProvider;
+import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
-
-import com.az.lb.MainView;
-
-@Route(value = "Dashboard", layout = MainView.class)
-@RouteAlias(value = "Dashboard", layout = MainView.class)
-@PageTitle("Dashboard")
+@Route(value = "Teams", layout = MainView.class)
+@RouteAlias(value = "Teams", layout = MainView.class)
+@PageTitle("Teams")
 @CssImport("styles/views/dashboard/dashboard-view.css")
 public class TeamView extends VerticalLayout implements AfterNavigationObserver {
 
@@ -44,7 +33,6 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
     private final Grid<Team> grid;
     private final ConfirmDialog confirmDialog;
     private final TeamEditDialog teamDialog;
-    private final ActivityDateDialog activityDateDialog;
 
     private UserContext userContext;
 
@@ -56,8 +44,6 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
 
         this.grid = new Grid<Team>();
         this.grid.setId("list");
-        //this.grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_COMPACT,
-        //      GridVariant.MATERIAL_COLUMN_DIVIDERS);
         this.grid.setHeightFull();
         this.grid.addColumn((ValueProvider<Team, String>) team ->
                 team.getName()).setHeader("Name").setSortable(true);
@@ -67,30 +53,14 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
         this.grid.addComponentColumn(
                 i -> {
 
-                    Icon deleteIcon = new Icon(VaadinIcon.CROSS_CUTLERY);
-                    deleteIcon.addClickListener(
-                            e -> removeTeam(i)
-                    );
-                    final FlexLayout deleteButtonWrapper = new FlexLayout(deleteIcon);
-                    deleteButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+                    Button deleteBtn = new Button(new Icon(VaadinIcon.DEL), e -> removeTeam(i));
 
+                    Button editBtn = new Button(new Icon(VaadinIcon.EDIT), e -> editTeam(i));
 
-                    Icon editIcon = new Icon(VaadinIcon.PENCIL);
-                    editIcon.addClickListener(
-                            e -> editTeam(i)
-                    );
-                    final FlexLayout editButtonWrapper = new FlexLayout(editIcon);
-                    editButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
-
-                    Icon membersIcon = new Icon(VaadinIcon.USERS);
-                    membersIcon.addClickListener(
-                            e -> editMembers(i)
-                    );
-                    final FlexLayout membersButtonWrapper = new FlexLayout(membersIcon);
-                    membersButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+                    Button membersBtn = new Button(new Icon(VaadinIcon.USERS), e -> editMembers(i));
 
                     HorizontalLayout hl = new HorizontalLayout(
-                            deleteButtonWrapper, editButtonWrapper, membersButtonWrapper);
+                            deleteBtn, editBtn, membersBtn);
 
                     return hl;
                 }
@@ -98,8 +68,6 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
                 .setFlexGrow(0)
                 .setTextAlign(ColumnTextAlign.END);
 
-
-        this.activityDateDialog = new ActivityDateDialog("Activity date");
 
         this.confirmDialog = new ConfirmDialog("Please confirm", "");
 
@@ -113,15 +81,13 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
 
 
         final HorizontalLayout hl = new HorizontalLayout(
-                new H5("Teams"),
+                new H4("Teams"),
                 addButtonWrapper
         );
         hl.expand(addButtonWrapper);
         hl.setWidthFull();
 
         this.teamDialog = new TeamEditDialog("Add new team");
-
-        add(this.activityDateDialog);
 
         add(this.confirmDialog);
 
@@ -165,7 +131,7 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
     private void editTeam(Team team) {
 
         teamDialog
-                .message("Edit " + team.getName())
+                .message("Edit")
                 .teamName(team.getName())
                 .onCancel(e -> {
                     grid.getDataProvider().refreshAll();
@@ -189,10 +155,17 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
                     confirmDialog.close();
                 })
                 .onConfirm(e -> {
-                    service.deleteTeam(team.getId());
-                    ((ListDataProvider) grid.getDataProvider()).getItems().remove(team);
-                    grid.getDataProvider().refreshAll();
-                    confirmDialog.close();
+                    try {
+                        service.deleteTeam(team.getId());
+                        ((ListDataProvider) grid.getDataProvider()).getItems().remove(team);
+                        grid.getDataProvider().refreshAll();
+                        confirmDialog.close();
+                    } catch (Exception ex) {
+                        //todo log
+                        ex.printStackTrace();
+                        Notification.show("Can't remove team");
+                    }
+
                 })
                 .open();
     }

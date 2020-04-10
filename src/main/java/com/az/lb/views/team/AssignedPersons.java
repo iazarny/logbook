@@ -9,11 +9,11 @@ import com.az.lb.model.Team;
 import com.az.lb.servise.PersonService;
 import com.az.lb.servise.TeamPersonService;
 import com.az.lb.servise.TeamService;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -83,16 +83,16 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
         availableMembersLb.setMinWidth("200px");
         availableMembersLb.setMaxWidth("300px");
         availableMembersLb.setWidth("250px");
-        hlMain.add(availableMembersLb);
+        availableMembersLb.setHeight("500px");
 
         VerticalLayout verticalLayout = new VerticalLayout(
-                addAllBtn, addOneBtn, removeOneBtn, removeAllBtn
+                new Html("<div><br/><br/><br/></div>"), addAllBtn, addOneBtn, removeOneBtn, removeAllBtn
         );
         verticalLayout.setMinWidth("100px");
         verticalLayout.setMaxWidth("100px");
         verticalLayout.setWidth("100px");
 
-        hlMain.add(verticalLayout);
+
 
         assignedMembersLb = new ListBox<>();
         assignedMembersLb.setRenderer(new TextRenderer<>(p -> p.getFullName() ));
@@ -101,67 +101,55 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
         assignedMembersLb.setWidth("250px");
         assignedMembersLb.setHeight("500px");
 
+        hlMain.add(
+                new VerticalLayout(
+                        new Label("Available persons"),
+                        availableMembersLb
+                )
+        );
 
-        hlMain.add(assignedMembersLb);
+        hlMain.add(verticalLayout);
+
+        hlMain.add(
+                new VerticalLayout(
+                        new Label("Assigned persons"),
+                        assignedMembersLb
+                )
+        );
+
+
 
         teamCmb = new ComboBox<>();
         teamCmb.setAllowCustomValue(false);
         teamCmb.setItemLabelGenerator(Team::getName);
         teamCmb.addValueChangeListener(e -> {
             if (e.getValue() != null) {
-                repopulateMembers(
-                        userContext.getOrg(),
-                        e.getValue().getId()
-                );
-
+                repopulateMembers( userContext.getOrg(), e.getValue().getId() );
             }
         });
 
-        availableMembersLb.addValueChangeListener(
-                e -> {
-                    changeControlsVisibility();
-                }
-        );
+        availableMembersLb.addValueChangeListener(  e -> changeControlsVisibility() );
 
-        assignedMembersLb.addValueChangeListener(
-                e -> {
-                    changeControlsVisibility();
-                }
-        );
+        assignedMembersLb.addValueChangeListener(e -> changeControlsVisibility()  );
 
-        addAllBtn.addClickListener( e-> {
-            assignAllPersons();
+        addAllBtn.addClickListener( e-> assignAllPersons());
 
-        });
+        addOneBtn.addClickListener( e-> assignOnePerson());
 
-        addOneBtn.addClickListener( e-> {
-            assignOnePerson();
+        removeOneBtn.addClickListener( e-> removeOnePerson());
 
-        });
+        removeAllBtn.addClickListener( e-> removeAllPersons());
 
-        removeOneBtn.addClickListener( e-> {
-
-            removeOnePerson();
-
-        });
-
-        removeAllBtn.addClickListener( e-> {
-            removeAllPersons();
-
-        });
-
-        header = new H5("Team members");
+        header = new H6("Select team");
         HorizontalLayout htTitle = new HorizontalLayout(
                 header, teamCmb
         );
 
-
         add(
+                new H4("Assign members to the team"),
                 htTitle,
                 hlMain
         );
-
-
 
     }
 

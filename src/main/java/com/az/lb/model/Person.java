@@ -32,6 +32,16 @@ public class Person {
 
     private Boolean orgManager;
 
+    public Person() {
+    }
+
+    public Person(String email, String firstName, String lastName, Org org) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.org = org;
+    }
+
     public UUID getId() {
         return id;
     }

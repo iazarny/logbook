@@ -5,6 +5,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -30,7 +31,7 @@ public class TeamEditDialog extends Dialog {
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
 
-        message = new H5(title);
+        message = new H4(title);
         input = new TextField();
         confirmButton = new Button("Ok");
         cancelButton = new Button("Cancel");

@@ -4,13 +4,20 @@ import com.az.lb.model.PersonActivity;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+
+import java.util.UUID;
 
 public class RecordPersonPlayNotification extends Notification {
 
     public RecordPersonPlayNotification(final PersonActivity personActivity) {
+        String id = "player" + UUID.randomUUID().toString();
         Html html = new Html(
                 String.format(
-                        "<audio controls><source src=\"download/audio?pid=%s\" type=\"audio/mpeg\"></audio>",
+                                "<audio id='%s' controls>" +
+                                "<source src=\"download/audio?pid=%s\" type=\"audio/mpeg\">" +
+                                "</audio>" ,
+                        id,
                         personActivity.getId().toString()
                 )
         );
@@ -21,8 +28,11 @@ public class RecordPersonPlayNotification extends Notification {
                 }
         );
         setPosition(Notification.Position.TOP_CENTER);
-        add(html);
-        add(btnStop);
+        add(
+                new HorizontalLayout(
+                        html,btnStop
+                )
+        );
     }
 
 }

@@ -1,6 +1,7 @@
 package com.az.lb.views.masterdetail;
 
 import com.az.lb.model.Person;
+import com.az.lb.views.ViewConst;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HtmlContainer;
@@ -9,6 +10,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -38,39 +40,42 @@ public class PersonEditDialog extends Dialog {
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
 
-        message = new H5(title);
-        emailTextField = new TextField("Email");
-        firstNameTextField = new TextField("First name");
-        lastNameTextField = new TextField("Last name");
+        message = new H4(title);
+        emailTextField = new TextField();
+        firstNameTextField = new TextField();
+        lastNameTextField = new TextField();
         confirmButton = new Button("New");
         cancelButton = new Button("Cancel");
-        managerCombobox = new Checkbox("Manager");
+        managerCombobox = new Checkbox();
 
         final FlexLayout cancelButtonWrapper = new FlexLayout(cancelButton);
         cancelButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
+        final FlexLayout confirmButtonWrapper = new FlexLayout(confirmButton);
+        confirmButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
         HorizontalLayout hl = new HorizontalLayout(
-                confirmButton,
+                confirmButtonWrapper,
                 cancelButtonWrapper
         );
         hl.setWidthFull();
-        hl.expand(cancelButtonWrapper);
+        hl.expand(confirmButtonWrapper, cancelButtonWrapper);
 
-        FormLayout nameLayout = new FormLayout(
-                firstNameTextField,
-                lastNameTextField,
-                emailTextField,
-                managerCombobox
-
-        );
-        nameLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
-                new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
-
-
-
+        FormLayout nameLayout = new FormLayout();
+        nameLayout.addFormItem( firstNameTextField, "First name");
+        nameLayout.addFormItem(lastNameTextField,"Last name");
+        nameLayout.addFormItem(emailTextField,"Email");
+        nameLayout.addFormItem(managerCombobox, "Manager");
         nameLayout.add(hl);
+        nameLayout.setResponsiveSteps(
+                new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
+                new FormLayout.ResponsiveStep("300px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
+        nameLayout.setWidth(ViewConst.DIALOG_WIDTH);
 
-        add(nameLayout);
+        add(
+                message,
+                nameLayout
+        );
 
     }
 

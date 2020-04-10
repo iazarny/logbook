@@ -42,8 +42,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.WeakHashMap;
 
-//@CssImport("styles/views/personactivitydetail/person-activity-detail.css")
-
 public class PersonAdtivityDetailDialog extends Dialog {
 
     private final static String SIZE_TASK = "60px";
@@ -63,6 +61,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
     private final HtmlContainer message;
     private final HtmlContainer personName;
     private final Button closeButton;
+    private final Button addeButton;
     private Registration closeListenerRegistration = null;
     private final Grid<PersonActivityDetail> grid;
     private final TextField teskTextField;
@@ -98,48 +97,40 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
         this.personName = new H5();
 
+        this.addeButton = new Button("Add");
         this.closeButton = new Button("Close");
 
         this.message = new H5("Detail activity");
 
         this.grid = new Grid<>();
         this.grid.setWidth("96%");
+        this.grid.setHeightFull();
+
         this.personActivityDetailBinder = new Binder<>(PersonActivityDetail.class);
         this.personActivityDetailEditor = grid.getEditor();
+
+
 
         Grid.Column<PersonActivityDetail> taskColumn = grid.addColumn(i -> i.getTask())
                 .setResizable(true)
                 .setSortable(true)
                 .setHeader("Task")
-                .setWidth(SIZE_TASK)
-                .setAutoWidth(true);
-
-        if (naemColumnEnabled) {
-            Grid.Column<PersonActivityDetail> nameColumn = grid.addColumn(i -> i.getName())
-                    .setResizable(true)
-                    .setSortable(true)
-                    .setHeader("Name")
-                    .setWidth(SIZE_NAME);
-
-            TextField nameTextField = new TextField();
-            personActivityDetailBinder.forField(nameTextField)
-                    .bind("name");
-            nameColumn.setEditorComponent(nameTextField);
-        }
+                .setAutoWidth(true)
+                .setFlexGrow(1);
 
 
         Grid.Column<PersonActivityDetail> detailColumn = grid.addColumn(i -> i.getDetail())
                 .setResizable(true)
                 .setSortable(true)
                 .setHeader("Detail")
-                .setWidth(SIZE_DESCR);
-
+                .setAutoWidth(true)
+                .setFlexGrow(1);
         Grid.Column<PersonActivityDetail> spendColumn = grid.addColumn(i -> i.getSpend())
                 .setResizable(true)
                 .setSortable(true)
                 .setHeader("Spend")
-                .setWidth(SIZE_SPEND);
-
+                .setAutoWidth(true)
+                .setFlexGrow(1);
 
         Grid.Column<PersonActivityDetail> doneColumn = grid.addColumn(new ComponentRenderer<>(i -> {
             Checkbox rez = new Checkbox(i.isDone());
@@ -148,19 +139,18 @@ public class PersonAdtivityDetailDialog extends Dialog {
         }))
                 .setResizable(true)
                 .setSortable(true)
+                .setHeader("Done")
                 .setAutoWidth(true)
-                .setWidth(SIZE_DONE)
-                .setHeader("Done");
+                .setFlexGrow(1);
 
 
         personActivityDetailEditor.setBinder(personActivityDetailBinder);
-        //personActivityDetailEditor.setBuffered(true);
         Div validationStatus = new Div();
         validationStatus.setId("validation");
 
 
         this.teskTextField = new TextField();
-        this.teskTextField.setWidth(SIZE_TASK);
+        this.teskTextField.setWidth("80px");
         personActivityDetailBinder.forField(teskTextField)
                 .withValidator(new StringLengthValidator("Task name length must be \nbetween 3 and 32.", 3, 32))
                 //.withStatusLabel(validationStatus)
@@ -171,8 +161,10 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
 
         TextArea detaildTextField = new TextArea();
-        detaildTextField.setWidth(SIZE_DESCR);
-        detaildTextField.setHeight("120pt");
+        detaildTextField.setMinWidth("120pt");
+        detaildTextField.setMaxWidth("440pt");
+        detaildTextField.setWidth("340pt");
+        detaildTextField.setHeight("220px");
         personActivityDetailBinder.forField(detaildTextField)
                 .withValidator(new StringLengthValidator("Detail length must be between 3 and 32768.", 3, 32768))
                 //.withStatusLabel(validationStatus)
@@ -195,67 +187,56 @@ public class PersonAdtivityDetailDialog extends Dialog {
                 .bind("done");
         doneColumn.setEditorComponent(doneCheckBox);
 
-        Collection<Icon> editButtons = Collections.newSetFromMap(new WeakHashMap<>());
+        Collection<Button> editButtons = Collections.newSetFromMap(new WeakHashMap<>());
 
         Grid.Column<PersonActivityDetail> editorColumn = grid.addComponentColumn(i -> {
-            final Icon delIcon = new Icon(VaadinIcon.MINUS_CIRCLE_O);
-            delIcon.addClickListener( e-> {
-
-                confirmDialog
-                        .message("Do you want to remove task " + i.getTask() + " ?")
-                        .onCancel(ce -> {
-                            grid.getDataProvider().refreshAll();
-                            confirmDialog.close();
-                        })
-                        .onConfirm(ce -> {
-                            personActivityDetailService.delete(i);
-                            persistedDetails = personActivityDetailService.findActivityDetail(this.personActivity);
-                            grid.setItems(this.persistedDetails);
-                            grid.getDataProvider().refreshAll();
-                            confirmDialog.close();
-                        })
-                        .open();
+            final Button delBtn = new Button(
+                    new Icon(VaadinIcon.DEL),
+                    e-> {
+                        confirmDialog
+                                .message("Do you want to remove task " + i.getTask() + " ?")
+                                .onCancel(ce -> {
+                                    grid.getDataProvider().refreshAll();
+                                    confirmDialog.close();
+                                })
+                                .onConfirm(ce -> {
+                                    personActivityDetailService.delete(i);
+                                    persistedDetails = personActivityDetailService.findActivityDetail(this.personActivity);
+                                    grid.setItems(this.persistedDetails);
+                                    grid.getDataProvider().refreshAll();
+                                    confirmDialog.close();
+                                })
+                                .open();
 
                     }
+
             );
-            editButtons.add(delIcon);
+            editButtons.add(delBtn);
+            final Button editBtn = new Button(
+                    new Icon(VaadinIcon.PENCIL),
+                    e -> {
+                        personActivityDetailEditor.editItem(i);
+                        teskTextField.focus();
+                    }
+            );
+            editButtons.add(editBtn);
+            editBtn.setEnabled(!personActivityDetailEditor.isOpen());
 
-
-            final Icon editIcon = new Icon(VaadinIcon.PENCIL);
-            editButtons.add(editIcon);
-            editIcon.addClickListener(e -> {
-                personActivityDetailEditor.editItem(i);
-                teskTextField.focus();
-            });
-            editIcon.setVisible(!personActivityDetailEditor.isOpen());
-
-
-            HorizontalLayout hl = new HorizontalLayout(delIcon, editIcon);
-
-
-            return hl;
+            return new HorizontalLayout(delBtn, editBtn);
 
         })
                 .setAutoWidth(true)
-                .setFlexGrow(0)
-                .setTextAlign(ColumnTextAlign.END);
+                .setFlexGrow(1);
 
-        Icon saveIcon = new Icon(VaadinIcon.CHECK);
-        saveIcon.addClassName("save");
-        saveIcon.addClickListener(e -> {
-                    saveNewRecord = true;
-                    personActivityDetailEditor.closeEditor();
-                }
-        );
-        Icon cancelIcon = new Icon(VaadinIcon.CLOSE);
-        cancelIcon.addClassName("cancel");
-        cancelIcon.addClickListener(e -> {
-                    saveNewRecord = false;
-                    personActivityDetailEditor.cancel();
-                }
-        );
-        Div buttons = new Div(saveIcon, cancelIcon);
-        editorColumn.setEditorComponent(buttons);
+        Button saveBtn = new Button(new Icon(VaadinIcon.CLOUD_UPLOAD_O), e -> {
+            saveNewRecord = true;
+            personActivityDetailEditor.closeEditor();
+        });
+        Button cancelBtn =  new Button(new Icon(VaadinIcon.CLOSE), e -> {
+            saveNewRecord = false;
+            personActivityDetailEditor.cancel();
+        });
+        editorColumn.setEditorComponent( new HorizontalLayout(saveBtn, cancelBtn));
 
         personActivityDetailEditor.addCloseListener(event -> {
             if (saveNewRecord) {
@@ -267,17 +248,9 @@ public class PersonAdtivityDetailDialog extends Dialog {
                         addNewItemToFill();
                     }
                 }
+                addeButton.setEnabled(true);
             }
         });
-
-/*
-        personActivityDetailEditor.addSaveListener(
-                event -> {
-                    System.out.println("########## addSaveListener " + event);
-
-                }
-        );
-*/
 
         personActivityDetailEditor.addCancelListener(
                 event -> {
@@ -286,17 +259,14 @@ public class PersonAdtivityDetailDialog extends Dialog {
                         removeItemDrimGrid(event.getItem());
                     }
                     autoAddAllowed = false;
+                    addeButton.setEnabled(true);
                 }
         );
 
-        //personActivityDetailBinder.setStatusLabel();
-        /*personActivityDetailBinder.setValidationStatusHandler(
-
-                h -> {
-                    System.out.println(h);
+        personActivityDetailEditor.addOpenListener( event -> {
+                    addeButton.setEnabled(false);
                 }
-
-        );*/
+        );
 
         addDialogCloseActionListener(closeEvt -> {
             if (personActivityDetailEditor.isOpen()) {
@@ -304,8 +274,13 @@ public class PersonAdtivityDetailDialog extends Dialog {
             }
         });
 
-        final FlexLayout closeButtonWrapper = new FlexLayout(closeButton);
+        addeButton.addClickListener(e -> {
+            addNewItemToFill();
+        });
+
+        final FlexLayout closeButtonWrapper = new FlexLayout(addeButton, closeButton);
         closeButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
 
         HorizontalLayout hl = new HorizontalLayout(
                 message,
@@ -335,6 +310,7 @@ public class PersonAdtivityDetailDialog extends Dialog {
 
     public PersonAdtivityDetailDialog autoAdd(boolean autoAddAllowed) {
         this.autoAddAllowed = autoAddAllowed;
+        addeButton.setEnabled(!autoAddAllowed);
         return this;
 
     }

@@ -9,10 +9,12 @@ import com.az.lb.servise.PersonActivityDetailService;
 import com.az.lb.servise.PersonActivityService;
 import com.az.lb.servise.TeamService;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
@@ -47,23 +49,20 @@ public class ReportDailyView extends VerticalLayout implements AfterNavigationOb
     public ReportDailyView(@Autowired UserContext userContext) {
         super();
         this.userContext = userContext;
-        this.labelDatePicker = new DatePicker(LocalDate.now());
+        this.labelDatePicker = new DatePicker( LocalDate.now());
         this.confirmButton = new Button("Generate");
-
+        HorizontalLayout fl = new HorizontalLayout();
+        fl.add(new H6("Date"));
+        fl.add(labelDatePicker);
+        fl.add(confirmButton);
 
         configureHandlers();
 
         add(
-                new HorizontalLayout(
-                        new H5("Daily report. Select date"),
-                        labelDatePicker,
-                        confirmButton
-                )
-        );
-        add(
+                new H4("Daily report."),
+                fl,
                 new Html("<hr/>")
         );
-
 
     }
 

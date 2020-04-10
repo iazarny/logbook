@@ -1,32 +1,26 @@
 package com.az.lb.servise;
 
+import com.az.lb.misc.DurationHumanizer;
 import com.az.lb.misc.DurationValidator;
 import com.az.lb.model.*;
-import com.az.lb.repository.ActivityRepository;
 import com.az.lb.repository.PersonActivityRepository;
 import com.az.lb.repository.PersonRepository;
-import com.az.lb.repository.TeamPersonRepository;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.LobHelper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transactional;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class PersonActivityService {
@@ -129,6 +123,7 @@ public class PersonActivityService {
         }
     }
 
+    //todo move to reporting svc
     public String getDetailsAsHtmlTable(final List<PersonActivityDetail> detailsRaw,
                                         final String notes, final String tags, final boolean useNotesTags) {
 
@@ -164,40 +159,23 @@ public class PersonActivityService {
                 );
             }
 
-            rez += String.format(
-                    "<tr class='task-tr'>" +
-                            "<td width='95%%' valign='top' colspan=2 class='task-total'>%s</td>" +
-                            "<td width='5%%'  class='task-total-value'>%s</td>" +
-                            "</tr>",
-                    "Total",
-                    humanizeTotal(totalSpend.toString())
-            );
+            if (details.size() > 1) {
+                rez += String.format(
+                        "<tr class='task-tr'>" +
+                                "<td width='95%%' valign='top' colspan=2 class='task-total'>%s</td>" +
+                                "<td width='5%%'  class='task-total-value'>%s</td>" +
+                                "</tr>",
+                        "Total",
+                        DurationHumanizer.humanizeTotal(totalSpend.toString())
+                );
+            }
+
+
 
         }
 
-        /*rez += String.format(
-                "<tr class='task-tr'>" +
-                        "<td width='95%%' valign='top' colspan=2 class='task-total'>%s</td>" +
-                        "<td width='5%%'  class='task-total-value'>%s</td>" +
-                        "</tr>",
-                "Team Total",
-                humanizeTotal(totalTeamSpend.toString())
-        );*/
-
         rez += "</table>";
         return rez;
-    }
-
-    private String humanizeTotal (String total) {
-        return total.replace("P", "")
-                .replace("T", "")
-                .replace("D", "d ")
-                .replace("H", "h ")
-                .replace("M", "m ")
-                .replace("S", "s ")
-                .replace("  ", " ")
-                .replace("  ", " ")
-                ;
     }
 
     public String getNotesAndTags(final List<PersonActivityDetail> details,

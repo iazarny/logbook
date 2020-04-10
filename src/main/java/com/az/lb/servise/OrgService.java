@@ -20,6 +20,11 @@ public class OrgService {
     private PersonRepository personRepository;
 
     @Transactional
+    public Org updateOrganization(Org org) {
+        return orgRepository.save(org);
+    }
+
+    @Transactional
     public Org createNewOrganiation(String orgName, String emailManager, String firstName, String lastName) {
         Org org = new Org();
         org.setName(orgName);

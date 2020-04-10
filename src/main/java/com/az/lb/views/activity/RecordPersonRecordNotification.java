@@ -4,6 +4,7 @@ import com.az.lb.model.PersonActivity;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
@@ -11,13 +12,14 @@ import com.vaadin.flow.component.page.Page;
 
 import java.util.function.Consumer;
 
-public class RecordPersonSpeachNotification extends Notification {
+@CssImport("styles/views/recording/recording.css")
+public class RecordPersonRecordNotification extends Notification {
 
     private final PersonActivity personActivity;
     private final Consumer<String> onClose;
 
 
-    public RecordPersonSpeachNotification(final PersonActivity personActivity, final Consumer<String> onClose) {
+    public RecordPersonRecordNotification(final PersonActivity personActivity, final Consumer<String> onClose) {
 
         super();
 
@@ -35,8 +37,12 @@ public class RecordPersonSpeachNotification extends Notification {
 
         setPosition(Notification.Position.TOP_CENTER);
 
+        Label info = new Label("Recording for " + personActivity.getPerson().getFullName()) ;
+        info.setClassName("blink_me");
+
         add(
-                new Label("Recording for " + personActivity.getPerson().getFullName()),
+                info,
+                new Label(" "),
                 stopRecordingBtn
         );
 
