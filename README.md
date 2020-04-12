@@ -19,6 +19,8 @@ To run from the command line, use `mvn spring-boot:run` and open [http://localho
 
 ## What next?
 
+mvn clean package -Pproduction-mode
+
 [vaadin.com](https://vaadin.com) has lots of material to help you get you started:
 
  - Follow the tutorials in [vaadin.com/tutorials](https://vaadin.com/tutorials). Especially [vaadin.com/tutorials/getting-started-with-flow](https://vaadin.com/tutorials/getting-started-with-flow) is good for getting a grasp of the basic Vaadin concepts.

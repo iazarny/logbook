@@ -23,6 +23,12 @@ public class Org {
     @Column(name = "name", length = 128, nullable = false, unique = true)
     private String name;
 
+    /**
+     * Allow to fill team data o team members.
+     */
+    @Column(name = "fillteam")
+    private Boolean fillteam;
+
 
     @OneToMany(
             mappedBy = "org",
@@ -46,6 +52,14 @@ public class Org {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getFillteam() {
+        return fillteam;
+    }
+
+    public void setFillteam(Boolean fillteam) {
+        this.fillteam = fillteam;
     }
 
     @Override

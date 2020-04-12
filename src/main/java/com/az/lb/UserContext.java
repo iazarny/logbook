@@ -110,33 +110,42 @@ public class UserContext {
 
         person = new Person("p.dolgih@org.net","Piotr","Dolgih",org);
         personRepository.save(person);
+        teamPersonService.assignPerson(person.getId(), team.getId());
 
         person = new Person("s.macdac@org.net","Scroogde","Macdac",org);
         personRepository.save(person);
 
+        LocalDate back = LocalDate.now().minusDays(30000);
+        while(back.isBefore(LocalDate.now().plusDays(1))) {
+            Activity activity = personActivityService.createPersonsActivitySheet(team, back);
 
-        Activity activity = personActivityService.createPersonsActivitySheet(team, LocalDate.now());
 
+            personActivityService.findAllByActivity(activity).stream()
+                    .forEach(
 
-        personActivityService.findAllByActivity(activity).stream()
-                .forEach(
+                            personActivity -> {
+                                int j = (int) (Math.random() * 12);
+                                for (int i = 0; i < j; i++) {
+                                    PersonActivityDetail pad = new PersonActivityDetail();
+                                    pad.setActivity(personActivity);
+                                    pad.setTask("ASD-" + task); task ++;
+                                    pad.setDetail("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." + i);
+                                    pad.setSpend("7h33m2s");
+                                    pad.setDone( Math.random() > 0.5);
+                                    personActivityDetailService.save(pad);
+                                }
+                                task = task - (int) (Math.random() * 6);
 
-                        personActivity -> {
-                            int j = (int) (Math.random() * 12);
-                            for (int i = 0; i < j; i++) {
-                                PersonActivityDetail pad = new PersonActivityDetail();
-                                pad.setActivity(personActivity);
-                                pad.setTask("ASD-" + task); task ++;
-                                pad.setDetail("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." + i);
-                                pad.setSpend("7h33m2s");
-                                pad.setDone( Math.random() > 0.5);
-                                personActivityDetailService.save(pad);
                             }
-                            task = task - (int) (Math.random() * 6);
 
-                        }
+                    );
 
-                );
+            back = back.plusDays(1);
+
+        }
+
+
+
     }
 
     int task = (int) (Math.random() * 10000);

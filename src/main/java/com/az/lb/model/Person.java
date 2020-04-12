@@ -30,6 +30,7 @@ public class Person {
     @ManyToOne(fetch = FetchType.EAGER)
     private Org org;
 
+    @Column(name = "manager")
     private Boolean orgManager;
 
     public Person() {

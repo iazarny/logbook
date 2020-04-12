@@ -33,6 +33,7 @@ public class PersonActivityDetail {
     @Column(name = "spend", length = 32)
     private String spend;
 
+    @Column(name = "done")
     private boolean done;
 
     public UUID getId() {
