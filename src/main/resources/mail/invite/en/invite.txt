@@ -1,0 +1,8 @@
+Welcome to the Log Book.
+
+[(${firstName})] [(${lastName})]
+
+Please open the [(${callbackhit})] link to accept invitation.
+
+Thanks,
+ the Log Book.

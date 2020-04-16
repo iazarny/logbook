@@ -26,6 +26,7 @@ public class PersonEditDialog extends Dialog {
     private TextField firstNameTextField;
     private TextField lastNameTextField;
     private Checkbox managerCombobox;
+    private Checkbox sendInvitation;
 
     private Button confirmButton;
     private Button cancelButton;
@@ -47,6 +48,7 @@ public class PersonEditDialog extends Dialog {
         confirmButton = new Button("New");
         cancelButton = new Button("Cancel");
         managerCombobox = new Checkbox();
+        sendInvitation = new Checkbox();
 
         final FlexLayout cancelButtonWrapper = new FlexLayout(cancelButton);
         cancelButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
@@ -66,6 +68,7 @@ public class PersonEditDialog extends Dialog {
         nameLayout.addFormItem(lastNameTextField,"Last name");
         nameLayout.addFormItem(emailTextField,"Email");
         nameLayout.addFormItem(managerCombobox, "Manager");
+        nameLayout.addFormItem(sendInvitation, "Send invitation");
         nameLayout.add(hl);
         nameLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
@@ -126,6 +129,10 @@ public class PersonEditDialog extends Dialog {
         }
         confirmListenerRegistration = this.confirmButton.addClickListener(listener);
         return this;
+    }
+
+    public boolean isSendInvitation() {
+        return sendInvitation.getValue();
     }
 
     public String getEmai() {

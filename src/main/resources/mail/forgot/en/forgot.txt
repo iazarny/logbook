@@ -1,0 +1,10 @@
+Reset password in the Log Book.
+
+[(${firstName})] [(${lastName})]
+
+Please open the [(${callbackhit})] link to reset password.
+
+Ignore this email if you did not request a password reset.
+
+Thanks,
+ the Log Book.

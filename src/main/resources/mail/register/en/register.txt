@@ -1,0 +1,10 @@
+Welcome to the Log Book.
+You've all set !
+Organization: [(${orgName})]
+Name: [(${firstName})] [(${lastName})]
+Login: [(${email})]
+
+Please open the [(${callbackhit})] link to confirm registration.
+
+Thanks,
+the Log Book.

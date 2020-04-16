@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Log book</title>
+</head>
+<body>
+
+
+
+<table style="margin: 5pt;font-family: Geneva, Arial, Helvetica, sans-serif;background-color: whitesmoke;" width="400" cellpadding="0" cellspacing="0">
+    <tr>
+        <td style="padding: 5pt; background-color: lightseagreen; font-size: larger">Invitation to the Log Book.</td>
+    </tr>
+    <tr>
+        <td style="padding: 5pt;" th:text="${firstName}+ ' ' +${lastName}"></td>
+    </tr>
+
+    <tr>
+        <td style="padding: 5pt;">
+            Please open the <a th:href="${callbackhit}" th:text="${callbackhit}"></a> link to accept invitation.
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 5pt;">
+            Thanks,<br>
+            &nbsp;the Log Book.
+        </td>
+    </tr>
+</table>

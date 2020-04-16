@@ -6,6 +6,9 @@ import com.az.lb.repository.PersonRepository;
 import com.az.lb.servise.*;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -47,16 +50,16 @@ public class UserContext {
     private LocalDate selectedDate;
 
 
-
     public synchronized Org getOrg() {
         if (org == null) {
-            Optional<Org> defaultOrg = orgRepository.findByName("Default");
-            if (defaultOrg.isPresent()) {
-                return defaultOrg.get();
-            }
-            createTestData();
-
-
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User user = (User) authentication.getPrincipal();
+            personRepository.findByEmail(user.getUsername()).ifPresent(
+                    u -> {
+                        org = u.getOrg();
+                    }
+            );
+            /*createTestData();*/
         }
         return org;
     }
@@ -65,7 +68,7 @@ public class UserContext {
         Org no = new Org();
         no.setName("Default");
         orgRepository.save(no);
-        org = orgRepository.findAll().get(0);
+        org = orgRepository.save(no);
 
         Team team = service.createNewTeam(
                 org.getId().toString(),

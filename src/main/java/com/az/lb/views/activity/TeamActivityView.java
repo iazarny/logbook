@@ -97,16 +97,11 @@ public class TeamActivityView extends VerticalLayout implements AfterNavigationO
     }
 
 
-
-
-
-
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
         // Lazy init of the grid items, happens only when we are sure the view will be
         // shown to the user
-        userContext.getOrg();
-        grid.setItems(service.findAll());
+        grid.setItems(service.findTeams(userContext.getOrg()));
         grid.getDataProvider().refreshAll();
     }
 

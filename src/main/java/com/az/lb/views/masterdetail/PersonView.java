@@ -2,7 +2,10 @@ package com.az.lb.views.masterdetail;
 
 import com.az.lb.UserContext;
 import com.az.lb.model.Person;
+import com.az.lb.model.Registration;
+import com.az.lb.repository.RegistrationRepository;
 import com.az.lb.servise.PersonService;
+import com.az.lb.servise.mail.MailService;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -30,6 +33,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import com.az.lb.MainView;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.HashMap;
+import java.util.Map;
+
 @Route(value = "Persons", layout = MainView.class)
 @PageTitle("Persons")
 @CssImport("styles/views/masterdetail/master-detail-view.css")
@@ -40,14 +48,21 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
     @Autowired
     private PersonService service;
 
+    @Autowired
+    private MailService mailService;
+
+    @Autowired
+    private RegistrationRepository registrationRepository;
+
+
     private Grid<Person> grid;
 
     private TextField firstname = new TextField();
     private TextField lastname = new TextField();
     private TextField email = new TextField();
     private Checkbox orgManager = new Checkbox();
-    private PasswordField password = new PasswordField();
 
+    private Button forgot = new Button("Change password");
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
 
@@ -66,12 +81,12 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         this.grid.setHeightFull();
         this.grid.addColumn(Person::getFullName)
                 .setHeader("Name")
-                .setWidth("20%")
+                .setWidth("40%")
                 .setSortable(true)
                 .setResizable(true);
         this.grid.addColumn(Person::getEmail)
                 .setHeader("Email")
-                .setWidth("80%")
+                .setWidth("60%")
                 .setSortable(true)
                 .setResizable(true);
 
@@ -90,6 +105,23 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
 
         // the grid valueChangeEvent will clear the form too
         this.cancel.addClickListener(e -> grid.asSingleSelect().clear());
+
+        this.forgot.addClickListener(
+
+                e -> {
+                    this.grid.getSelectedItems().forEach(
+                            p-> {
+                                service.forgotPassword(p.getEmail());
+                                Notification.show(
+                                        "Change password mail has been sent to " + p.getFullName(),
+                                        3000,
+                                        Notification.Position.TOP_CENTER
+                                );
+                            }
+                    );
+                }
+
+        );
 
         this.save.addClickListener(e -> {
 
@@ -140,6 +172,8 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
                 splitLayout
         );
     }
+
+
     private void newPerson() {
         personEditDialog
                 .email("")
@@ -157,15 +191,20 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
                     person.setLastName(personEditDialog.getLastName());
                     person.setEmail(personEditDialog.getEmai());
                     person.setOrg(userContext.getOrg());
-                    service.save(person);
+                    person = service.save(person);
                     grid.setItems(service.findAll(userContext.getOrg()));
+                    if (personEditDialog.isSendInvitation()) {
+                        if (service.invitePerson(person.getEmail())) {
+                            Notification.show("Invitation sent to " + person.getEmail(),
+                                    3000, Notification.Position.TOP_CENTER);
+                        }
+                    }
                     personEditDialog.close();
 
                 })
                 .open();
 
     }
-
 
 
     private void createEditorLayout(SplitLayout splitLayout) {
@@ -185,9 +224,10 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         buttonLayout.setId("button-layout");
         buttonLayout.setWidthFull();
         buttonLayout.setSpacing(true);
+        forgot.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(cancel, save);
+        buttonLayout.add(forgot, cancel, save);
         editorDiv.add(buttonLayout);
     }
 
@@ -217,9 +257,5 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
     private void populateForm(Person value) {
         // Value can be null as well, that clears the form
         binder.readBean(value);
-
-
-        // The password field isn't bound through the binder, so handle that
-        password.setValue("");
     }
 }

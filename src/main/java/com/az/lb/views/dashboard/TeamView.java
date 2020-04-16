@@ -120,7 +120,7 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
                     Team team = service.createNewTeam(
                             userContext.getOrg().getId().toString(),
                             teamDialog.getValue());
-                    grid.setItems(service.findAll());
+                    grid.setItems(service.findTeams(userContext.getOrg()));
                     grid.getDataProvider().refreshAll();
                     teamDialog.close();
                 })
@@ -175,8 +175,7 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
     public void afterNavigation(AfterNavigationEvent event) {
         // Lazy init of the grid items, happens only when we are sure the view will be
         // shown to the user
-        userContext.getOrg();
-        grid.setItems(service.findAll());
+        grid.setItems(service.findTeams(userContext.getOrg()));
         grid.getDataProvider().refreshAll();
     }
 

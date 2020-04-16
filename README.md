@@ -26,3 +26,7 @@ mvn clean package -Pproduction-mode
  - Follow the tutorials in [vaadin.com/tutorials](https://vaadin.com/tutorials). Especially [vaadin.com/tutorials/getting-started-with-flow](https://vaadin.com/tutorials/getting-started-with-flow) is good for getting a grasp of the basic Vaadin concepts.
  - Read the documentation in [vaadin.com/docs](https://vaadin.com/docs).
  - For a bigger Vaadin application example, check out the Full Stack App starter from [vaadin.com/start](https://vaadin.com/start).
+
+
+### TODO
+ * Schedule to clean up old registration

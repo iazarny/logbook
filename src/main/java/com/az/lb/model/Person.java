@@ -3,6 +3,7 @@ package com.az.lb.model;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity(name = "Person")
@@ -33,6 +34,14 @@ public class Person {
     @Column(name = "manager")
     private Boolean orgManager;
 
+    @Column(name = "pwd")
+    private String pwd;
+
+    @Column(name = "pwdchanged")
+    private LocalDate pwdchanged;
+
+
+
     public Person() {
     }
 
@@ -41,6 +50,22 @@ public class Person {
         this.firstName = firstName;
         this.lastName = lastName;
         this.org = org;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
+    public LocalDate getPwdchanged() {
+        return pwdchanged;
+    }
+
+    public void setPwdchanged(LocalDate pwdchanged) {
+        this.pwdchanged = pwdchanged;
     }
 
     public UUID getId() {
