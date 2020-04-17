@@ -1,6 +1,7 @@
 package com.az.lb.views.login;
 
 import com.az.lb.servise.PersonService;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -116,6 +117,12 @@ public class LoginView extends HorizontalLayout {
                     UI.getCurrent().navigate(RegisterView.ROUTE);
                 }
         );
+
+        passwordField.addKeyPressListener(Key.ENTER,  e -> {
+            UI.getCurrent().getPage().executeJs(
+                    "document.getElementById('ironform').submit();");
+
+        });
 
 
     }

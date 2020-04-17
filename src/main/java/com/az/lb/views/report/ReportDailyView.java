@@ -19,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 @RouteAlias(value = "DailyReport", layout = MainView.class)
 @PageTitle("Daily report")
 @CssImport("styles/views/dashboard/dashboard-view.css")
+@Secured({"ADM"})
 public class ReportDailyView extends VerticalLayout implements AfterNavigationObserver {
 
 

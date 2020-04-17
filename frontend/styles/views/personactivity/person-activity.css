@@ -10,7 +10,7 @@
 
 table.detail-table {
 
-    border: 0.1px  solid #aaaaaa;
+    border: 0.1px  dotted var(--lumo-primary-color-50pct);
     font-size: x-small;
 
 }
@@ -21,13 +21,15 @@ tr.task-rt {
 }
 
 tr.task-done {
-    background-color: #eeffee;
+    //background-color: #eeffee;
+    background-color: var(--lumo-success-color-10pct);
     vertical-align: top;
     white-space: normal;
 }
 
 tr.task-not-done {
-    background-color: #eeeeff;
+    //background-color: #eeeeff;
+    background-color: var(--lumo-primary-color-10pct);
     vertical-align: top;
     white-space: normal;
 }
@@ -41,7 +43,8 @@ td.task-total-value {
     font-weight: bold;
     vertical-align: top;
     text-align: end;
-    background-color: #eeeeee;
+    //background-color: #eeeeee;
+    background-color: var(--lumo-primary-color);
     vert-align: top;
 }
 

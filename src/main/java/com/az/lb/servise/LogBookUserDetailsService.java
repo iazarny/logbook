@@ -28,9 +28,16 @@ public class LogBookUserDetailsService implements UserDetailsService {
         final Optional<Person> optP = personRepository.findByEmail(username);
         if (optP.isPresent()) {
             Person p = optP.get();
+
             final List<GrantedAuthority> authorities = new ArrayList<>();
+            if (BooleanUtils.toBoolean(p.getOrgManager())) {
+                authorities.add(new SimpleGrantedAuthority("ADM"));
+            }
+            authorities.add(new SimpleGrantedAuthority("USER"));
+
             final boolean enabled = p.getPwdchanged() != null
-                    && LocalDate.now().minusDays(100).isBefore(p.getPwdchanged());
+                    && LocalDate.now().minusDays(100).isBefore(p.getPwdchanged()); //todo 100
+
             final UserDetails userDetails = new User(
                     p.getEmail(),
                     p.getPwd(),
@@ -38,10 +45,7 @@ public class LogBookUserDetailsService implements UserDetailsService {
                     true, true, true,
                     authorities
             );
-            if (BooleanUtils.toBoolean(p.getOrgManager())) {
-                authorities.add(new SimpleGrantedAuthority("ADM"));
-            }
-            authorities.add(new SimpleGrantedAuthority("USER"));
+
             return userDetails;
         }
         throw new UsernameNotFoundException("User not found");

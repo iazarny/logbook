@@ -6,6 +6,7 @@ import com.az.lb.views.login.RegisterConfirmView;
 import com.az.lb.views.login.RegisterView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
      */
     private void beforeEnter(BeforeEnterEvent event) {
 
+
         if (InvitationConfirmView.class.equals(event.getNavigationTarget())) {
             return;
         }
@@ -41,9 +43,16 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
             return;
         }
 
-        if (!LoginView.class.equals(event.getNavigationTarget())
-                && !SecurityUtils.isUserLoggedIn()) {
+        if (LoginView.class.equals(event.getNavigationTarget())) {
+            return;
+        }
+
+        if (!SecurityUtils.isUserLoggedIn()) {
             event.rerouteTo(LoginView.class);
+        }
+
+        if(!SecurityUtils.isAccessGranted(event.getNavigationTarget())) {
+            event.rerouteToError(NotFoundException.class);
         }
 
     }

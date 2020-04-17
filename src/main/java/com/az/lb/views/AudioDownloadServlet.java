@@ -1,11 +1,14 @@
 package com.az.lb.views;
 
 import com.az.lb.servise.PersonActivityService;
+import com.az.lb.views.masterdetail.PersonView;
 import com.vaadin.flow.server.VaadinServletConfiguration;
 import com.vaadin.flow.spring.SpringServlet;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.ServletException;
@@ -24,6 +27,8 @@ import java.util.Optional;
 @WebServlet(urlPatterns = "/download/audio", name = "downloadaudio", asyncSupported = true)
 @VaadinServletConfiguration(productionMode = false)
 public class AudioDownloadServlet extends SpringServlet {
+
+    private static final Logger logger = LoggerFactory.getLogger(AudioDownloadServlet.class);
 
     private final ApplicationContext context;
 
@@ -46,12 +51,12 @@ public class AudioDownloadServlet extends SpringServlet {
             IOUtils.copy(is, response.getOutputStream());
             is.close();
         } catch (Exception e) {
-            e.printStackTrace(); //todo log
+
+            logger.warn("Cannot get audio id " + paid, e);
             response.setStatus(400);
             response.setContentType("text/html");
             PrintWriter pwriter = response.getWriter();
             pwriter.println("400");
-            pwriter.println(ExceptionUtils.getStackFrames(e)); //todo remove rom prod;
             pwriter.close();
         }
 

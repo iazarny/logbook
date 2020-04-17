@@ -4,14 +4,19 @@ import com.az.lb.UserContext;
 import com.az.lb.model.Person;
 import com.az.lb.model.Registration;
 import com.az.lb.repository.RegistrationRepository;
+import com.az.lb.security.SecurityUtils;
 import com.az.lb.servise.PersonService;
 import com.az.lb.servise.mail.MailService;
+import com.az.lb.views.dashboard.TeamView;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.ValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.AbstractField;
@@ -34,6 +39,7 @@ import com.vaadin.flow.router.Route;
 
 import com.az.lb.MainView;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +47,10 @@ import java.util.Map;
 @Route(value = "Persons", layout = MainView.class)
 @PageTitle("Persons")
 @CssImport("styles/views/masterdetail/master-detail-view.css")
+@Secured({"ADM", "USER"})
 public class PersonView extends VerticalLayout implements AfterNavigationObserver {
+
+    private static final Logger logger = LoggerFactory.getLogger(PersonView.class);
 
     private UserContext userContext;
 
@@ -134,7 +143,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
                             Notification.show("Saved " + p.getFullName());
 
                         } catch (ValidationException ex) {
-                            ex.printStackTrace(); // todo log
+                            logger.warn("Cannot save person " + p, ex);
                             Notification.show("Error " + p.getFullName());
                         }
                     }
@@ -149,14 +158,13 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
 
         this.personEditDialog = new PersonEditDialog("New person");
 
-
         final Button addBtn = new Button("Add");
 
         final FlexLayout caddButtonWrapper = new FlexLayout(addBtn);
         caddButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
         HorizontalLayout hl = new HorizontalLayout(
-                new H5("Organization members"),
+                new H4("Organization members"),
                 caddButtonWrapper
         );
         hl.setWidthFull();
@@ -171,6 +179,13 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
                 hl,
                 splitLayout
         );
+
+        if (!SecurityUtils.hasRole("ADM")) {
+            addBtn.setEnabled(false);
+            forgot.setEnabled(false);
+            save.setEnabled(false);
+            cancel.setEnabled(false);
+        }
     }
 
 

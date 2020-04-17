@@ -24,9 +24,16 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class MailService {
+
+    private static final Logger logger = LoggerFactory.getLogger(MailService.class);
 
     public static String MAIL_REGISTER = "register";
     public static String MAIL_FORGOTPWD = "forgot";
@@ -39,6 +46,8 @@ public class MailService {
 
     @Autowired
     private JavaMailSender javaMailSender;
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(3);
 
     TemplateEngine textTemplateEngine = new TemplateEngine();
     TemplateEngine htmlTemplateEngine = new TemplateEngine();
@@ -55,9 +64,7 @@ public class MailService {
     public void send(String mailKey, String to, String subject, Map<String, Object> data, String locale) {
         try {
             final MimeMessage message = javaMailSender.createMimeMessage();
-            System.out.println(">>> 1 " + new Date());
             final MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            System.out.println(">>> 2 " + new Date());
             composeMessage(
                     helper,
                     mailKey,
@@ -68,11 +75,10 @@ public class MailService {
                     locale,
                     mailKey
             );
-            System.out.println(">>> 3 " + new Date());
-            javaMailSender.send(message);
-            System.out.println(">>> 4 " + new Date());
+            MailSendJob job = new MailSendJob(javaMailSender, message);
+            executorService.submit(job);
         } catch (Exception e) {
-            e.printStackTrace(); //todo
+            logger.error("Cannot send mail", e);
         }
     }
 
@@ -133,10 +139,12 @@ public class MailService {
 
     String getTemplate(String mailKey, String locale, String template) {
 
-        try {
-            String currLocale = ObjectUtils.defaultIfNull(locale, "en");
+        String currLocale = ObjectUtils.defaultIfNull(locale, "en");
 
-            Path path = Paths.get(PREFIX, mailKey, currLocale, template);
+        Path path = Paths.get(PREFIX, mailKey, currLocale, template);
+
+        try {
+
 
             String content = FileUtils.readFileToString(
                     ResourceUtils.getFile("classpath:" + path.toString()),
@@ -146,14 +154,12 @@ public class MailService {
 
         } catch (Exception e) {
 
-            e.printStackTrace(); //todo log
+            logger.warn("Cannot get template " + path.toString(), e);
 
         }
 
         return null;
 
-
     }
-
 
 }

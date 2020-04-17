@@ -1,0 +1,34 @@
+<configuration>
+    <springProperty name="application_version" source="info.app.version"/>
+    <springProperty scope="context" name="application" source="info.app.name"/>
+    <springProperty scope="context" name="profile" source="spring.profiles.active"/>
+    <property scope="context" name="HOSTNAME" value="${HOSTNAME}"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss.SSS}  %highlight(%-5level) %cyan(%logger{35}) %mdc - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/logbook.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>log/logbook-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

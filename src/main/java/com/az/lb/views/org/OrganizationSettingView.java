@@ -19,12 +19,14 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 
 @Route(value = "OrganizationSettings", layout = MainView.class)
 @RouteAlias(value = "OrganizationSettings", layout = MainView.class)
 @PageTitle("Organization Settings")
 @CssImport("styles/views/dashboard/dashboard-view.css")
+@Secured("ADM")
 public class OrganizationSettingView extends VerticalLayout implements AfterNavigationObserver {
 
     private final UserContext userContext;
@@ -55,7 +57,7 @@ public class OrganizationSettingView extends VerticalLayout implements AfterNavi
         saveButton.setEnabled(false);
 
 
-        add(new H4("Organization settings"));
+        add(new HorizontalLayout(new H4("Organization settings")));
         add(formLayout);
 
 

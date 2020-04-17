@@ -1,5 +1,6 @@
 package com.az.lb;
 
+import com.az.lb.security.SecurityUtils;
 import com.az.lb.views.activity.TeamActivityView;
 import com.az.lb.views.dashboard.TeamView;
 import com.az.lb.views.masterdetail.PersonView;
@@ -21,6 +22,8 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
+import com.vaadin.flow.theme.material.Material;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,8 @@ import java.util.Optional;
  */
 @JsModule("./styles/shared-styles.js")
 @PWA(name = "Log Book", shortName = "Log Book")
-@Theme(value = Lumo.class, variant = Lumo.LIGHT)
+@Theme(value = Lumo.class, variant = Lumo.DARK)
+@Secured({"ADM", "USER"})
 public class MainView extends AppLayout {
 
     private final Accordion accordion;
@@ -45,21 +49,32 @@ public class MainView extends AppLayout {
                         new RouterLink("Activity", TeamActivityView.class)
                 )
         );
-        this.accordion.add(
-                "Reports",
-                new VerticalLayout(
-                        new RouterLink("Daily", ReportDailyView.class),
-                        new RouterLink("Tasks", ReportTaskView.class),
-                        new RouterLink("Person", ReportPersonView.class)
-                )
+
+
+        if (SecurityUtils.hasRole("ADM")) {
+            this.accordion.add(
+                    "Reports",
+                    new VerticalLayout(
+                            new RouterLink("Daily", ReportDailyView.class),
+                            new RouterLink("Tasks", ReportTaskView.class),
+                            new RouterLink("Person", ReportPersonView.class)
+                    )
+            );
+        }
+
+
+        VerticalLayout settingVerticalLayout = new VerticalLayout(
+                new RouterLink("Persons", PersonView.class),
+                new RouterLink("Teams ", TeamView.class)
         );
+        if (SecurityUtils.hasRole("ADM")) {
+            settingVerticalLayout.add(
+                    new RouterLink("Organization", OrganizationSettingView.class)
+            );
+        }
         this.accordion.add(
-                "Settings",
-                new VerticalLayout(
-                        new RouterLink("Persons", PersonView.class),
-                        new RouterLink("Teams ", TeamView.class),
-                        new RouterLink("Organization", OrganizationSettingView.class)
-                        )
+                "Settings",settingVerticalLayout
+
         );
         addToDrawer(this.accordion );
         //addToNavbar(new Label("Log book"));

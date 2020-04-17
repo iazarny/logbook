@@ -136,10 +136,7 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
                         Notification notification = new RecordPersonRecordNotification(pa, id -> {
                             playBtn.setEnabled(true);
                             delBtn.setEnabled(false);
-                            /*playBtn.addClickListener(
-                                    plc -> { //todo play
-                                    }
-                            );*/
+
                         });
                         notification.open();
                     }

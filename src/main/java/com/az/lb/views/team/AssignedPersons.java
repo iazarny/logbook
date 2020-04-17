@@ -6,6 +6,7 @@ import com.az.lb.UserContext;
 import com.az.lb.model.Org;
 import com.az.lb.model.Person;
 import com.az.lb.model.Team;
+import com.az.lb.security.SecurityUtils;
 import com.az.lb.servise.PersonService;
 import com.az.lb.servise.TeamPersonService;
 import com.az.lb.servise.TeamService;
@@ -23,6 +24,7 @@ import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.material.Material;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +32,8 @@ import java.util.Map;
 import java.util.UUID;
 
 @Route(value = "AssignedPersons", layout = MainView.class)
-@PageTitle("AssignedPersons")
+@PageTitle("Assigned persons")
+@Secured({"ADM", "USER"})
 public class AssignedPersons extends VerticalLayout implements AfterNavigationObserver/*, HasUrlParameter<String>*/{
 
     @Autowired
@@ -151,6 +154,13 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
                 hlMain
         );
 
+        if(!SecurityUtils.hasRole("ADM")) {
+            addAllBtn.setEnabled(false);
+            addOneBtn.setEnabled(false);
+            removeOneBtn.setEnabled(false);
+            removeAllBtn.setEnabled(false);
+        }
+
     }
 
     @Override
@@ -221,10 +231,19 @@ public class AssignedPersons extends VerticalLayout implements AfterNavigationOb
         availableMembersLb.setEnabled(teamSelected);
         assignedMembersLb.setEnabled(teamSelected);
 
-        addAllBtn.setEnabled(teamSelected && !availableMembers.isEmpty());
-        addOneBtn.setEnabled(teamSelected && availableMembersLb.getValue() != null);
-        removeOneBtn.setEnabled(teamSelected && assignedMembersLb.getValue() != null);
-        removeAllBtn.setEnabled(teamSelected && !assignedMembers.isEmpty());
+        if(SecurityUtils.hasRole("ADM")) {
+            addAllBtn.setEnabled(teamSelected && !availableMembers.isEmpty());
+            addOneBtn.setEnabled(teamSelected && availableMembersLb.getValue() != null);
+            removeOneBtn.setEnabled(teamSelected && assignedMembersLb.getValue() != null);
+            removeAllBtn.setEnabled(teamSelected && !assignedMembers.isEmpty());
+        } else {
+
+            addAllBtn.setEnabled(false);
+            addOneBtn.setEnabled(false);
+            removeOneBtn.setEnabled(false);
+            removeAllBtn.setEnabled(false);
+
+        }
     }
 
 

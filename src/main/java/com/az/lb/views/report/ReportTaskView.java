@@ -22,6 +22,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
 @RouteAlias(value = "TaskReport", layout = MainView.class)
 @PageTitle("Task report")
 @CssImport("styles/views/dashboard/dashboard-view.css")
+@Secured({"ADM"})
 public class ReportTaskView extends VerticalLayout implements AfterNavigationObserver {
 
     @Autowired

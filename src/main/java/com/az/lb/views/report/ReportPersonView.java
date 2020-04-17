@@ -21,6 +21,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 import java.time.LocalDate;
 
@@ -28,6 +29,7 @@ import java.time.LocalDate;
 @RouteAlias(value = "PersonReport", layout = MainView.class)
 @PageTitle("Person activity report")
 @CssImport("styles/views/dashboard/dashboard-view.css")
+@Secured({"ADM"})
 public class ReportPersonView extends VerticalLayout implements AfterNavigationObserver {
 
     @Autowired

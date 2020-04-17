@@ -18,6 +18,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 import java.time.LocalDate;
 
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 @RouteAlias(value = "", layout = MainView.class)
 @PageTitle("Team's activity")
 @CssImport("styles/views/dashboard/dashboard-view.css")
+@Secured({"ADM", "USER"})
 public class TeamActivityView extends VerticalLayout implements AfterNavigationObserver {
 
     @Autowired
@@ -72,9 +74,9 @@ public class TeamActivityView extends VerticalLayout implements AfterNavigationO
         this.activityDateDialog =  new ActivityDateDialog("Activity date");
 
         add(
-                this.activityDateDialog,
                 new H4("Team's activity"),
-                this.grid
+                this.grid,
+                this.activityDateDialog
         );
 
     }
