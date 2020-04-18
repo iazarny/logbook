@@ -36,20 +36,20 @@ class TeamPersonServiceTest {
     @Test
     void assignPerson() {
 
-        Org org = orgService.createNewOrganiation("TeamPersonServiceTest", "man@ефыва.com", "John","Da");
+        Org org = orgService.createNewOrganiation("Wo ist dein ausweis", "man@ausweis.com", "Do","Hast");
         Team team = teamService.createNewTeam(org.getId(), "Team");
         for (int i = 0; i < 10; i++) {
             Person person = new Person();
-            person.setEmail("any"+i+"@sdfsdf.com");
-            person.setFirstName("John  " + i);
-            person.setLastName("Dow " + i);
+            person.setEmail("wo"+i+"@sdfsdf.com");
+            person.setFirstName("Wo  " + i);
+            person.setLastName("ist " + i);
 
             person.setOrg(org);
             personRepository.save(person);
 
         }
 
-        Person person = personRepository.findByEmail("any5@sdfsdf.com").get();
+        Person person = personRepository.findByEmail("wo5@sdfsdf.com").get();
 
         List<TeamPerson> assigned = teamPersonService.assignPerson(
                 person.getId(),

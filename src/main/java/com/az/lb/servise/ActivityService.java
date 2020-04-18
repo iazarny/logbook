@@ -38,11 +38,8 @@ public class ActivityService {
     }
 
     @Transactional
-    public List<Activity> findAll(LocalDate localDate) {
-        Activity activity = new Activity();
-        activity.setDt(localDate);
-        Example<Activity> activityExample  = Example.of(activity);
-        return activityRepository.findAll();
+    public List<Activity> findAllByDate(LocalDate localDate) {
+        return activityRepository.findAllByDt(localDate);
     }
 
 }

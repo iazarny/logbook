@@ -1,6 +1,7 @@
 package com.az.lb.model;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -15,7 +16,8 @@ public class PersonActivityDetail {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "char(36)")
+    @Type(type="uuid-char")
     private UUID id;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -27,7 +29,7 @@ public class PersonActivityDetail {
     @Column(name = "name", length = 512)
     private String name;
 
-    @Column(name = "detail", length = 32768)
+    @Column(name = "detail", length = 8096)
     private String detail;
 
     @Column(name = "spend", length = 32)

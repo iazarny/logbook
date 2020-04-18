@@ -48,10 +48,11 @@ public class PersonActivityService {
 
     @Transactional
     public List<PersonActivity> findAllByActivity(Activity activity) {
-        PersonActivity personActivity = new PersonActivity();
+        /*PersonActivity personActivity = new PersonActivity();
         personActivity.setActivity(activity);
         Example<PersonActivity> example = Example.of(personActivity);
-        return personActivityRepository.findAll(example);
+        return personActivityRepository.findAll(example);*/
+        return personActivityRepository.findAllByActivity(activity);
     }
 
     /**
@@ -68,12 +69,16 @@ public class PersonActivityService {
         personRepository.findAllInTeam(team.getId()).stream()
                 .forEach(
                         teamMember -> {
-                            PersonActivity personActivity = new PersonActivity();
+                            /*PersonActivity personActivity = new PersonActivity();
                             personActivity.setActivity(activity);
                             personActivity.setPerson(teamMember);
                             Example<PersonActivity> example = Example.of(personActivity);
-                            Optional<PersonActivity> pa = personActivityRepository.findOne(example);
+                            Optional<PersonActivity> pa = personActivityRepository.findOne(example);*/
+                            Optional<PersonActivity> pa = personActivityRepository.findOneByActivityAndPerson(activity, teamMember);
                             if (!pa.isPresent()) {
+                                PersonActivity personActivity = new PersonActivity();
+                                personActivity.setActivity(activity);
+                                personActivity.setPerson(teamMember);
                                 personActivityRepository.save(personActivity);
                             }
                         }

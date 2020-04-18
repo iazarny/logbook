@@ -278,7 +278,8 @@ public class PersonActivityView extends VerticalLayout implements AfterNavigatio
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        act = personActivityService.createPersonsActivitySheet(userContext.getSelectedTeam(),
+        act = personActivityService.createPersonsActivitySheet(
+                userContext.getSelectedTeam(),
                 userContext.getSelectedDate());
         data = personActivityService.findAllByActivity(act);
         grid.setItems(data);

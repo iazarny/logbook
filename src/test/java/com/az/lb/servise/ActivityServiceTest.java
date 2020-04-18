@@ -34,18 +34,19 @@ class ActivityServiceTest {
 
         Team newTeam = teamService.createNewTeam(org.getId().toString(), "ActivityServiceTest Team");
 
-        Activity activity = activityService.createActivity(newTeam, LocalDate.now());
+        Activity activity = activityService.createActivity(newTeam, LocalDate.now().minusDays(100));
 
         assertNotNull(activity);
 
-        Activity oneMoreActivity = activityService.createActivity(newTeam, LocalDate.now());
+        Activity oneMoreActivity = activityService.createActivity(newTeam, LocalDate.now().minusDays(100));
 
         assertTrue(activity != oneMoreActivity);
         assertEquals(activity.getId(), oneMoreActivity.getId());
 
         Team team = teamService.createNewTeam(org.getId().toString(), "ActivityServiceTest Team1");
-        Activity activity1 = activityService.createActivity(team, LocalDate.now());
-        assertEquals(2, activityService.findAll(LocalDate.now()).size());
+        Activity activity1 = activityService.createActivity(team, LocalDate.now().minusDays(99));
+        assertEquals(1, activityService.findAllByDate(LocalDate.now().minusDays(100)).size());
+        assertEquals(1, activityService.findAllByDate(LocalDate.now().minusDays(99)).size());
 
     }
 

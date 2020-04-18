@@ -1,6 +1,7 @@
 package com.az.lb.model;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -15,7 +16,8 @@ public class Team {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "char(36)")
+    @Type(type="uuid-char")
     private UUID id;
 
     private String name;
