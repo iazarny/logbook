@@ -30,3 +30,6 @@ mvn clean package -Pproduction-mode
 
 ### TODO
  * Schedule to clean up old registration
+ * Block accounts
+ * Bot
+ * Track limit
