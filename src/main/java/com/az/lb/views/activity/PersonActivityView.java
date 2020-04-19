@@ -34,11 +34,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.util.List;
 
-@Route(value = "PersonActivity", layout = MainView.class)
-@RouteAlias(value = "PersonActivity", layout = MainView.class)
-@PageTitle("PersonActivity")
+@Route(value = PersonActivityView.ROUTE, layout = MainView.class)
+@RouteAlias(value = PersonActivityView.ROUTE, layout = MainView.class)
+@PageTitle("Person Activity")
 @CssImport("styles/views/personactivity/person-activity.css")
 public class PersonActivityView extends VerticalLayout implements AfterNavigationObserver /*, HasUrlParameter<String>*/ {
+
+    public static final  String ROUTE = "PersonActivity";
 
     @Autowired
     private UserContext userContext;

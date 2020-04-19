@@ -7,6 +7,9 @@ import com.az.lb.security.SecurityUtils;
 import com.az.lb.servise.TeamService;
 import com.az.lb.servise.mail.MailService;
 import com.az.lb.views.ConfirmDialog;
+import com.az.lb.views.activity.PersonActivityView;
+import com.az.lb.views.team.AssignedPersons;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -121,7 +124,7 @@ public class TeamView extends VerticalLayout implements AfterNavigationObserver 
     private void editMembers(Team team) {
         getUI().ifPresent(ui -> {
             userContext.setSelectedTeam(team);
-            ui.getPage().setLocation("/AssignedPersons");
+            UI.getCurrent().navigate(AssignedPersons.ROUTE);
         });
     }
 

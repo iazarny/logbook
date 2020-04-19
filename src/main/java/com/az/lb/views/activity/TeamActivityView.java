@@ -4,13 +4,12 @@ import com.az.lb.MainView;
 import com.az.lb.UserContext;
 import com.az.lb.model.Team;
 import com.az.lb.servise.TeamService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -66,7 +65,7 @@ public class TeamActivityView extends VerticalLayout implements AfterNavigationO
                     getUI().ifPresent(ui -> {
                         userContext.setSelectedTeam(item.getItem());
                         userContext.setSelectedDate(LocalDate.now());
-                        ui.getPage().setLocation("/PersonActivity");
+                        UI.getCurrent().navigate(PersonActivityView.ROUTE);
                     });
                 }
         );
@@ -92,7 +91,7 @@ public class TeamActivityView extends VerticalLayout implements AfterNavigationO
                     getUI().ifPresent(ui -> {
                         userContext.setSelectedTeam(team);
                         userContext.setSelectedDate(activityDateDialog.getLocalDate());
-                        ui.getPage().setLocation("/PersonActivity");
+                        UI.getCurrent().navigate(PersonActivityView.ROUTE);
                     });
                 })
                 .open();

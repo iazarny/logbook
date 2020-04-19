@@ -31,10 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Route(value = "AssignedPersons", layout = MainView.class)
+@Route(value = AssignedPersons.ROUTE, layout = MainView.class)
 @PageTitle("Assigned persons")
 @Secured({"ADM", "USER"})
 public class AssignedPersons extends VerticalLayout implements AfterNavigationObserver/*, HasUrlParameter<String>*/{
+
+    public static final String ROUTE = "AssignedPersons";
 
     @Autowired
     private TeamPersonService teamPersonService;
