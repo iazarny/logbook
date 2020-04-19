@@ -1,11 +1,11 @@
 package com.az.lb.servise.mail;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,6 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 import javax.mail.internet.MimeMessage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,9 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class MailService {
@@ -146,9 +141,16 @@ public class MailService {
         try {
 
 
-            String content = FileUtils.readFileToString(
-                    ResourceUtils.getFile("classpath:" + path.toString()),
+
+            //ResourceUtils.getURL(path.toString()).openStream()
+            String content = IOUtils.toString(
+                    ResourceUtils.getURL("classpath:" +path.toString()).openStream(),
                     StandardCharsets.UTF_8);
+            //ResourceUtils.getURL("classpath:" +path.toString())
+
+            /*String content = FileUtils.readFileToString(
+                    ResourceUtils.getFile("classpath:" + path.toString()),
+                    StandardCharsets.UTF_8);*/
 
             return content;
 
