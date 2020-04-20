@@ -42,7 +42,7 @@ a {
     outline: none;
     -webkit-transition: 0.4s;
     transition: 0.4s;
-    color: #333333;
+    color: #337ab7;
 }
 
 input:focus,
@@ -368,7 +368,8 @@ input:-webkit-autofill:focus {
 
 .client-area,
 .header-area {
-    background: #000000 url('images/parallax-2.jpg') no-repeat scroll center center / cover;
+    /*background: #000000 url('images/parallax-2.jpg') no-repeat scroll center center / cover;*/
+    background: #000000;
 }
 
 .anlge-bg {
@@ -598,7 +599,7 @@ input:-webkit-autofill:focus {
 ***/
 
 .testimonial-area {
-    background: url('images/parallax-7.jpg') no-repeat scroll center center / cover;
+    /*background: url('images/parallax-7.jpg') no-repeat scroll center center / cover;*/
     position: relative;
     color: #ffffff;
 }
@@ -642,7 +643,7 @@ input:-webkit-autofill:focus {
 ***/
 
 .price-area {
-    background: url('images/parallax-6.jpg') no-repeat scroll center center / cover
+    /*background: url('images/parallax-6.jpg') no-repeat scroll center center / cover*/
 }
 
 .price-table h3 {

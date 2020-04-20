@@ -147,14 +147,14 @@ public class LoginView extends HorizontalLayout implements AfterNavigationObserv
                         VaadinSession.getCurrent().getBrowser().getAddress() + "]"
         );
 
-        Enumeration<String> names = VaadinService.getCurrentRequest().getHeaderNames();
+        /*Enumeration<String> names = VaadinService.getCurrentRequest().getHeaderNames();
         StringBuilder sb = new StringBuilder();
         while(names.hasMoreElements()) {
             String name = names.nextElement();
             sb.append(name + "=" + VaadinService.getCurrentRequest().getHeader(name) + " \n");
         }
 
-        logger.info(sb.toString());
+        logger.info(sb.toString());*/
 
     }
 }
