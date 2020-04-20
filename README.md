@@ -33,3 +33,4 @@ mvn clean package -Pproduction-mode
  * Block accounts
  * Bot
  * Track limit
+ * Report fox size

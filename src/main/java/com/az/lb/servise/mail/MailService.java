@@ -71,8 +71,9 @@ public class MailService {
                     mailKey
             );
             System.out.println(">>>> try to send messsage " +message);
-            MailSendJob job = new MailSendJob(javaMailSender, message);
-            executorService.submit(job);
+            //MailSendJob job = new MailSendJob(javaMailSender, message);
+            //executorService.submit(job);
+            javaMailSender.send(message);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Cannot send mail", e);
