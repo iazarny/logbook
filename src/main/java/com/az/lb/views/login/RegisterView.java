@@ -18,6 +18,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -108,6 +109,8 @@ public class RegisterView extends HorizontalLayout {
                     data.put("callbackkey", reg.getId().toString());
                     data.put("callbackurl", lbRegistrationCallbackurl);
                     data.put("callbackhit", lbRegistrationCallbackurl+ "?regreq=" + reg.getId().toString());
+
+
 
 
                     mailService.send(
