@@ -1,10 +1,14 @@
 package com.az.lb.servise.mail;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.internet.MimeMessage;
 
 public class MailSendJob implements Runnable {
+
+    private static final Logger logger = LoggerFactory.getLogger(MailSendJob.class);
 
     private final JavaMailSender sender;
     private final MimeMessage message;
@@ -16,8 +20,11 @@ public class MailSendJob implements Runnable {
 
     @Override
     public void run() {
-        sender.send(message);
-        System.out.println(">>> Masg ok ");
+        try {
+            sender.send(message);
+        } catch (Exception ex) {
+            logger.error("Cannot send email", ex);
+        }
     }
 
 }
