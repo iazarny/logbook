@@ -54,7 +54,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .loginProcessingUrl(LOGIN_PROCESSING_URL)
                 .failureForwardUrl(LOGIN_FAILURE_URL)
-                .failureUrl(LOGIN_FAILURE_URL)
+                //.failureUrl(LOGIN_FAILURE_URL)
                 .successForwardUrl("/")
 
                 // Configure logout
