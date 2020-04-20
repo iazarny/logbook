@@ -17,6 +17,7 @@ public class MailSendJob implements Runnable {
     @Override
     public void run() {
         sender.send(message);
+        System.out.println(">>> Masg ok ");
     }
 
 }

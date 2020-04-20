@@ -70,9 +70,11 @@ public class MailService {
                     locale,
                     mailKey
             );
+            System.out.println(">>>> try to send messsage " +message);
             MailSendJob job = new MailSendJob(javaMailSender, message);
             executorService.submit(job);
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Cannot send mail", e);
         }
     }
@@ -128,6 +130,8 @@ public class MailService {
         } else {
             rez = htmlTemplateEngine.process(template, new Context(locale, data));
         }
+
+        System.out.println(">>>> Content is " + rez);
 
         return rez;
     }
