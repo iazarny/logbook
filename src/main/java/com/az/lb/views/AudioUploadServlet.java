@@ -35,7 +35,6 @@ public class AudioUploadServlet extends SpringServlet {
         if ("POST".equalsIgnoreCase(request.getMethod())) {
             try {
                 Collection<Part> parts = request.getParts();
-                System.out.println(">>>>>>>>>>>>>>> pid " + request.getParameterValues("pid")[0]);
 
                 Part audio = getPart(parts, "audio_data").get();
                 PersonActivityService pas = context.getBean(PersonActivityService.class);

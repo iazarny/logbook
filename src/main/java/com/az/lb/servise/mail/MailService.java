@@ -70,8 +70,9 @@ public class MailService {
                     locale,
                     mailKey
             );
-            MailSendJob job = new MailSendJob(javaMailSender, message);
-            executorService.submit(job);
+            //javaMailSender todo not yet
+            //MailSendJob job = new MailSendJob(javaMailSender, message);
+            //executorService.submit(job);
         } catch (Exception e) {
 
             logger.error("Cannot send mail", e);
@@ -97,6 +98,7 @@ public class MailService {
         if (textTemplate != null) {
             textContent = compose(textTemplate, model, TemplateMode.TEXT, locale);
         }
+        logger.info(textContent); //todo remove
 
 
         String htmlContent = null;
@@ -129,8 +131,6 @@ public class MailService {
         } else {
             rez = htmlTemplateEngine.process(template, new Context(locale, data));
         }
-
-        System.out.println(">>>> Content is " + rez);
 
         return rez;
     }
