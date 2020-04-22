@@ -1,7 +1,6 @@
 package com.az.lb.views.login;
 
 import com.az.lb.servise.PersonService;
-import com.az.lb.views.AudioDownloadServlet;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -21,13 +20,10 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Enumeration;
 
 
 @Route(value = LoginView.ROUTE)
@@ -53,6 +49,10 @@ public class LoginView extends HorizontalLayout implements AfterNavigationObserv
     public LoginView() {
 
         userNameTextField.getElement().setAttribute("name", "username");
+        userNameTextField.setId("username");
+
+
+
         userNameTextField.addInputListener(event -> {
             forgotPasswordButton.setEnabled(true);
         });
@@ -116,7 +116,7 @@ public class LoginView extends HorizontalLayout implements AfterNavigationObserv
                     if (personService.forgotPassword(userNameTextField.getValue())) {
                         Notification.show(
                                 "Reset password mail has been sent",
-                                4000,
+                                5000,
                                 Notification.Position.TOP_CENTER
                         );
                     }
@@ -135,26 +135,18 @@ public class LoginView extends HorizontalLayout implements AfterNavigationObserv
 
         });
 
+        UI.getCurrent().getPage().executeJs(
+                "document.getElementById('username').focus();");
+
 
     }
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-
-
         logger.info(
                 "New client [" + VaadinSession.getCurrent().getBrowser().getBrowserApplication() + "] from ip [" +
                         VaadinSession.getCurrent().getBrowser().getAddress() + "]"
         );
-
-        /*Enumeration<String> names = VaadinService.getCurrentRequest().getHeaderNames();
-        StringBuilder sb = new StringBuilder();
-        while(names.hasMoreElements()) {
-            String name = names.nextElement();
-            sb.append(name + "=" + VaadinService.getCurrentRequest().getHeader(name) + " \n");
-        }
-
-        logger.info(sb.toString());*/
 
     }
 }

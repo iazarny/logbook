@@ -1,36 +1,28 @@
 # Log Book
 
-Simple log book to track several team.
+A simple application designed to track people's activity. This application is not coupled with any  methodology.Track and record people's daily activities using keyboard and audio recordings. You can record audio from the site. Participants can also record their activities on their own. No specifal tools is required - just web browser.
 
-# Custom project from start.vaadin.com
+# Deployed 
 
-This project was created from https://start.vaadin.com. It's a fully working Vaadin application that you continue developing locally.
-It has all the necessary dependencies and files to help you get going. 
+Fully operational site deployed http://log-book.online/ . You can use it for free. 
 
-The project is a standard Maven project, so you can import it to your IDE of choice. You'll need to have Java 8+ and Node.js 10+ installed.
 
-To run from the command line, use `mvn spring-boot:run` and open [http://localhost:8080](http://localhost:8080) in your browser.
+# Resources
 
-## Project structure
+Based on :
 
-- `MainView.java` in `src/main/java` contains the navigation setup. It uses [App Layout](https://vaadin.com/components/vaadin-app-layout).
-- `views` package in `src/main/java` contains the server-side Java views of your application.
-- `views` folder in `frontend/src/` contains the client-side JavaScript views of your application.
+ * Java 
+ * Vaadin
+ * MySQL
 
 ## What next?
 
-mvn clean package -Pproduction-mode
-
-[vaadin.com](https://vaadin.com) has lots of material to help you get you started:
-
- - Follow the tutorials in [vaadin.com/tutorials](https://vaadin.com/tutorials). Especially [vaadin.com/tutorials/getting-started-with-flow](https://vaadin.com/tutorials/getting-started-with-flow) is good for getting a grasp of the basic Vaadin concepts.
- - Read the documentation in [vaadin.com/docs](https://vaadin.com/docs).
- - For a bigger Vaadin application example, check out the Full Stack App starter from [vaadin.com/start](https://vaadin.com/start).
-
-
-### TODO
+Simple todo list:
  * Schedule to clean up old registration
  * Block accounts
- * Bot
+ * Chat Bot
  * Track limit
  * Report fox size
+
+mvn clean package -Pproduction
+

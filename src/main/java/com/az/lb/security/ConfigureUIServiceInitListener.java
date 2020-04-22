@@ -1,6 +1,6 @@
 package com.az.lb.security;
 
-import com.az.lb.views.login.InvitationConfirmView;
+import com.az.lb.views.login.ChangePasswordView;
 import com.az.lb.views.login.LoginView;
 import com.az.lb.views.login.RegisterConfirmView;
 import com.az.lb.views.login.RegisterView;
@@ -31,7 +31,7 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
     private void beforeEnter(BeforeEnterEvent event) {
 
 
-        if (InvitationConfirmView.class.equals(event.getNavigationTarget())) {
+        if (ChangePasswordView.class.equals(event.getNavigationTarget())) {
             return;
         }
 

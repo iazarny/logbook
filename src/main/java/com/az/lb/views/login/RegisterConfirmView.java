@@ -51,7 +51,7 @@ public class RegisterConfirmView extends HorizontalLayout implements BeforeEnter
                 infoLabel,
                 submitButton);
 
-        submitButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         formLayout.setWidth("360px");
 
@@ -95,13 +95,13 @@ public class RegisterConfirmView extends HorizontalLayout implements BeforeEnter
                         registration.getLastname(),
                         encodedPwd);
                 registrationRepository.delete(registration);
-                infoLabel.setText("Registration is confirmed.");
+                infoLabel.setText("Registration is confirmed. After login you can add people, teams ans start track activity");
                 submitButton.setText("Open log book.");
-                submitButton.addClickListener(e -> UI.getCurrent().navigate(TeamView.class) );
+                submitButton.addClickListener(e -> UI.getCurrent().navigate(LoginView.class) );
             } else {
                 infoLabel.setText("Registration link is expired, sorry. Register one more time, please.");
                 submitButton.setText("Go to registration");
-                submitButton.addClickListener(e -> UI.getCurrent().navigate(RegisterView.class) );
+                submitButton.addClickListener(e -> UI.getCurrent().navigate(LoginView.class) );
             }
         }
 

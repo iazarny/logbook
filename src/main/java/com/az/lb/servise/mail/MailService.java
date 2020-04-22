@@ -70,9 +70,8 @@ public class MailService {
                     locale,
                     mailKey
             );
-            //javaMailSender todo not yet
-            //MailSendJob job = new MailSendJob(javaMailSender, message);
-            //executorService.submit(job);
+            MailSendJob job = new MailSendJob(javaMailSender, message);
+            executorService.submit(job);
         } catch (Exception e) {
 
             logger.error("Cannot send mail", e);
@@ -98,8 +97,6 @@ public class MailService {
         if (textTemplate != null) {
             textContent = compose(textTemplate, model, TemplateMode.TEXT, locale);
         }
-        logger.info(textContent); //todo remove
-
 
         String htmlContent = null;
         String htmlTemplate = getTemplate(mailKey, locale, templateName + ".html");

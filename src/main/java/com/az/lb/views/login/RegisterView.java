@@ -3,11 +3,8 @@ package com.az.lb.views.login;
 import com.az.lb.model.Registration;
 import com.az.lb.repository.RegistrationRepository;
 import com.az.lb.servise.mail.MailService;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
@@ -15,10 +12,12 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -49,6 +48,7 @@ public class RegisterView extends HorizontalLayout {
     private PasswordField passwordField = new PasswordField("Password");
     private Button submitButton = new Button("Create");
     private Label infoLabel = new Label("");
+    private Binder<Registration> binderRegistration = new Binder<>();
 
     public RegisterView() {
 
@@ -61,7 +61,6 @@ public class RegisterView extends HorizontalLayout {
                 passwordField,
                 submitButton);
         formLayout.add(infoLabel);
-
 
         submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
@@ -86,46 +85,75 @@ public class RegisterView extends HorizontalLayout {
         this.setJustifyContentMode(JustifyContentMode.CENTER);
 
 
+        createValidation();
+
+
         submitButton.addClickListener(
                 e -> {
-
-                    final Optional<Registration> optPrevReg = registrationRepository.findByEmail(userEmailTextField.getValue());
-                    Registration reg = new Registration();
-                    reg.setEmail(userEmailTextField.getValue());
-                    reg.setName(orgNameTextField.getValue());
-                    reg.setPwd(passwordField.getValue());
-                    reg.setFirstname(firstNameTextField.getValue());
-                    reg.setLastname(lastNameTextField.getValue());
-                    if (optPrevReg.isPresent()) {
-                        reg.setId(optPrevReg.get().getId());
+                    try {
+                        Registration reg = new Registration();
+                        binderRegistration.writeBean(reg);
+                        createNewRegistration(reg);
+                        infoLabel.setText(
+                                String.format("Please, check your email to confirm registration of \"%s\"", orgNameTextField.getValue())
+                        );
+                    } catch (ValidationException ve) {
+                        infoLabel.setText(
+                                "Validation has failed for some fields"
+                        );
                     }
-                    reg = registrationRepository.save(reg);
-
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("email", reg.getEmail());
-                    data.put("orgName", reg.getName());
-                    data.put("firstName", reg.getFirstname());
-                    data.put("lastName", reg.getLastname());
-                    data.put("callbackkey", reg.getId().toString());
-                    data.put("callbackurl", lbRegistrationCallbackurl);
-                    data.put("callbackhit", lbRegistrationCallbackurl+ "?regreq=" + reg.getId().toString());
-
-
-
-
-                    mailService.send(
-                            MailService.MAIL_REGISTER,
-                            userEmailTextField.getValue(),
-                            "Register a new organization in the Log Book ",
-                            data,
-                            null //todo
-                    );
-
-                    infoLabel.setText(
-                            String.format("Please, check your email to confirm registration of \"%s\"", orgNameTextField.getValue())
-                    );
 
                 }
+        );
+    }
+
+    private String NAME_ERR_MSG = "Name must contain at least three characters. And less than 64";
+
+    private void createValidation() {
+        binderRegistration.forField(orgNameTextField).withValidator(
+                name -> name.length() >= 3 && name.length() <= 64, NAME_ERR_MSG
+
+        ).bind(Registration::getName, Registration::setName);
+
+        binderRegistration.forField(firstNameTextField).withValidator(
+                name -> name.length() >= 3 && name.length() <= 64, NAME_ERR_MSG
+        ).bind(Registration::getFirstname, Registration::setFirstname);
+
+        binderRegistration.forField(lastNameTextField).withValidator(
+                name -> name.length() >= 3 && name.length() <= 63, NAME_ERR_MSG
+        ).bind(Registration::getLastname, Registration::setLastname);
+
+        binderRegistration.forField(userEmailTextField).withValidator(
+                new EmailValidator("Please provide correct email")
+        ).bind(Registration::getEmail, Registration::setEmail);
+
+        binderRegistration.forField(passwordField).withValidator(
+                pwd -> pwd.length() >= 8 ,
+                "Name must contain at least 8 characters"
+        ).bind(Registration::getPwd, Registration::setPwd);
+    }
+
+    private void createNewRegistration(Registration reg) {
+        final Optional<Registration> optPrevReg = registrationRepository.findByEmail(userEmailTextField.getValue());
+        if (optPrevReg.isPresent()) {
+            reg.setId(optPrevReg.get().getId());
+        }
+        reg = registrationRepository.save(reg);
+        Map<String, Object> data = new HashMap<>();
+        data.put("email", reg.getEmail());
+        data.put("orgName", reg.getName());
+        data.put("firstName", reg.getFirstname());
+        data.put("lastName", reg.getLastname());
+        data.put("callbackkey", reg.getId().toString());
+        data.put("callbackurl", lbRegistrationCallbackurl);
+        data.put("callbackhit", lbRegistrationCallbackurl+ "?regreq=" + reg.getId().toString());
+
+        mailService.send(
+                MailService.MAIL_REGISTER,
+                userEmailTextField.getValue(),
+                "Register a new organization in the Log Book ",
+                data,
+                null //todo
         );
     }
 }

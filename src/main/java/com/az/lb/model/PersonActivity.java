@@ -34,7 +34,7 @@ public class PersonActivity {
     private String contentType;
 
     @Lob
-    @Column(name = "record", columnDefinition="BLOB")
+    @Column(name = "record", columnDefinition="LONGBLOB")
     private Blob record;
 
     @ManyToOne(fetch = FetchType.EAGER)

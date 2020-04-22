@@ -118,13 +118,13 @@ public class PersonAdtivityDetailDialog extends Dialog {
                 .setAutoWidth(true)
                 .setFlexGrow(1);
 
-
         Grid.Column<PersonActivityDetail> detailColumn = grid.addColumn(i -> i.getDetail())
                 .setResizable(true)
                 .setSortable(true)
                 .setHeader("Detail")
                 .setAutoWidth(true)
                 .setFlexGrow(1);
+
         Grid.Column<PersonActivityDetail> spendColumn = grid.addColumn(i -> i.getSpend())
                 .setResizable(true)
                 .setSortable(true)
