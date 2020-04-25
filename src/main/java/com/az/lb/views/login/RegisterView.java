@@ -3,6 +3,7 @@ package com.az.lb.views.login;
 import com.az.lb.model.Registration;
 import com.az.lb.repository.RegistrationRepository;
 import com.az.lb.servise.mail.MailService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -97,6 +98,12 @@ public class RegisterView extends HorizontalLayout {
                         infoLabel.setText(
                                 String.format("Please, check your email to confirm registration of \"%s\"", orgNameTextField.getValue())
                         );
+                        submitButton.addClickListener(
+                                e2 -> {
+                                     UI.getCurrent().navigate(LoginView.class);
+                                }
+                        );
+                        submitButton.setText("Login");
                     } catch (ValidationException ve) {
                         infoLabel.setText(
                                 "Validation has failed for some fields"

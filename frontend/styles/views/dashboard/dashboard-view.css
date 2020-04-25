@@ -8,36 +8,6 @@
     height: 100%;
 }
 
-tr.task-rt {
-    vertical-align: top;
-    display: inline;
-}
-
-tr.task-done {
-    background-color: var(--lumo-success-color-10pct);
-    vertical-align: top;
-    white-space: normal;
-}
-
-tr.task-not-done {
-    background-color: var(--lumo-primary-color-10pct);
-    vertical-align: top;
-    white-space: normal;
-}
-
-td.task-total {
-    font-weight: bold;
-    vertical-align: top;
-}
-
-td.task-total-value {
-    font-weight: bold;
-    vertical-align: top;
-    text-align: end;
-    background-color: var(--lumo-primary-color-50pct);
-    vert-align: top;
-}
-
 div.employee-column {
     border-radius: var(--lumo-border-radius);
     box-shadow: var(--lumo-box-shadow-s);

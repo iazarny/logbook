@@ -22,7 +22,10 @@ Simple todo list:
  * Block accounts
  * Chat Bot
  * Track limit
- * Report fox size
 
+## Changes
+ * 2020-0425 Fixed font size in reports. 
+ * 2020-0425 Add css class to highlight list of user.
+ 
 mvn clean package -Pproduction
 

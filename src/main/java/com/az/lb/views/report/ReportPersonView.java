@@ -5,17 +5,14 @@ import com.az.lb.MainView;
 import com.az.lb.UserContext;
 import com.az.lb.model.Person;
 import com.az.lb.servise.PersonActivityDetailService;
-import com.az.lb.servise.PersonActivityService;
 import com.az.lb.servise.PersonService;
-import com.az.lb.servise.TeamService;
+import com.az.lb.servise.ReportingService;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.H6;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -28,7 +25,7 @@ import java.time.LocalDate;
 @Route(value = "PersonReport", layout = MainView.class)
 @RouteAlias(value = "PersonReport", layout = MainView.class)
 @PageTitle("Person activity report")
-@CssImport("styles/views/dashboard/dashboard-view.css")
+@CssImport("styles/views/reports/reports.css")
 @Secured({"ADM"})
 public class ReportPersonView extends VerticalLayout implements AfterNavigationObserver {
 
@@ -36,7 +33,7 @@ public class ReportPersonView extends VerticalLayout implements AfterNavigationO
     private PersonService personService;
 
     @Autowired
-    private PersonActivityService personActivityService;
+    private ReportingService reportingService;
 
     @Autowired
     private PersonActivityDetailService personActivityDetailService;
@@ -92,7 +89,7 @@ public class ReportPersonView extends VerticalLayout implements AfterNavigationO
         confirmButton.addClickListener(
                 e -> {
 
-                    String str =  personActivityDetailService.findAllFromTillDateAsHtmlTable(
+                    String str =  reportingService.findAllFromTillDateAsHtmlTable(
                             userContext.getOrg(),
                             persons.getValue(),
                             fromDatePicker.getValue(),

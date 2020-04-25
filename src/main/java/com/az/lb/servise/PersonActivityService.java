@@ -12,7 +12,6 @@ import org.hibernate.LobHelper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManagerFactory;
@@ -48,10 +47,6 @@ public class PersonActivityService {
 
     @Transactional
     public List<PersonActivity> findAllByActivity(Activity activity) {
-        /*PersonActivity personActivity = new PersonActivity();
-        personActivity.setActivity(activity);
-        Example<PersonActivity> example = Example.of(personActivity);
-        return personActivityRepository.findAll(example);*/
         return personActivityRepository.findAllByActivity(activity);
     }
 

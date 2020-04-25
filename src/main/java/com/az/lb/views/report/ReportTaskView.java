@@ -3,45 +3,34 @@ package com.az.lb.views.report;
 
 import com.az.lb.MainView;
 import com.az.lb.UserContext;
-import com.az.lb.model.PersonActivityDetail;
 import com.az.lb.servise.PersonActivityDetailService;
-import com.az.lb.servise.PersonActivityService;
-import com.az.lb.servise.TeamService;
+import com.az.lb.servise.ReportingService;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.H6;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Route(value = "TaskReport", layout = MainView.class)
 @RouteAlias(value = "TaskReport", layout = MainView.class)
 @PageTitle("Task report")
-@CssImport("styles/views/dashboard/dashboard-view.css")
+@CssImport("styles/views/reports/reports.css")
 @Secured({"ADM"})
 public class ReportTaskView extends VerticalLayout implements AfterNavigationObserver {
 
     @Autowired
-    private TeamService teamService;
-
-    @Autowired
-    private PersonActivityService personActivityService;
-
-    @Autowired
     private PersonActivityDetailService personActivityDetailService;
+
+    @Autowired
+    private ReportingService reportingService;
 
     private final UserContext userContext;
 
@@ -80,7 +69,7 @@ public class ReportTaskView extends VerticalLayout implements AfterNavigationObs
         confirmButton.addClickListener(
                 e -> {
 
-                    String str = personActivityDetailService.findAllFromTillDateAsHtmlTable(
+                    String str = reportingService.findAllFromTillDateAsHtmlTable(
                             userContext.getOrg(), fromDatePicker.getValue(), tillDatePicker.getValue());
 
                     add(
