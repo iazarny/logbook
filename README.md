@@ -19,13 +19,13 @@ Based on :
 
 Simple todo list:
  * Schedule to clean up old registration
- * Block accounts
  * Chat Bot
  * Track limit
 
 ## Changes
- * 2020-0425 Fixed font size in reports. 
- * 2020-0425 Add css class to highlight list of user.
+ * 2020-04-26 Lock user account feature added. 
+ * 2020-04-25 Fixed font size in reports. 
+ * 2020-04-25 Add css class to highlight list of user.
  
 mvn clean package -Pproduction
 

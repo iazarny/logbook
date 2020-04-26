@@ -43,6 +43,9 @@ public class Person {
     private LocalDate pwdchanged;
 
 
+    @Column(name = "blocked")
+    private Boolean blocked;
+
 
     public Person() {
     }
@@ -116,6 +119,14 @@ public class Person {
 
     public void setOrg(Org org) {
         this.org = org;
+    }
+
+    public Boolean getBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        this.blocked = blocked;
     }
 
     @Transient

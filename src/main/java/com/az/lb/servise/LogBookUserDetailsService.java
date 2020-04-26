@@ -2,7 +2,10 @@ package com.az.lb.servise;
 
 import com.az.lb.model.Person;
 import com.az.lb.repository.PersonRepository;
+import com.az.lb.servise.mail.MailSendJob;
 import org.apache.commons.lang3.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +22,8 @@ import java.util.Optional;
 
 //@Service
 public class LogBookUserDetailsService implements UserDetailsService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LogBookUserDetailsService.class);
 
     @Autowired
     private PersonRepository personRepository;
@@ -38,11 +43,17 @@ public class LogBookUserDetailsService implements UserDetailsService {
             final boolean enabled = p.getPwdchanged() != null
                     && LocalDate.now().minusDays(100).isBefore(p.getPwdchanged()); //todo 100
 
+            boolean locked = BooleanUtils.toBoolean(p.getBlocked());
+
+            if (locked) {
+                logger.info("User  {0}, {1} is blocked", p.getFullName(), p.getEmail());
+            }
+
             final UserDetails userDetails = new User(
                     p.getEmail(),
                     p.getPwd(),
                     enabled,
-                    true, true, true,
+                    true, true, !locked,
                     authorities
             );
 

@@ -70,6 +70,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
     private TextField lastname = new TextField();
     private TextField email = new TextField();
     private Checkbox orgManager = new Checkbox();
+    private Checkbox blocked = new Checkbox();
 
     private Button forgot = new Button("Change password");
     private Button cancel = new Button("Cancel");
@@ -206,6 +207,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
                     person.setLastName(personEditDialog.getLastName());
                     person.setEmail(personEditDialog.getEmai());
                     person.setOrg(userContext.getOrg());
+                    person.setBlocked(false);
                     person = service.save(person);
                     grid.setItems(service.findAll(userContext.getOrg()));
                     if (personEditDialog.isSendInvitation()) {
@@ -230,6 +232,7 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         addFormItem(editorDiv, formLayout, lastname, "Last name");
         addFormItem(editorDiv, formLayout, email, "Email");
         addFormItem(editorDiv, formLayout, orgManager, "Lead");
+        addFormItem(editorDiv, formLayout, blocked, "Blocked");
         createButtonLayout(editorDiv);
         splitLayout.addToSecondary(editorDiv);
     }
