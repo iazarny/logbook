@@ -138,7 +138,12 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
             this.grid.getSelectedItems().forEach(
                     p -> {
                         try {
+
+                            Person prev = service.findById(p.getId().toString()).get();
+
                             this.binder.writeBean(p);
+                            p.setPwd(prev.getPwd());
+
                             this.service.save(p);
                             this.grid.getDataProvider().refreshItem(p);
                             Notification.show("Saved " + p.getFullName());
