@@ -96,7 +96,8 @@ public class RegisterView extends HorizontalLayout {
                         binderRegistration.writeBean(reg);
                         createNewRegistration(reg);
                         infoLabel.setText(
-                                String.format("Please, check your email to confirm registration of \"%s\"", orgNameTextField.getValue())
+                                String.format("Please, check your email to confirm registration of \"%s\". " +
+                                        "To resend confirmation need to register one more time or check email spam folder if you cannot find email from log book", orgNameTextField.getValue())
                         );
                         submitButton.addClickListener(
                                 e2 -> {
@@ -106,7 +107,7 @@ public class RegisterView extends HorizontalLayout {
                         submitButton.setText("Login");
                     } catch (ValidationException ve) {
                         infoLabel.setText(
-                                "Validation has failed for some fields"
+                                "Validation has failed for fields"
                         );
                     }
 

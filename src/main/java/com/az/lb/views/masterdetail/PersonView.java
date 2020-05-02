@@ -2,15 +2,12 @@ package com.az.lb.views.masterdetail;
 
 import com.az.lb.UserContext;
 import com.az.lb.model.Person;
-import com.az.lb.model.Registration;
 import com.az.lb.repository.RegistrationRepository;
 import com.az.lb.security.SecurityUtils;
 import com.az.lb.servise.PersonService;
 import com.az.lb.servise.mail.MailService;
-import com.az.lb.views.dashboard.TeamView;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -29,7 +26,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.AfterNavigationEvent;
@@ -38,11 +34,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import com.az.lb.MainView;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Route(value = "Persons", layout = MainView.class)
 @PageTitle("Persons")
@@ -87,7 +79,6 @@ public class PersonView extends VerticalLayout implements AfterNavigationObserve
         setId("master-detail-view");
         // Configure Grid
         this.grid = new Grid<>();
-        //grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         this.grid.setHeightFull();
         this.grid.addColumn(Person::getFullName)
                 .setHeader("Name")

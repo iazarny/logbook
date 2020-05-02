@@ -1,14 +1,11 @@
-package com.az.lb.views.dashboard;
+package com.az.lb.views.team;
 
 import com.az.lb.MainView;
 import com.az.lb.UserContext;
 import com.az.lb.model.Team;
 import com.az.lb.security.SecurityUtils;
 import com.az.lb.servise.TeamService;
-import com.az.lb.servise.mail.MailService;
 import com.az.lb.views.ConfirmDialog;
-import com.az.lb.views.activity.PersonActivityView;
-import com.az.lb.views.team.AssignedPersons;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -30,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
 @Route(value = "Teams", layout = MainView.class)
-@RouteAlias(value = "Teams", layout = MainView.class)
+//@RouteAlias(value = "Teams", layout = MainView.class)
 @PageTitle("Teams")
 @CssImport("styles/views/dashboard/dashboard-view.css")
 @Secured({"ADM", "USER"})

@@ -44,12 +44,19 @@ public class ReportDailyView extends VerticalLayout implements AfterNavigationOb
 
     private final Button confirmButton;
 
+    private final VerticalLayout reportBody;
+
 
     public ReportDailyView(@Autowired UserContext userContext) {
         super();
         this.userContext = userContext;
         this.labelDatePicker = new DatePicker( LocalDate.now());
         this.confirmButton = new Button("Generate");
+        this.reportBody = new VerticalLayout();
+        reportBody.getStyle().set("overflow", "auto");
+        reportBody.setWidth("99%");
+        reportBody.setHeight("70vh");
+
         HorizontalLayout fl = new HorizontalLayout();
         fl.add(new H6("Date"));
         fl.add(labelDatePicker);
@@ -60,7 +67,8 @@ public class ReportDailyView extends VerticalLayout implements AfterNavigationOb
         add(
                 new H4("Daily report."),
                 fl,
-                new Html("<hr/>")
+                new Html("<hr/>"),
+                reportBody
         );
 
     }
@@ -102,9 +110,11 @@ public class ReportDailyView extends VerticalLayout implements AfterNavigationOb
                     str = str.replace("'detail-table'", "'detail-table-report'");
 
 
-                    add(
+
+
+                    reportBody.add(
                             new Html(
-                                    "<div>" +
+                                    "<div" +
                                             str +
                                             "</dv>")
                     );

@@ -48,6 +48,8 @@ public class ReportPersonView extends VerticalLayout implements AfterNavigationO
 
     private final Button confirmButton;
 
+    private final VerticalLayout reportBody;
+
     public ReportPersonView(@Autowired UserContext userContext) {
         super();
         this.userContext = userContext;
@@ -57,6 +59,10 @@ public class ReportPersonView extends VerticalLayout implements AfterNavigationO
         this.confirmButton.setEnabled(false);
         this.persons = new ComboBox<>();
         this.persons.setItemLabelGenerator(Person::getFullName);
+        this.reportBody = new VerticalLayout();
+        reportBody.getStyle().set("overflow", "auto");
+        reportBody.setWidth("99%");
+        reportBody.setHeight("70vh");
 
         configureHandlers();
         HorizontalLayout fl = new HorizontalLayout();
@@ -67,12 +73,11 @@ public class ReportPersonView extends VerticalLayout implements AfterNavigationO
         fl.add(new H6( "Till"));
         fl.add(tillDatePicker);
         fl.add(confirmButton);
-        //fl.setResponsiveSteps(
-          //      new FormLayout.ResponsiveStep("0", 4, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
         add(
                 new H4("Person activity report."),
                 fl,
-                new Html("<hr/>")
+                new Html("<hr/>"),
+                reportBody
         );
     }
 
@@ -96,7 +101,7 @@ public class ReportPersonView extends VerticalLayout implements AfterNavigationO
                             tillDatePicker.getValue()
                     );
 
-                    add(
+                    reportBody.add(
                             new Html(
                                     "<div>" +
                                             str +

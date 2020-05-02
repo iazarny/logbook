@@ -44,9 +44,13 @@ public class OrganizationSettingView extends VerticalLayout implements AfterNavi
 
         FormLayout formLayout = new FormLayout();
         formLayout.addFormItem(name, "Name");
-        formLayout.addFormItem(fillteam, "Allow impersonalized log");
-        formLayout.addFormItem(
-                saveButton, " "
+        //formLayout.addFormItem(fillteam, "Allow impersonalized log");
+
+        final FlexLayout caddButtonWrapper = new FlexLayout(saveButton);
+        caddButtonWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+        formLayout.add(
+                caddButtonWrapper
         );
 
         formLayout.setResponsiveSteps(
@@ -54,7 +58,7 @@ public class OrganizationSettingView extends VerticalLayout implements AfterNavi
                 new FormLayout.ResponsiveStep("300px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
         formLayout.setWidth(ViewConst.DIALOG_WIDTH);
 
-        saveButton.setEnabled(false);
+        //saveButton.setEnabled(false);
 
 
         add(new HorizontalLayout(new H4("Organization settings")));

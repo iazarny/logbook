@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 
@@ -31,15 +32,21 @@ public class OrgService {
         org.setName(orgName);
         org = orgRepository.save(org);
 
-        Person manager = new Person();
-        manager.setEmail(emailManager);
-        manager.setFirstName(firstName);
-        manager.setLastName(lastName);
-        manager.setOrgManager(true);
-        manager.setOrg(org);
-        manager.setPwd(pwd);
-        manager.setPwdchanged(LocalDate.now());
-        manager = personRepository.save(manager);
+        Optional<Person> checkManager = personRepository.findByEmail(emailManager);
+
+        if (!checkManager.isPresent()) {
+            final Person manager = new Person();
+            manager.setEmail(emailManager);
+            manager.setFirstName(firstName);
+            manager.setLastName(lastName);
+            manager.setOrgManager(true);
+            manager.setOrg(org);
+            manager.setPwd(pwd);
+            manager.setPwdchanged(LocalDate.now());
+            personRepository.save(manager);
+        }
+
+
 
         return org;
     }

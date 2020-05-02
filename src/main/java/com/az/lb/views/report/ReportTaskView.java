@@ -40,12 +40,18 @@ public class ReportTaskView extends VerticalLayout implements AfterNavigationObs
 
     private final Button confirmButton;
 
+    private final VerticalLayout reportBody;
+
     public ReportTaskView(@Autowired UserContext userContext) {
         super();
         this.userContext = userContext;
         this.fromDatePicker = new DatePicker(LocalDate.now().minusDays(7));
         this.tillDatePicker = new DatePicker(LocalDate.now());
         this.confirmButton = new Button("Generate");
+        this.reportBody = new VerticalLayout();
+        reportBody.getStyle().set("overflow", "auto");
+        reportBody.setWidth("99%");
+        reportBody.setHeight("70vh");
         configureHandlers();
 
         HorizontalLayout fl = new HorizontalLayout();
@@ -59,7 +65,8 @@ public class ReportTaskView extends VerticalLayout implements AfterNavigationObs
         add(
                 new H4("Tasks report."),
                 fl,
-                new Html("<hr/>")
+                new Html("<hr/>"),
+                reportBody
         );
     }
 
@@ -72,7 +79,7 @@ public class ReportTaskView extends VerticalLayout implements AfterNavigationObs
                     String str = reportingService.findAllFromTillDateAsHtmlTable(
                             userContext.getOrg(), fromDatePicker.getValue(), tillDatePicker.getValue());
 
-                    add(
+                    reportBody.add(
                             new Html(
                                     "<div>" +
                                             str +

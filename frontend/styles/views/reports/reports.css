@@ -36,4 +36,5 @@ td.task-total-value {
     text-align: end;
     background-color: var(--lumo-primary-color-50pct);
     vert-align: top;
+    white-space: normal;
 }

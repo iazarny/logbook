@@ -162,8 +162,8 @@ public class PersonActivityService {
             if (details.size() > 1) {
                 rez += String.format(
                         "<tr class='task-tr'>" +
-                                "<td width='95%%' valign='top' colspan=2 class='task-total'>%s</td>" +
-                                "<td width='5%%'  class='task-total-value'>%s</td>" +
+                                "<td width='90%%' valign='top' colspan=2 class='task-total'>%s</td>" +
+                                "<td width='10%%'  class='task-total-value'>%s</td>" +
                                 "</tr>",
                         "Total",
                         DurationHumanizer.humanizeTotal(totalSpend.toString())

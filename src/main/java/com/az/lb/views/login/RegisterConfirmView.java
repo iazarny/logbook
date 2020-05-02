@@ -1,20 +1,15 @@
 package com.az.lb.views.login;
 
-import com.az.lb.MainView;
 import com.az.lb.model.Org;
 import com.az.lb.model.Registration;
-import com.az.lb.repository.OrgRepository;
 import com.az.lb.repository.RegistrationRepository;
 import com.az.lb.servise.OrgService;
-import com.az.lb.servise.TeamService;
-import com.az.lb.views.dashboard.TeamView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.dom.Element;

@@ -40,7 +40,7 @@ public class LoginView extends HorizontalLayout implements AfterNavigationObserv
     @Autowired
     private PersonService personService;
 
-    private TextField userNameTextField = new TextField("Name");
+    private TextField userNameTextField = new TextField("Name (email)");
     private PasswordField passwordField = new PasswordField("Password");
     private Button submitButton = new Button("Login");
     private Button forgotPasswordButton = new Button("Forgot password");
@@ -115,7 +115,7 @@ public class LoginView extends HorizontalLayout implements AfterNavigationObserv
                 e -> {
                     if (personService.forgotPassword(userNameTextField.getValue())) {
                         Notification.show(
-                                "Reset password mail has been sent",
+                                "Reset password email has been sent",
                                 5000,
                                 Notification.Position.TOP_CENTER
                         );

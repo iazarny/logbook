@@ -3,8 +3,6 @@ package com.az.lb.views.login;
 import com.az.lb.model.Registration;
 import com.az.lb.repository.RegistrationRepository;
 import com.az.lb.servise.PersonService;
-import com.az.lb.servise.mail.MailSendJob;
-import com.az.lb.views.dashboard.TeamView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
