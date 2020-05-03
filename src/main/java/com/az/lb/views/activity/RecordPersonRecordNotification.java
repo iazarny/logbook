@@ -1,11 +1,9 @@
 package com.az.lb.views.activity;
 
 import com.az.lb.model.PersonActivity;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.page.Page;
@@ -26,8 +24,8 @@ public class RecordPersonRecordNotification extends Notification {
         this.personActivity = personActivity;
         this.onClose = onClose;
 
-        UI.getCurrent().getPage().addJavaScript("js/WebAudioRecorder.min.js");
-        UI.getCurrent().getPage().addJavaScript("js/app.js");
+        UI.getCurrent().getPage().addJavaScript("./js/WebAudioRecorder.min.js");
+        UI.getCurrent().getPage().addJavaScript("./js/app.js");
 
         Button stopRecordingBtn = new Button("Stop recording");
 
