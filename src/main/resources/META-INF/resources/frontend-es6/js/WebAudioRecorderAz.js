@@ -92,21 +92,20 @@ function startRecording() {
 		 __log("Recording started");
 
 	}).catch(function(err) {
+
+		__log("Error");
 	  	//enable the record button if getUSerMedia() fails
     	//recordButton.disabled = false;
     	//stopButton.disabled = true;
 
 	});
 
-	//disable the record button
-    //recordButton.disabled = true;
-    //stopButton.disabled = false;
 }
 
 
 var paid;
 function stopRecording(pid) {
-	console.log("stopRecording() called");
+	console.log("stopRecording() called " + pid);
 	
 	//stop microphone access
 	gumStream.getAudioTracks()[0].stop();
@@ -115,6 +114,7 @@ function stopRecording(pid) {
 
 
 	//tell the recorder to finish the recording (stop recording + encode the recorded audio)
+	console.log("finishRecording() called");
 	recorder.finishRecording();
 
 	__log('Recording stopped');
@@ -142,31 +142,12 @@ function createDownloadLink(blob,encoding) {
 
 	console.log("data uploaded ", paid);
 	
-	/*var url = URL.createObjectURL(blob);
-	var au = document.createElement('audio');
-	var li = document.createElement('li');
-	var link = document.createElement('a');
 
-	//add controls to the <audio> element
-	au.controls = true;
-	au.src = url;
-
-	//link the a element to the blob
-	link.href = url;
-	link.download = new Date().toISOString() + '.'+encoding;
-	link.innerHTML = link.download;
-
-	//add the new audio and a elements to the li element
-	li.appendChild(au);
-	li.appendChild(link);
-
-	//add the li element to the ordered list
-	recordingsList.appendChild(li);*/
 }
 
 
 
 //helper function
 function __log(e, data) {
-	//console.info(e, data);
+	console.info(e, data);
 }
