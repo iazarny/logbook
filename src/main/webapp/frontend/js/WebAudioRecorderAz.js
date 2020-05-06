@@ -129,13 +129,18 @@ function createDownloadLink(blob,encoding) {
 		if(this.readyState === 4) {
 			console.log("Server returned: ", e.target.responseText);
 		}
-		console.log("zServer returned: ", e);
+		console.log("Server returned: ", e);
 	};
+
+	console.log("prepare data for upload ", paid);
+
 	var fd=new FormData();
 	fd.append("audio_data", blob, filename);
 	fd.append("pid", paid);
 	xhr.open("POST","upload/audio",true);
 	xhr.send(fd);
+
+	console.log("data uploaded ", paid);
 	
 	/*var url = URL.createObjectURL(blob);
 	var au = document.createElement('audio');
@@ -163,5 +168,5 @@ function createDownloadLink(blob,encoding) {
 
 //helper function
 function __log(e, data) {
-	//log.innerHTML += "\n" + e + " " + (data || '');
+	//console.info(e, data);
 }

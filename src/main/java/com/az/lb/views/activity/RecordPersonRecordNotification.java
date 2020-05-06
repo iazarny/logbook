@@ -25,7 +25,7 @@ public class RecordPersonRecordNotification extends Notification {
         this.onClose = onClose;
 
         UI.getCurrent().getPage().addJavaScript("./js/WebAudioRecorder.min.js");
-        UI.getCurrent().getPage().addJavaScript("./js/app.js");
+        UI.getCurrent().getPage().addJavaScript("./js/WebAudioRecorderAz.js");
 
         Button stopRecordingBtn = new Button("Stop recording");
 
@@ -54,7 +54,12 @@ public class RecordPersonRecordNotification extends Notification {
 
         Page page = UI.getCurrent().getPage();
 
+        System.out.println("CALL stopRecording("+personActivity.getId().toString()+")");
+
+
         page.executeJs("stopRecording($0)", personActivity.getId().toString());
+
+        System.out.println("CALL  ok ");
 
         this.close();
 
