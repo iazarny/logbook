@@ -22,6 +22,7 @@ import javax.transaction.Transactional;
 import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -55,7 +56,7 @@ public class PersonPhotoService {
                     LobHelper lb = ses.getLobHelper();
                     pf.setImagect(contentType);
                     pf.setImage(lb.createBlob(is, size));
-                    pf.setImagedt(LocalDate.now());
+                    pf.setImagedt(LocalDateTime.now());
                     personPhotoRepository.save(pf);
                 }
         );
@@ -64,6 +65,12 @@ public class PersonPhotoService {
 
     public List<PersonPhoto> getTeamsPhoto(String teamId) {
         return personPhotoRepository.findAllInTeam(UUID.fromString(teamId));
+    }
+
+    public PersonPhoto getPersonPhoto(String personId) {
+        return personPhotoRepository.findByPerson(
+                personRepository.findById(UUID.fromString(personId)).get()
+        ).get();
     }
 
 

@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.sql.Blob;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -36,7 +37,7 @@ public class PersonPhoto {
     private String imagect;
 
     @Column(name = "imagedt")
-    private LocalDate imagedt;
+    private LocalDateTime imagedt;
 
     public UUID getId() {
         return id;
@@ -70,11 +71,11 @@ public class PersonPhoto {
         this.imagect = imagect;
     }
 
-    public LocalDate getImagedt() {
+    public LocalDateTime getImagedt() {
         return imagedt;
     }
 
-    public void setImagedt(LocalDate imagedt) {
+    public void setImagedt(LocalDateTime imagedt) {
         this.imagedt = imagedt;
     }
 }

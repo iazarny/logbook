@@ -13,11 +13,14 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Component
 @VaadinSessionScope
 public class UserContext {
+
+    private UUID userId = null;
 
     private Org org = null;
 
@@ -57,6 +60,7 @@ public class UserContext {
             personRepository.findByEmail(user.getUsername()).ifPresent(
                     u -> {
                         org = u.getOrg();
+                        userId = u.getId();
                     }
             );
             /*createTestData();*/
@@ -163,6 +167,10 @@ public class UserContext {
 
     public LocalDate getSelectedDate() {
         return selectedDate;
+    }
+
+    public UUID getUserId() {
+        return userId;
     }
 
     public void setSelectedDate(LocalDate selectedDate) {

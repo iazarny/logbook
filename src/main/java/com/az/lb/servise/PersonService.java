@@ -6,7 +6,6 @@ import com.az.lb.repository.RegistrationRepository;
 import com.az.lb.servise.mail.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -82,7 +81,7 @@ public class PersonService {
     public boolean forgotPassword(String email) {
         Optional<Person> optPerson = repository.findByEmail(email);
         if (optPerson.isPresent()) {
-            cgangePassword(optPerson.get(),  MailService.MAIL_FORGOTPWD, "Reset password");
+            changePassword(optPerson.get(),  MailService.MAIL_FORGOTPWD, "Reset password");
             return true;
         }
         return false;
@@ -92,14 +91,14 @@ public class PersonService {
     public boolean invitePerson(String email) {
         Optional<Person> optPerson = repository.findByEmail(email);
         if (optPerson.isPresent()) {
-            cgangePassword(optPerson.get(),  MailService.MAIL_INVITE, "Invitation the Log Book ");
+            changePassword(optPerson.get(),  MailService.MAIL_INVITE, "Invitation the Log Book ");
             return true;
         }
         return false;
     }
 
 
-    public void cgangePassword(Person person, String templateKey, String emailSubj) {
+    public void changePassword(Person person, String templateKey, String emailSubj) {
         Registration reg = new Registration();
         reg.setFirstname(person.getFirstName());
         reg.setLastname(person.getLastName());

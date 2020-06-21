@@ -33,6 +33,9 @@ class PersonPhotoServiceTest {
     @Autowired
     private PersonPhotoRepository personPhotoRepository;
 
+    @Autowired
+    private TeamPersonService teamPersonService;
+
 
     @Test
     void addPhoto() throws Exception {
@@ -69,9 +72,27 @@ class PersonPhotoServiceTest {
             person.setLastName("Ozzy " + i);
             person.setOrg(org);
             personRepository.save(person);
+
+            teamPersonService.assignPerson(
+                    person.getId(),
+                    team.getId()
+            );
         }
 
         assertTrue(personPhotoService.getTeamsPhoto(team.getId().toString()).isEmpty());
+
+        for (int i = 0; i < 10; i++) {
+            final String email = "do"+i+"@funny.com";
+            personRepository.findByEmail(email).ifPresent(
+                    person -> {
+                        personPhotoService.addPhoto(person.getId().toString(), "plaint/text",
+                                0L + email.getBytes().length, new ByteArrayInputStream(email.getBytes()));
+                    }
+            );
+        }
+
+        assertEquals(10, personPhotoService.getTeamsPhoto(team.getId().toString()).size());
+        System.out.println();
 
     }
 }

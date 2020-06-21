@@ -1,0 +1,13 @@
+#tean-board {
+    display: block;
+    height: 80vh;
+}
+
+:host {
+    display: block;
+    height: 100%;
+}
+
+
+
+
