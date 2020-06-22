@@ -32,14 +32,12 @@ public class PhotoUploadServlet extends SpringServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         if ("POST".equalsIgnoreCase(request.getMethod())) {
             try {
                 Collection<Part> parts = request.getParts();
                 Part picture = getPart(parts, "picture_data").get();
                 String contentType = request.getParameterValues("picture_ct")[0];
                 String userId = request.getParameterValues("pid")[0];
-                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + userId + contentType + picture.getSize());
                 PersonPhotoService personPhotoService = context.getBean(PersonPhotoService.class);
                 personPhotoService.addPhoto(userId, contentType, picture.getSize(), picture.getInputStream());
                 response.setStatus(200);

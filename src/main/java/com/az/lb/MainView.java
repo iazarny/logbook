@@ -55,7 +55,7 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 
         LeftAppMenuBuilder leftAppMenuBuilder = LeftAppMenuBuilder.get();
         leftAppMenuBuilder.add(new LeftNavigationItem("Activity", VaadinIcon.HOME.create(), TeamActivityView.class));
-        leftAppMenuBuilder.add(new LeftNavigationItem("Team board", VaadinIcon.DASHBOARD.create(), TeamBoardView.class));
+        leftAppMenuBuilder.add(new LeftNavigationItem("Team board", VaadinIcon.GRID.create(), TeamBoardView.class));
         if (SecurityUtils.hasRole("ADM")) {
             leftAppMenuBuilder.add(LeftSubMenuBuilder.get("Reports", VaadinIcon.PRINT.create())
                     .add(new LeftNavigationItem("Daily", VaadinIcon.CALENDAR.create(), ReportDailyView.class),

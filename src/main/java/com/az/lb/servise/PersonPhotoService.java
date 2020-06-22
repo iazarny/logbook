@@ -67,10 +67,15 @@ public class PersonPhotoService {
         return personPhotoRepository.findAllInTeam(UUID.fromString(teamId));
     }
 
-    public PersonPhoto getPersonPhoto(String personId) {
+    public PersonPhoto getPersonPhoto(String phId) {
+        return personPhotoRepository.findById(
+                UUID.fromString(phId)
+        ).get();
+/*
         return personPhotoRepository.findByPerson(
                 personRepository.findById(UUID.fromString(personId)).get()
         ).get();
+*/
     }
 
 

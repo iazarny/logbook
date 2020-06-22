@@ -52,10 +52,10 @@ function startVideoRecording(p) {
     var timerId = setTimeout(function tick() {
         if (allowMakePhoto) {
             takepicture();
-            timerId = setTimeout(tick, 2000); // (*)
+            timerId = setTimeout(tick, 30000); // (*)
             __log("Make photo");
         }
-    }, 2000);
+    }, 30000);
 
     __log("Video recording started");
 
