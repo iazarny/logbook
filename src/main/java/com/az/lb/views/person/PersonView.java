@@ -38,7 +38,7 @@ import org.springframework.security.access.annotation.Secured;
 
 @Route(value = "Persons", layout = MainView.class)
 @PageTitle("Persons")
-@CssImport("styles/views/person/master-detail-view.css")
+@CssImport("./styles/views/masterdetail/master-detail-view.css")
 @Secured({"ADM", "USER"})
 public class PersonView extends VerticalLayout implements AfterNavigationObserver {
 

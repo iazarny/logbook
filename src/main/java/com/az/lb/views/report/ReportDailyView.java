@@ -25,7 +25,7 @@ import java.util.List;
 @Route(value = "DailyReport", layout = MainView.class)
 @RouteAlias(value = "DailyReport", layout = MainView.class)
 @PageTitle("Daily report")
-@CssImport("styles/views/reports/reports.css")
+@CssImport("./styles/views/reports/reports.css")
 @Secured({"ADM"})
 public class ReportDailyView extends VerticalLayout implements AfterNavigationObserver {
 

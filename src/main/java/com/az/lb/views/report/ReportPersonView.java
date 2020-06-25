@@ -25,7 +25,7 @@ import java.time.LocalDate;
 @Route(value = "PersonReport", layout = MainView.class)
 @RouteAlias(value = "PersonReport", layout = MainView.class)
 @PageTitle("Person activity report")
-@CssImport("styles/views/reports/reports.css")
+@CssImport("./styles/views/reports/reports.css")
 @Secured({"ADM"})
 public class ReportPersonView extends VerticalLayout implements AfterNavigationObserver {
 

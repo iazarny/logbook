@@ -37,7 +37,7 @@ import java.util.List;
 @Route(value = PersonActivityView.ROUTE, layout = MainView.class)
 @RouteAlias(value = PersonActivityView.ROUTE, layout = MainView.class)
 @PageTitle("Person Activity")
-@CssImport("styles/views/personactivity/person-activity.css")
+@CssImport("./styles/views/personactivity/person-activity.css")
 public class PersonActivityView extends VerticalLayout implements AfterNavigationObserver /*, HasUrlParameter<String>*/ {
 
     public static final  String ROUTE = "PersonActivity";

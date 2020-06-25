@@ -28,7 +28,6 @@ import java.util.*;
 @Route(value = TeamBoardView.ROUTE, layout = MainView.class)
 @PageTitle("Team board")
 @Secured({"ADM", "USER"})
-@CssImport("styles/views/team/team-board.css")
 @CssImport("./styles/views/team/team-board.css")
 public class TeamBoardView extends VerticalLayout implements AfterNavigationObserver {
 

@@ -25,7 +25,7 @@ import org.springframework.security.access.annotation.Secured;
 @Route(value = "OrganizationSettings", layout = MainView.class)
 @RouteAlias(value = "OrganizationSettings", layout = MainView.class)
 @PageTitle("Organization Settings")
-@CssImport("styles/views/dashboard/dashboard-view.css")
+@CssImport("./styles/views/dashboard/dashboard-view.css")
 @Secured("ADM")
 public class OrganizationSettingView extends VerticalLayout implements AfterNavigationObserver {
 

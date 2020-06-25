@@ -22,7 +22,7 @@ import java.time.LocalDate;
 @Route(value = "TaskReport", layout = MainView.class)
 @RouteAlias(value = "TaskReport", layout = MainView.class)
 @PageTitle("Task report")
-@CssImport("styles/views/reports/reports.css")
+@CssImport("./styles/views/reports/reports.css")
 @Secured({"ADM"})
 public class ReportTaskView extends VerticalLayout implements AfterNavigationObserver {
 

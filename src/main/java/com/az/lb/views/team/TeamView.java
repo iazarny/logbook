@@ -27,9 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
 @Route(value = "Teams", layout = MainView.class)
-//@RouteAlias(value = "Teams", layout = MainView.class)
 @PageTitle("Teams")
-@CssImport("styles/views/dashboard/dashboard-view.css")
+@CssImport("./styles/views/dashboard/dashboard-view.css")
 @Secured({"ADM", "USER"})
 public class TeamView extends VerticalLayout implements AfterNavigationObserver {
 

@@ -10,7 +10,7 @@ import com.vaadin.flow.component.page.Page;
 
 import java.util.function.Consumer;
 
-@CssImport("styles/views/recording/recording.css")
+@CssImport("./styles/views/recording/recording.css")
 public class RecordPersonRecordNotification extends Notification {
 
     private final PersonActivity personActivity;

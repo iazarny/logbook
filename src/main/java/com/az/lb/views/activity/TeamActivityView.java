@@ -24,7 +24,7 @@ import java.time.LocalDate;
 @Route(value = "TeamActivity", layout = MainView.class)
 @RouteAlias(value = "", layout = MainView.class)
 @PageTitle("Team's activity")
-@CssImport("styles/views/dashboard/dashboard-view.css")
+@CssImport("./styles/views/dashboard/dashboard-view.css")
 @Secured({"ADM", "USER"})
 public class TeamActivityView extends VerticalLayout implements AfterNavigationObserver {
 
