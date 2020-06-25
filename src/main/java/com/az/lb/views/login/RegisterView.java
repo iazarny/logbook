@@ -115,7 +115,7 @@ public class RegisterView extends HorizontalLayout {
         );
     }
 
-    private String NAME_ERR_MSG = "Name must contain at least three characters. And less than 64";
+    private String NAME_ERR_MSG = "Name must be at least 3 and less than 64 characters";
 
     private void createValidation() {
         binderRegistration.forField(orgNameTextField).withValidator(

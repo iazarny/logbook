@@ -1,4 +1,4 @@
-package com.az.lb.views.masterdetail;
+package com.az.lb.views.person;
 
 import com.az.lb.UserContext;
 import com.az.lb.model.Person;
@@ -38,7 +38,7 @@ import org.springframework.security.access.annotation.Secured;
 
 @Route(value = "Persons", layout = MainView.class)
 @PageTitle("Persons")
-@CssImport("styles/views/masterdetail/master-detail-view.css")
+@CssImport("styles/views/person/master-detail-view.css")
 @Secured({"ADM", "USER"})
 public class PersonView extends VerticalLayout implements AfterNavigationObserver {
 

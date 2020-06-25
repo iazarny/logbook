@@ -23,7 +23,10 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonPhotoService {
@@ -64,18 +67,17 @@ public class PersonPhotoService {
     }
 
     public List<PersonPhoto> getTeamsPhoto(String teamId) {
-        return personPhotoRepository.findAllInTeam(UUID.fromString(teamId));
+        return personPhotoRepository
+                .findAllInTeam(UUID.fromString(teamId))
+                .stream()
+                .filter(ph -> ph.getImagedt().isAfter(LocalDateTime.now().minus(15, ChronoUnit.MINUTES)))
+                .collect(Collectors.toList());
     }
 
     public PersonPhoto getPersonPhoto(String phId) {
         return personPhotoRepository.findById(
                 UUID.fromString(phId)
         ).get();
-/*
-        return personPhotoRepository.findByPerson(
-                personRepository.findById(UUID.fromString(personId)).get()
-        ).get();
-*/
     }
 
 

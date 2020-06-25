@@ -5,7 +5,7 @@ import com.az.lb.views.activity.TeamActivityView;
 import com.az.lb.views.team.TeamBoardView;
 import com.az.lb.views.team.TeamView;
 import com.az.lb.views.login.LoginView;
-import com.az.lb.views.masterdetail.PersonView;
+import com.az.lb.views.person.PersonView;
 import com.az.lb.views.org.OrganizationSettingView;
 import com.az.lb.views.report.ReportDailyView;
 import com.az.lb.views.report.ReportPersonView;
@@ -55,7 +55,7 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 
         LeftAppMenuBuilder leftAppMenuBuilder = LeftAppMenuBuilder.get();
         leftAppMenuBuilder.add(new LeftNavigationItem("Activity", VaadinIcon.HOME.create(), TeamActivityView.class));
-        leftAppMenuBuilder.add(new LeftNavigationItem("Team board", VaadinIcon.GRID.create(), TeamBoardView.class));
+        leftAppMenuBuilder.add(new LeftNavigationItem("Team video board", VaadinIcon.GRID.create(), TeamBoardView.class));
         if (SecurityUtils.hasRole("ADM")) {
             leftAppMenuBuilder.add(LeftSubMenuBuilder.get("Reports", VaadinIcon.PRINT.create())
                     .add(new LeftNavigationItem("Daily", VaadinIcon.CALENDAR.create(), ReportDailyView.class),

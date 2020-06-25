@@ -9,5 +9,27 @@
 }
 
 
+.photo-card {
+
+}
+
+.photo-datetime {
+    color: red;
+    align-self: end;
+
+}
+
+.photo-old {
+    /*-webkit-filter: grayscale(100%);
+    filter: grayscale(100%);*/
+
+    /* Add the blur effect */
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+
+}
+
+
+
 
 

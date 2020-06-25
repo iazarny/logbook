@@ -1,13 +1,11 @@
 package com.az.lb.views.team;
 
 
-
 import com.az.lb.MainView;
 import com.az.lb.UserContext;
 import com.az.lb.model.PersonPhoto;
 import com.az.lb.model.Team;
 import com.az.lb.servise.PersonPhotoService;
-import com.az.lb.servise.PersonService;
 import com.az.lb.servise.TeamService;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -23,6 +21,7 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -30,11 +29,12 @@ import java.util.*;
 @PageTitle("Team board")
 @Secured({"ADM", "USER"})
 @CssImport("styles/views/team/team-board.css")
+@CssImport("./styles/views/team/team-board.css")
 public class TeamBoardView extends VerticalLayout implements AfterNavigationObserver {
 
-    public static final String ROUTE = "TeamBoardView";
+    static final String ROUTE = "TeamBoardView";
 
-    public static int REFRESH_TIMEOUT = 30000;
+    static int REFRESH_TIMEOUT = 10000;
 
     private final List<PersonPhoto> data = new ArrayList<>();
 
@@ -43,9 +43,6 @@ public class TeamBoardView extends VerticalLayout implements AfterNavigationObse
 
     @Autowired
     private PersonPhotoService personPhotoService;
-
-    @Autowired
-    private PersonService personService;
 
     @Autowired
     private TeamService teamService;
@@ -91,12 +88,27 @@ public class TeamBoardView extends VerticalLayout implements AfterNavigationObse
         );
     }
 
+    /**
+     * The photos older that 15 minutes not present on board,
+     * photo older that 5 minutes are greyscaled via css.
+     * @param tid
+     * @param hard
+     */
     public void getTeamPhotoBoard(UUID tid, boolean hard) {
+
+        final List<Component> imgComponents = new ArrayList<>();
+        final List<Component> dtComponents = new ArrayList<>();
+        findChildren(board, "img-",  imgComponents);
+        findChildren(board, "dt-",  dtComponents);
+
         selectedTeamId = tid;
         data.clear();
         data.addAll(personPhotoService.getTeamsPhoto(selectedTeamId.toString()));
 
-        if (hard) {
+
+        boolean forceHard = data.size() != imgComponents.size();
+
+        if (hard || forceHard) {
             int columns = (int) Math.min(5, Math.max(2, Math.sqrt(data.size())));
             board.removeAll();
 
@@ -110,21 +122,101 @@ public class TeamBoardView extends VerticalLayout implements AfterNavigationObse
                 row.add(createComponent(data.get(i)));
             }
         } else {
-            List<Component> collector = new ArrayList<>();
-            findChildren(board, "img-",  collector);
-            collector.forEach(component -> {
-                final Image img = (Image) component;
-                final int tailIdx = img.getSrc().indexOf("&rnd");
-                final String src;
-                if ( tailIdx == -1) {
-                    src = img.getSrc();
-                } else {
-                    src = img.getSrc().substring(0, tailIdx);
-                }
-                String newSrc = src + "&rnd=" + UUID.randomUUID().toString();
-                img.setSrc(newSrc);
-            });
+
+            for (int i = 0; i < imgComponents.size(); i++) {
+                final PersonPhoto ph = data.get(i);
+                final LocalDateTime ldt = ph.getImagedt();
+
+
+                final Label lbl = (Label) dtComponents.get(i);
+                lbl.setText(ldt.truncatedTo(ChronoUnit.MINUTES).toString());
+
+                final Image img = (Image) imgComponents.get(i);
+                img.setSrc(getNewSrcLocation(img.getSrc()));
+                setImageStyle(ldt, img);
+
+            }
         }
+    }
+
+
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        super.onDetach(detachEvent);
+        Page page = UI.getCurrent().getPage();
+        page.executeJs("stopVideoRecording()");
+        thread.interrupt();
+        thread = null;
+    }
+
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+        Page page = UI.getCurrent().getPage();
+        page.executeJs("startVideoRecording($0)", this.userContext.getUserId().toString());
+        thread = new TeamBoardRefreshThread(attachEvent.getUI(), this);
+        thread.start();
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        final List<Team> teams = teamService.findTeams(userContext.getOrg());
+        teams.stream().findFirst().ifPresent(
+                team -> {
+                    teamCmb.setItems(teams);
+                    teamCmb.setValue(team);
+                }
+        );
+    }
+
+    private Div createComponent(PersonPhoto ph) {
+        final Div div = new Div();
+        final String phId = ph.getId().toString();
+        final String dateTime = ph.getImagedt().truncatedTo(ChronoUnit.MINUTES).toString();
+
+        final Html mailTo = new Html(
+                String.format("<div><a href='mailto:%s'>%s</a></div>",  ph.getPerson().getEmail(), ph.getPerson().getFullName())
+        );
+        final Label dt = new Label(dateTime);
+        dt.setId("dt-" + phId);
+        final Div head = new Div(mailTo, dt);
+
+        Image image = new Image();
+
+        setImageStyle(ph.getImagedt(), image);
+
+        image.setId("img-" + phId);
+        image.setSrc( String.format( "download/photo?pid=%s", phId));
+        image.setAlt( String.format( "Photo at %s", dateTime ) );
+
+        final Div msg = new Div();
+        div.add(head);
+        div.add(image);
+        div.add(msg);
+        return div;
+    }
+
+    private void setImageStyle(LocalDateTime ldt, Image img) {
+        if (ldt.isBefore(LocalDateTime.now().minus(10, ChronoUnit.MINUTES))) {
+            img.getStyle().set("filter", "blur(8px)");
+            img.getStyle().set("-webkit-filter", "blur(8px)");
+        } else {
+            img.getStyle().remove("filter");
+            img.getStyle().remove("-webkit-filter");
+        }
+    }
+
+    private String getNewSrcLocation(String oldSrc) {
+        final int tailIdx = oldSrc.indexOf("&rnd");
+        final String src;
+        if ( tailIdx == -1) {
+            src = oldSrc;
+        } else {
+            src = oldSrc.substring(0, tailIdx);
+        }
+        return src + "&rnd=" + UUID.randomUUID().toString();
     }
 
 
@@ -143,73 +235,10 @@ public class TeamBoardView extends VerticalLayout implements AfterNavigationObse
         );
     }
 
-    private Div createComponent(PersonPhoto ph) {
-        Div div = new Div();
-        div.setId("div-" + ph.getId().toString());
-        div.setClassName("photo-card");
 
-        Html mailTo = new Html(
-                String.format("<div><a href='mailto:%s'>%s</a></div>",
-                        ph.getPerson().getEmail(), ph.getPerson().getFullName())
-        );
-
-        Image image = new Image();
-        image.setId("img-" + ph.getId().toString());
-        image.setSrc(
-                String.format(
-                        "download/photo?pid=%s", ph.getId().toString()
-                )
-        );
-        image.setAlt(
-                String.format(
-                        "Photo at", ph.getImagedt().truncatedTo(ChronoUnit.MINUTES)
-                )
-        );
-
-
-        Div msg = new Div();
-
-        div.add(mailTo);
-        div.add(image);
-        div.add(msg);
-
-        return div;
-    }
-
-
-    @Override
-    protected void onDetach(DetachEvent detachEvent) {
-        super.onDetach(detachEvent);
-        Page page = UI.getCurrent().getPage();
-        page.executeJs("stopVideoRecording()");
-
-        thread.interrupt();
-        thread = null;
-    }
-
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-        Page page = UI.getCurrent().getPage();
-        page.executeJs("startVideoRecording($0)", this.userContext.getUserId().toString());
-
-        thread = new TeamBoardRefreshThread(attachEvent.getUI(), this);
-        thread.start();
-    }
-
-    @Override
-    public void afterNavigation(AfterNavigationEvent event) {
-        final List<Team> teams = teamService.findTeams(userContext.getOrg());
-        teams.stream().findFirst().ifPresent(
-                team -> {
-                    teamCmb.setItems(teams);
-                    teamCmb.setValue(team);
-                }
-        );
-    }
-
-
+    /**
+     * It is on for experiments, but need move to timer.
+     */
     private static class TeamBoardRefreshThread extends Thread {
         private final UI ui;
         private final TeamBoardView view;
@@ -223,7 +252,6 @@ public class TeamBoardView extends VerticalLayout implements AfterNavigationObse
         public void run() {
             try {
                 while(true) {
-
                     if (view.selectedTeamId != null) {
                         ui.access(() -> view.getTeamPhotoBoard(view.selectedTeamId, false));
                     }

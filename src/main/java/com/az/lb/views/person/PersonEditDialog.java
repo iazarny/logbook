@@ -1,4 +1,4 @@
-package com.az.lb.views.masterdetail;
+package com.az.lb.views.person;
 
 import com.az.lb.model.Person;
 import com.az.lb.views.ViewConst;
@@ -9,13 +9,15 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.shared.Registration;
 
 
@@ -33,6 +35,30 @@ public class PersonEditDialog extends Dialog {
 
     private Registration cancelListenerRegistration = null;
     private Registration confirmListenerRegistration = null;
+
+    private Label infoLabel = new Label("");
+
+    private Binder<Person> binderPerson = new Binder<>();
+
+    private String NAME_ERR_MSG = "Name must be at least 3 and less than 128 characters";
+
+    private void createValidation() {
+
+        binderPerson.forField(firstNameTextField).withValidator(
+                name -> name.length() >= 3 && name.length() <= 128, NAME_ERR_MSG
+
+        ).bind(Person::getFirstName, Person::setFirstName);
+
+        binderPerson.forField(lastNameTextField).withValidator(
+                name -> name.length() >= 3 && name.length() <= 128, NAME_ERR_MSG
+
+        ).bind(Person::getLastName, Person::setLastName);
+
+        binderPerson.forField(emailTextField).withValidator(
+                new EmailValidator("Please provide correct email")
+        ).bind(Person::getEmail, Person::setEmail);
+
+    }
 
 
     public PersonEditDialog(String title) {
@@ -70,6 +96,7 @@ public class PersonEditDialog extends Dialog {
         nameLayout.addFormItem(managerCombobox, "Manager");
         nameLayout.addFormItem(sendInvitation, "Send invitation");
         nameLayout.add(hl);
+        nameLayout.add(infoLabel);
         nameLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
                 new FormLayout.ResponsiveStep("300px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
@@ -79,6 +106,8 @@ public class PersonEditDialog extends Dialog {
                 message,
                 nameLayout
         );
+
+        createValidation();
 
     }
 
@@ -124,10 +153,32 @@ public class PersonEditDialog extends Dialog {
     }
 
     public PersonEditDialog onConfirm(ComponentEventListener<ClickEvent<Button>> listener) {
+
+        ComponentEventListener<ClickEvent<Button>> wrapper = new ComponentEventListener<ClickEvent<Button>>() {
+
+            ComponentEventListener<ClickEvent<Button>> wraped = listener;
+
+            @Override
+            public void onComponentEvent(ClickEvent<Button> event) {
+                Person person = new Person();
+                try {
+                    binderPerson.writeBean(person);
+                    wraped.onComponentEvent(event);
+                } catch (ValidationException e) {
+                    infoLabel.setText(
+                            "Validation has failed"
+                    );
+                }
+
+
+            }
+        };
+
+
         if (confirmListenerRegistration != null) {
             confirmListenerRegistration.remove();
         }
-        confirmListenerRegistration = this.confirmButton.addClickListener(listener);
+        confirmListenerRegistration = this.confirmButton.addClickListener(wrapper);
         return this;
     }
 
